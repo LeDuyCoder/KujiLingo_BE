@@ -16,6 +16,8 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/swagger-ui": "^6.1.1",
     "@prisma/client": "^7.9.1",
     "bcrypt": "^6.0.0",
     "dayjs": "^1.11.21",
