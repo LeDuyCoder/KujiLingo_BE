@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +5,645 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model achievements {
+  id                String              @id @db.Uuid
+  title             String              @db.VarChar
+  description       String
+  icon              String              @db.VarChar
+  type              AchievementType
+  condition_value   Int
+  reward_exp        Int?                @default(0)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  user_achievements user_achievements[]
+
+  @@index([type])
+}
+
+model courses {
+  id          String    @id @db.Uuid
+  title       String?   @db.VarChar
+  description String?
+  image       String?   @db.VarChar
+  order_no    Int?
+  lessons     lessons[]
+
+  @@index([order_no])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model example_sentences {
+  id            String        @id @db.Uuid
+  vocabulary_id String?       @db.Uuid
+  japanese      String?
+  hiragana      String?
+  translation   String?
+  vocabularies  vocabularies? @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model favorite_vocabularies {
+  user_id       String       @db.Uuid
+  vocabulary_id String       @db.Uuid
+  users         users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, vocabulary_id])
+  @@index([vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model folder_system_vocabularies {
+  folder_id     String       @db.Uuid
+  vocabulary_id String       @db.Uuid
+  folders       folders      @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([folder_id, vocabulary_id])
+  @@index([vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model folder_user_vocabularies {
+  folder_id          String            @db.Uuid
+  user_vocabulary_id String            @db.Uuid
+  folders            folders           @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_vocabularies  user_vocabularies @relation(fields: [user_vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([folder_id, user_vocabulary_id])
+  @@index([user_vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model folders {
+  id                         String                       @id @db.Uuid
+  user_id                    String?                      @db.Uuid
+  name                       String?                      @db.VarChar
+  color                      String?                      @db.VarChar
+  icon                       String?                      @db.VarChar
+  folder_system_vocabularies folder_system_vocabularies[]
+  folder_user_vocabularies   folder_user_vocabularies[]
+  users                      users?                       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id])
+}
+
+model gem_packages {
+  id                   String                 @id @db.Uuid
+  title                String?                @db.VarChar
+  description          String?
+  gem_amount           Int?
+  bonus_gem            Int?                   @default(0)
+  price                Decimal?               @db.Decimal
+  image                String?                @db.VarChar
+  is_popular           Boolean?               @default(false)
+  is_best_value        Boolean?               @default(false)
+  sort_order           Int?
+  is_active            Boolean?               @default(true)
+  created_at           DateTime?              @db.Timestamp(6)
+  payment_transactions payment_transactions[]
+
+  @@index([is_active])
+  @@index([sort_order])
+}
+
+model gem_promotions {
+  id                   String                 @id @db.Uuid
+  title                String?                @db.VarChar
+  description          String?
+  bonus_percent        Int?
+  start_at             DateTime?              @db.Timestamp(6)
+  end_at               DateTime?              @db.Timestamp(6)
+  is_active            Boolean?               @default(true)
+  created_at           DateTime?              @db.Timestamp(6)
+  payment_transactions payment_transactions[]
+
+  @@index([is_active])
+  @@index([start_at, end_at])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model grammar_examples {
+  id             String          @id @db.Uuid
+  grammar_id     String?         @db.Uuid
+  japanese       String?
+  translation    String?
+  grammar_points grammar_points? @relation(fields: [grammar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([grammar_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model grammar_points {
+  id               String             @id @db.Uuid
+  lesson_id        String?            @db.Uuid
+  title            String?            @db.VarChar
+  structure        String?
+  meaning          String?
+  usage            String?
+  jlpt             JLPTLevel?
+  grammar_examples grammar_examples[]
+  lessons          lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([lesson_id, jlpt])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model kanji_vocabularies {
+  kanji_id      String       @db.Uuid
+  vocabulary_id String       @db.Uuid
+  kanjis        kanjis       @relation(fields: [kanji_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([kanji_id, vocabulary_id])
+  @@index([vocabulary_id])
+}
+
+model kanjis {
+  id                 String               @id @db.Uuid
+  kanji              String?              @db.VarChar
+  meaning            String?
+  onyomi             String?              @db.VarChar
+  kunyomi            String?              @db.VarChar
+  stroke_count       Int?
+  jlpt               JLPTLevel?
+  kanji_vocabularies kanji_vocabularies[]
+
+  @@index([jlpt])
+  @@index([kanji])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model learning_progress {
+  id            String          @id @db.Uuid
+  user_id       String?         @db.Uuid
+  vocabulary_id String?         @db.Uuid
+  status        LearningStatus?
+  mastery       Float?
+  correct_count Int?
+  wrong_count   Int?
+  last_review   DateTime?       @db.Timestamp(6)
+  next_review   DateTime?       @db.Timestamp(6)
+  users         users?          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies?   @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, vocabulary_id], map: "learning_progress_user_id_vocabulary_id_idx")
+  @@index([user_id, next_review, status])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model lessons {
+  id             String           @id @db.Uuid
+  course_id      String?          @db.Uuid
+  title          String?          @db.VarChar
+  description    String?
+  order_no       Int?
+  grammar_points grammar_points[]
+  courses        courses?         @relation(fields: [course_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topics         topics[]
+
+  @@index([course_id, order_no])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model payment_transactions {
+  id                      String             @id @db.Uuid
+  user_id                 String?            @db.Uuid
+  package_id              String?            @db.Uuid
+  promotion_id            String?            @db.Uuid
+  payment_method          PaymentMethod?
+  payment_status          PaymentStatus?
+  amount                  Decimal?           @db.Decimal
+  gem_amount              Int?
+  bonus_gem               Int?
+  total_gem               Int?
+  transaction_code        String?            @unique @db.VarChar
+  provider_transaction_id String?            @db.VarChar
+  payment_url             String?
+  provider_response       String?
+  expired_at              DateTime?          @db.Timestamp(6)
+  paid_at                 DateTime?          @db.Timestamp(6)
+  created_at              DateTime?          @db.Timestamp(6)
+  updated_at              DateTime?          @db.Timestamp(6)
+  gem_packages            gem_packages?      @relation(fields: [package_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  gem_promotions          gem_promotions?    @relation(fields: [promotion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                   users?             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  wallet_histories        wallet_histories[]
+
+  @@index([created_at])
+  @@index([package_id])
+  @@index([payment_status])
+  @@index([provider_transaction_id])
+  @@index([transaction_code])
+  @@index([user_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model purchase_histories {
+  id           String        @id @db.Uuid
+  user_id      String?       @db.Uuid
+  shop_item_id String?       @db.Uuid
+  price        Int?
+  currency     CurrencyType?
+  purchased_at DateTime?     @db.Timestamp(6)
+  shop_items   shop_items?   @relation(fields: [shop_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users        users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([purchased_at])
+  @@index([user_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model pvp_match_histories {
+  id                                          String     @id @db.Uuid
+  player1_id                                  String?    @db.Uuid
+  player2_id                                  String?    @db.Uuid
+  winner_id                                   String?    @db.Uuid
+  player1_score                               Int?
+  player2_score                               Int?
+  player1_correct                             Int?
+  player2_correct                             Int?
+  player1_time                                Int?
+  player2_time                                Int?
+  jlpt                                        JLPTLevel?
+  question_count                              Int?
+  played_at                                   DateTime?  @db.Timestamp(6)
+  users_pvp_match_histories_player1_idTousers users?     @relation("pvp_match_histories_player1_idTousers", fields: [player1_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_pvp_match_histories_player2_idTousers users?     @relation("pvp_match_histories_player2_idTousers", fields: [player2_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_pvp_match_histories_winner_idTousers  users?     @relation("pvp_match_histories_winner_idTousers", fields: [winner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([jlpt])
+  @@index([played_at])
+  @@index([player1_id])
+  @@index([player2_id])
+  @@index([winner_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model quiz_answers {
+  id             String          @id @db.Uuid
+  question_id    String?         @db.Uuid
+  answer         String?
+  is_correct     Boolean?
+  quiz_questions quiz_questions? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([question_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model quiz_questions {
+  id           String         @id @db.Uuid
+  quiz_id      String?        @db.Uuid
+  question     String?
+  audio        String?        @db.VarChar
+  image        String?        @db.VarChar
+  quiz_answers quiz_answers[]
+  quizzes      quizzes?       @relation(fields: [quiz_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([quiz_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model quizzes {
+  id             String           @id @db.Uuid
+  topic_id       String?          @db.Uuid
+  title          String?          @db.VarChar
+  quiz_questions quiz_questions[]
+  topics         topics?          @relation(fields: [topic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([topic_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model review_histories {
+  id            String        @id @db.Uuid
+  user_id       String?       @db.Uuid
+  vocabulary_id String?       @db.Uuid
+  reviewed_at   DateTime?     @db.Timestamp(6)
+  correct       Boolean?
+  duration      Int?
+  users         users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies? @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id, reviewed_at])
+  @@index([user_id, vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model shop_banners {
+  id           String      @id @db.Uuid
+  title        String?     @db.VarChar
+  description  String?
+  image        String?     @db.VarChar
+  shop_item_id String?     @db.Uuid
+  start_at     DateTime?   @db.Timestamp(6)
+  end_at       DateTime?   @db.Timestamp(6)
+  is_active    Boolean?
+  shop_items   shop_items? @relation(fields: [shop_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model shop_items {
+  id                  String                @id @db.Uuid
+  name                String?               @db.VarChar
+  description         String?
+  image               String?               @db.VarChar
+  preview_image       String?               @db.VarChar
+  item_type           ItemType?
+  rarity              ItemRarity?
+  price               Int?
+  currency            CurrencyType?
+  status              ItemStatus?
+  is_limited          Boolean?
+  stock               Int?
+  created_at          DateTime?             @db.Timestamp(6)
+  purchase_histories  purchase_histories[]
+  shop_banners        shop_banners[]
+  user_equipped_items user_equipped_items[]
+  user_shop_items     user_shop_items[]
+
+  @@index([item_type])
+  @@index([item_type, rarity])
+  @@index([rarity])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model topic_vocabularies {
+  topic_id      String       @db.Uuid
+  vocabulary_id String       @db.Uuid
+  topics        topics       @relation(fields: [topic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies  vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([topic_id, vocabulary_id])
+  @@index([vocabulary_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model topics {
+  id                 String               @id @db.Uuid
+  lesson_id          String?              @db.Uuid
+  title              String?              @db.VarChar
+  description        String?
+  image              String?              @db.VarChar
+  order_no           Int?
+  quizzes            quizzes[]
+  topic_vocabularies topic_vocabularies[]
+  lessons            lessons?             @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([lesson_id, order_no])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_achievements {
+  user_id        String       @db.Uuid
+  achievement_id String       @db.Uuid
+  unlocked_at    DateTime?    @default(now()) @db.Timestamp(6)
+  achievements   achievements @relation(fields: [achievement_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users          users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, achievement_id])
+  @@index([user_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_equipped_items {
+  user_id      String      @db.Uuid
+  item_type    ItemType
+  shop_item_id String?     @db.Uuid
+  equipped_at  DateTime?   @db.Timestamp(6)
+  shop_items   shop_items? @relation(fields: [shop_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users        users       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, item_type])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_pvp_statistics {
+  user_id            String    @id @db.Uuid
+  total_matches      Int?      @default(0)
+  win_count          Int?      @default(0)
+  lose_count         Int?      @default(0)
+  draw_count         Int?      @default(0)
+  total_score        Int?      @default(0)
+  average_score      Float?    @default(0)
+  longest_win_streak Int?      @default(0)
+  current_win_streak Int?      @default(0)
+  updated_at         DateTime? @db.Timestamp(6)
+  users              users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([total_matches])
+  @@index([win_count])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_shop_items {
+  id           String      @id @db.Uuid
+  user_id      String?     @db.Uuid
+  shop_item_id String?     @db.Uuid
+  purchased_at DateTime?   @db.Timestamp(6)
+  shop_items   shop_items? @relation(fields: [shop_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users        users?      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, shop_item_id], map: "user_shop_items_user_id_shop_item_id_idx")
+  @@index([user_id])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_vocabularies {
+  id                       String                     @id @db.Uuid
+  user_id                  String?                    @db.Uuid
+  kanji                    String?                    @db.VarChar
+  hiragana                 String?                    @db.VarChar
+  romaji                   String?                    @db.VarChar
+  meaning                  String?
+  note                     String?
+  image                    String?                    @db.VarChar
+  audio                    String?                    @db.VarChar
+  created_at               DateTime?                  @db.Timestamp(6)
+  folder_user_vocabularies folder_user_vocabularies[]
+  users                    users?                     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id, created_at])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_wallets {
+  user_id    String    @id @db.Uuid
+  coins      Int?      @default(0)
+  gems       Int?      @default(0)
+  updated_at DateTime? @db.Timestamp(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id                                                        String                  @id @db.Uuid
+  email                                                     String?                 @unique @db.VarChar
+  password_hash                                             String?                 @db.VarChar
+  display_name                                              String?                 @db.VarChar
+  avatar                                                    String?                 @db.VarChar
+  level                                                     Int?
+  exp                                                       Int?
+  streak                                                    Int?
+  created_at                                                DateTime?               @db.Timestamp(6)
+  favorite_vocabularies                                     favorite_vocabularies[]
+  folders                                                   folders[]
+  learning_progress                                         learning_progress[]
+  payment_transactions                                      payment_transactions[]
+  purchase_histories                                        purchase_histories[]
+  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player1_idTousers")
+  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player2_idTousers")
+  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]   @relation("pvp_match_histories_winner_idTousers")
+  review_histories                                          review_histories[]
+  user_achievements                                         user_achievements[]
+  user_equipped_items                                       user_equipped_items[]
+  user_pvp_statistics                                       user_pvp_statistics?
+  user_shop_items                                           user_shop_items[]
+  user_vocabularies                                         user_vocabularies[]
+  user_wallets                                              user_wallets?
+  wallet_histories                                          wallet_histories[]
+}
+
+model vocabularies {
+  id                         String                       @id @db.Uuid
+  kanji                      String?                      @db.VarChar
+  hiragana                   String?                      @db.VarChar
+  romaji                     String?                      @db.VarChar
+  word_type                  WordType?
+  jlpt                       JLPTLevel?
+  frequency                  Int?
+  audio                      String?                      @db.VarChar
+  image                      String?                      @db.VarChar
+  created_at                 DateTime?                    @db.Timestamp(6)
+  example_sentences          example_sentences[]
+  favorite_vocabularies      favorite_vocabularies[]
+  folder_system_vocabularies folder_system_vocabularies[]
+  kanji_vocabularies         kanji_vocabularies[]
+  learning_progress          learning_progress[]
+  review_histories           review_histories[]
+  topic_vocabularies         topic_vocabularies[]
+  vocabulary_meanings        vocabulary_meanings[]
+
+  @@index([hiragana])
+  @@index([jlpt, frequency])
+  @@index([jlpt])
+  @@index([kanji])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model vocabulary_meanings {
+  id            String        @id @db.Uuid
+  vocabulary_id String?       @db.Uuid
+  language      String?       @db.VarChar
+  meaning       String?
+  display_order Int?
+  vocabularies  vocabularies? @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([vocabulary_id, display_order])
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model wallet_histories {
+  id                     String                 @id @db.Uuid
+  user_id                String?                @db.Uuid
+  transaction_type       WalletTransactionType?
+  coin_change            Int?                   @default(0)
+  gem_change             Int?                   @default(0)
+  balance_coin           Int?
+  balance_gem            Int?
+  payment_transaction_id String?                @db.Uuid
+  note                   String?
+  created_at             DateTime?              @db.Timestamp(6)
+  payment_transactions   payment_transactions?  @relation(fields: [payment_transaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                  users?                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([created_at])
+  @@index([payment_transaction_id])
+  @@index([user_id])
+}
+
+enum AchievementType {
+  STREAK
+  EXP
+  VOCAB_MASTER
+  QUIZ_PERFECT
+}
+
+enum CurrencyType {
+  COIN
+  GEM
+}
+
+enum ItemRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum ItemStatus {
+  ACTIVE
+  HIDDEN
+}
+
+enum ItemType {
+  AVATAR
+  BACKGROUND
+  FRAME
+}
+
+enum JLPTLevel {
+  N5
+  N4
+  N3
+  N2
+  N1
+}
+
+enum LearningStatus {
+  NEW
+  LEARNING
+  REVIEWING
+  MASTERED
+}
+
+enum PVPMatchResult {
+  WIN
+  LOSE
+  DRAW
+}
+
+enum PaymentMethod {
+  MOMO
+  VNPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum WalletTransactionType {
+  RECHARGE
+  PURCHASE
+  REWARD
+  REFUND
+  ADMIN
+}
+
+enum WordType {
+  NOUN
+  VERB
+  I_ADJECTIVE
+  NA_ADJECTIVE
+  ADVERB
+  PRONOUN
+  PARTICLE
+  CONJUNCTION
+  EXPRESSION
 }
