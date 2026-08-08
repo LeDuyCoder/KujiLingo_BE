@@ -39,3 +39,13 @@ export const registerSchema = z.object({
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
+
+export const verifyEmailSchema = z.object({
+    token: z
+        .string()
+        .trim()
+        .min(1)
+        .max(256),
+});
+
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;

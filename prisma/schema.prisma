@@ -488,7 +488,9 @@ model users {
   streak                                                    Int?
   accepted_terms                                            Boolean?                      @default(false)
   jlpt_target_level                                         JLPTLevel?
+  status                                                    String?                       @default("pending_verification") @db.VarChar
   email_verified                                            Boolean?                      @default(false)
+  email_verified_at                                         DateTime?                     @db.Timestamp(6)
   created_at                                                DateTime?                     @default(now()) @db.Timestamp(6)
   updated_at                                                DateTime?                     @db.Timestamp(6)
   deleted_at                                                DateTime?                     @db.Timestamp(6)
@@ -512,12 +514,13 @@ model users {
 }
 
 model email_verification_tokens {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  token_hash String   @db.VarChar
-  expires_at DateTime @db.Timestamp(6)
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id          String    @id @default(uuid()) @db.Uuid
+  user_id     String    @db.Uuid
+  token_hash  String    @db.VarChar
+  expires_at  DateTime  @db.Timestamp(6)
+  consumed_at DateTime? @db.Timestamp(6)
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@index([token_hash])

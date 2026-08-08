@@ -4,6 +4,11 @@ import crypto from "node:crypto";
 
 type TransactionClient = Prisma.TransactionClient;
 
+/**
+ * Tìm người dùng đã kích hoạt theo email
+ * @param email Email cần tìm
+ * @returns Người dùng đã kích hoạt hoặc null
+ */
 export async function findActiveUserByEmail(email: string) {
     return prisma.users.findFirst({
         where: {
@@ -16,6 +21,12 @@ export async function findActiveUserByEmail(email: string) {
     });
 }
 
+/**
+ * Tạo người dùng mới
+ * @param tx Transaction client
+ * @param data Dữ liệu người dùng
+ * @returns Người dùng mới
+ */
 export async function createUser(
     tx: TransactionClient,
     data: {
@@ -38,6 +49,12 @@ export async function createUser(
     });
 }
 
+/**
+ * Tạo token xác thực email
+ * @param tx Transaction client
+ * @param data Dữ liệu token
+ * @returns Token xác thực email
+ */
 export async function createEmailVerificationToken(
     tx: TransactionClient,
     data: {
@@ -55,8 +72,63 @@ export async function createEmailVerificationToken(
     });
 }
 
+/**
+ * Tìm token xác thực email theo hash
+ * @param tx Transaction client
+ * @param hash Hash token
+ * @returns Token xác thực email hoặc null
+ */
+export async function findTokenByHash(tx: TransactionClient, hash: string) {
+    const tokens = await tx.$queryRaw<any[]>`
+        SELECT * FROM "email_verification_tokens" 
+        WHERE "token_hash" = ${hash} 
+        LIMIT 1
+        FOR UPDATE
+    `;
+    return tokens[0] || null;
+}
+
+/**
+ * Đánh dấu token đã được sử dụng
+ * @param tx Transaction client
+ * @param tokenId ID của token
+ * @param now Thời gian hiện tại
+ * @returns Token đã được đánh dấu
+ */
+export async function markTokenAsConsumed(tx: TransactionClient, tokenId: string, now: Date) {
+    return tx.email_verification_tokens.update({
+        where: { id: tokenId },
+        data: { consumed_at: now },
+    });
+}
+
+/**
+ * Cập nhật trạng thái người dùng
+ * @param tx Transaction client
+ * @param userId ID của người dùng
+ * @param now Thời gian hiện tại
+ * @returns Người dùng đã được cập nhật
+ */
+export async function updateUserStatus(tx: TransactionClient, userId: string, now: Date) {
+    return tx.users.update({
+        where: { id: userId },
+        data: {
+            status: "active",
+            email_verified: true,
+            email_verified_at: now,
+            updated_at: now,
+        },
+    });
+}
+
+/**
+ * Repository các hàm liên quan đến xác thực
+ */
 export const authRepository = {
     findActiveUserByEmail,
     createUser,
     createEmailVerificationToken,
+    findTokenByHash,
+    markTokenAsConsumed,
+    updateUserStatus,
 };

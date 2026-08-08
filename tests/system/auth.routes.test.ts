@@ -1,5 +1,6 @@
 import { test, beforeEach, after } from "node:test";
 import assert from "node:assert";
+import crypto from "node:crypto";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
 
@@ -25,7 +26,7 @@ test("Auth API - Database Integration Tests", async (t) => {
             method: "POST",
             url: "/auth/register",
             payload: {
-                email: "newuser@example.com",
+                email: "duyga544@gmail.com",
                 password: "Password123",
                 password_confirmation: "Password123",
                 display_name: "New User",
@@ -38,11 +39,11 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         assert.strictEqual(response.statusCode, 201);
         assert.strictEqual(body.code, "REGISTER_SUCCESS");
-        assert.strictEqual(body.user.email, "newuser@example.com");
+        assert.strictEqual(body.user.email, "duyga544@gmail.com");
         assert.ok(body.verificationToken);
 
         // Kiểm tra thực tế trong DB
-        const userInDb = await prisma.users.findUnique({ where: { email: "newuser@example.com" } });
+        const userInDb = await prisma.users.findUnique({ where: { email: "duyga544@gmail.com" } });
         assert.ok(userInDb, "User phải được lưu trong DB");
     });
 
@@ -51,7 +52,7 @@ test("Auth API - Database Integration Tests", async (t) => {
             method: "POST",
             url: "/auth/register",
             payload: {
-                email: "newuser@example.com",
+                email: "duyga544@gmail.com",
                 password: "Password123",
                 password_confirmation: "WrongPassword",
                 display_name: "New User",
@@ -87,5 +88,169 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(response.statusCode, 409);
         const body = JSON.parse(response.body);
         assert.strictEqual(body.code, "REGISTER_DUPLICATE_EMAIL");
+    });
+
+    await t.test("POST /auth/verify-email - success 200", async () => {
+        // 1. Đăng ký để lấy token thật
+        const registerResponse = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email: "verifyuser@example.com",
+                password: "Password123",
+                password_confirmation: "Password123",
+                display_name: "Verify Me",
+                accepted_terms: true,
+            },
+        });
+        const { verificationToken } = JSON.parse(registerResponse.body);
+
+        // 2. Gọi api verify
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: {
+                token: verificationToken,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.data.email, "verifyuser@example.com");
+        assert.strictEqual(body.data.status, "active");
+
+        // 3. Kiểm tra DB
+        const user = await prisma.users.findUnique({ where: { email: "verifyuser@example.com" } });
+        assert.strictEqual(user?.status, "active");
+        assert.strictEqual(user?.email_verified, true);
+        assert.ok(user?.email_verified_at);
+    });
+
+    await t.test("POST /auth/verify-email - not found 404", async () => {
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: {
+                token: "non-existent-token-uuid",
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 404);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "TOKEN_NOT_FOUND");
+    });
+
+    await t.test("POST /auth/verify-email - expired token 410", async () => {
+        // 1. Tạo user thủ công
+        const userId = "550e8400-e29b-41d4-a716-446655440022";
+        await prisma.users.create({
+            data: {
+                id: userId,
+                email: "expired@example.com",
+                password_hash: "hashed",
+                status: "pending_verification",
+            },
+        });
+
+        // 2. Tạo token hết hạn thủ công
+        const rawToken = "my-expired-token-value";
+        const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+        await prisma.email_verification_tokens.create({
+            data: {
+                user_id: userId,
+                token_hash: tokenHash,
+                expires_at: new Date(Date.now() - 1000), // đã hết hạn cách đây 1s
+            },
+        });
+
+        // 3. Gọi api
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: {
+                token: rawToken,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 410);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "TOKEN_EXPIRED");
+    });
+
+    await t.test("POST /auth/verify-email - already used 409", async () => {
+        // 1. Tạo user thủ công
+        const userId = "550e8400-e29b-41d4-a716-446655440033";
+        await prisma.users.create({
+            data: {
+                id: userId,
+                email: "alreadyused@example.com",
+                password_hash: "hashed",
+                status: "pending_verification", // vẫn chưa kích hoạt
+            },
+        });
+
+        // 2. Tạo token đã sử dụng thủ công
+        const rawToken = "my-used-token-value";
+        const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+        await prisma.email_verification_tokens.create({
+            data: {
+                user_id: userId,
+                token_hash: tokenHash,
+                expires_at: new Date(Date.now() + 100000),
+                consumed_at: new Date(), // đã sử dụng
+            },
+        });
+
+        // 3. Gọi api
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: {
+                token: rawToken,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 409);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "TOKEN_ALREADY_USED");
+    });
+
+    await t.test("POST /auth/verify-email - idempotent success 200", async () => {
+        // 1. Đăng ký tài khoản
+        const registerResponse = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email: "idempotent@example.com",
+                password: "Password123",
+                password_confirmation: "Password123",
+                display_name: "Idempotent User",
+                accepted_terms: true,
+            },
+        });
+        const { verificationToken } = JSON.parse(registerResponse.body);
+
+        // 2. Kích hoạt lần 1 -> 200 OK
+        const response1 = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: verificationToken },
+        });
+        assert.strictEqual(response1.statusCode, 200);
+
+        // 3. Kích hoạt lần 2 (idempotent) -> Vẫn 200 OK
+        const response2 = await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: verificationToken },
+        });
+        assert.strictEqual(response2.statusCode, 200);
+        const body = JSON.parse(response2.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.data.email, "idempotent@example.com");
     });
 });
