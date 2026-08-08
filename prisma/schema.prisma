@@ -478,23 +478,29 @@ model user_wallets {
 }
 
 model users {
-  id                                                        String                  @id @db.Uuid
-  email                                                     String?                 @unique @db.VarChar
-  password_hash                                             String?                 @db.VarChar
-  display_name                                              String?                 @db.VarChar
-  avatar                                                    String?                 @db.VarChar
+  id                                                        String                        @id @db.Uuid
+  email                                                     String?                       @unique @db.VarChar
+  password_hash                                             String?                       @db.VarChar
+  display_name                                              String?                       @db.VarChar
+  avatar                                                    String?                       @db.VarChar
   level                                                     Int?
   exp                                                       Int?
   streak                                                    Int?
-  created_at                                                DateTime?               @db.Timestamp(6)
+  accepted_terms                                            Boolean?                      @default(false)
+  jlpt_target_level                                         JLPTLevel?
+  email_verified                                            Boolean?                      @default(false)
+  created_at                                                DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                                                DateTime?                     @db.Timestamp(6)
+  deleted_at                                                DateTime?                     @db.Timestamp(6)
+  email_verification_tokens                                 email_verification_tokens[]
   favorite_vocabularies                                     favorite_vocabularies[]
   folders                                                   folders[]
   learning_progress                                         learning_progress[]
   payment_transactions                                      payment_transactions[]
   purchase_histories                                        purchase_histories[]
-  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player1_idTousers")
-  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player2_idTousers")
-  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]   @relation("pvp_match_histories_winner_idTousers")
+  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]         @relation("pvp_match_histories_player1_idTousers")
+  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]         @relation("pvp_match_histories_player2_idTousers")
+  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]         @relation("pvp_match_histories_winner_idTousers")
   review_histories                                          review_histories[]
   user_achievements                                         user_achievements[]
   user_equipped_items                                       user_equipped_items[]
@@ -503,6 +509,18 @@ model users {
   user_vocabularies                                         user_vocabularies[]
   user_wallets                                              user_wallets?
   wallet_histories                                          wallet_histories[]
+}
+
+model email_verification_tokens {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  token_hash String   @db.VarChar
+  expires_at DateTime @db.Timestamp(6)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([token_hash])
 }
 
 model vocabularies {
