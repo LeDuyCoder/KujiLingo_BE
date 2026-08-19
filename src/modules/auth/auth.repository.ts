@@ -122,13 +122,116 @@ export async function updateUserStatus(tx: TransactionClient, userId: string, no
 }
 
 /**
+ * Tìm người dùng theo email (kể cả chưa kích hoạt)
+ * @param email Email cần tìm
+ * @returns Người dùng hoặc null
+ */
+export async function findUserByEmail(email: string) {
+    return prisma.users.findFirst({
+        where: {
+            email: {
+                equals: email,
+                mode: "insensitive",
+            },
+            deleted_at: null,
+        },
+    });
+}
+
+/**
+ * Đếm số lần đăng nhập thất bại của một email trong khoảng thời gian xác định (phục vụ chặn brute-force)
+ * @param email Email cần kiểm tra
+ * @param windowMinutes Khoảng thời gian lăn (rolling window) tính bằng phút
+ * @returns Số lần đăng nhập thất bại
+ */
+export async function countRecentFailedAttempts(email: string, windowMinutes: number): Promise<number> {
+    const cutoff = new Date(Date.now() - windowMinutes * 60 * 1000);
+    return prisma.login_attempts.count({
+        where: {
+            email: {
+                equals: email,
+                mode: "insensitive",
+            },
+            succeeded: false,
+            created_at: {
+                gte: cutoff,
+            },
+        },
+    });
+}
+
+/**
+ * Ghi nhận một lượt đăng nhập (succeeded = true/false)
+ * Thực hiện best-effort ngoài transaction
+ */
+export async function createLoginAttempt(data: {
+    email: string;
+    ipAddress: string;
+    userAgent?: string | undefined;
+    succeeded: boolean;
+}) {
+    return prisma.login_attempts.create({
+        data: {
+            id: crypto.randomUUID(),
+            email: data.email,
+            ip_address: data.ipAddress,
+            succeeded: data.succeeded,
+            user_agent: data.userAgent ?? null,
+        },
+    });
+}
+
+/**
+ * Lưu refresh token và cập nhật thời gian đăng nhập cuối cùng của người dùng
+ * Chạy trong transaction để đảm bảo tính nguyên tử
+ */
+export async function createSession(
+    tx: TransactionClient,
+    data: {
+        userId: string;
+        tokenHash: string;
+        deviceId?: string | undefined;
+        deviceName?: string | undefined;
+        ipAddress: string;
+        userAgent?: string | undefined;
+        expiresAt: Date;
+    }
+) {
+    // 1. Lưu hash của refresh token
+    await tx.refresh_tokens.create({
+        data: {
+            id: crypto.randomUUID(),
+            user_id: data.userId,
+            token_hash: data.tokenHash,
+            device_id: data.deviceId ?? null,
+            device_name: data.deviceName ?? null,
+            ip_address: data.ipAddress,
+            user_agent: data.userAgent ?? null,
+            expires_at: data.expiresAt,
+        },
+    });
+
+    // 2. Cập nhật last_login_at của users
+    return tx.users.update({
+        where: { id: data.userId },
+        data: {
+            last_login_at: new Date(),
+        },
+    });
+}
+
+/**
  * Repository các hàm liên quan đến xác thực
  */
 export const authRepository = {
     findActiveUserByEmail,
+    findUserByEmail,
     createUser,
     createEmailVerificationToken,
     findTokenByHash,
     markTokenAsConsumed,
     updateUserStatus,
+    countRecentFailedAttempts,
+    createLoginAttempt,
+    createSession,
 };

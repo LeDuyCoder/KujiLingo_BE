@@ -1,11 +1,14 @@
 import { test, beforeEach, after } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
+import bcrypt from "bcrypt";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
 
 async function clearDatabase() {
     // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
+    await prisma.login_attempts.deleteMany({});
+    await prisma.refresh_tokens.deleteMany({});
     await prisma.email_verification_tokens.deleteMany({});
     await prisma.users.deleteMany({});
 }
@@ -253,4 +256,108 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(body.success, true);
         assert.strictEqual(body.data.email, "idempotent@example.com");
     });
+
+    await t.test("POST /auth/login - success 200", async () => {
+        // 1. Tạo user đã active
+        const email = "login.success@example.com";
+        const password = "ValidPassword123";
+        const passwordHash = await bcrypt.hash(password, 10);
+        
+        await prisma.users.create({
+            data: {
+                id: crypto.randomUUID(),
+                email,
+                password_hash: passwordHash,
+                display_name: "Login Success",
+                status: "active",
+                email_verified: true,
+            }
+        });
+
+        // 2. Gọi api login
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, true);
+        assert.ok(body.data.access_token);
+        assert.ok(body.data.refresh_token);
+        assert.strictEqual(body.data.user.email, email);
+
+        // 3. Kiểm tra DB: last_login_at và refresh_token
+        const user = await prisma.users.findUnique({ 
+            where: { email },
+            include: { refresh_tokens: true }
+        });
+        assert.ok(user?.last_login_at, "last_login_at phải được cập nhật");
+        assert.strictEqual(user?.refresh_tokens.length, 1, "Phải có 1 refresh token trong DB");
+    });
+
+    await t.test("POST /auth/login - invalid credentials 401", async () => {
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email: "wrong@example.com", password: "any" },
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.error.code, "INVALID_CREDENTIALS");
+    });
+
+    await t.test("POST /auth/login - email not verified 403", async () => {
+        // 1. Tạo user pending
+        const email = "pending@example.com";
+        const password = "Password123";
+        await prisma.users.create({
+            data: {
+                id: crypto.randomUUID(),
+                email,
+                password_hash: await bcrypt.hash(password, 10),
+                status: "pending_verification",
+            }
+        });
+
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+
+        assert.strictEqual(response.statusCode, 403);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.error.code, "EMAIL_NOT_VERIFIED");
+    });
+
+    await t.test("POST /auth/login - account temporarily locked 429", async () => {
+        const email = "bruteforce@example.com";
+        
+        // 1. Tạo 10 lượt failed attempts thủ công
+        for (let i = 0; i < 10; i++) {
+            await prisma.login_attempts.create({
+                data: {
+                    id: crypto.randomUUID(),
+                    email,
+                    ip_address: "127.0.0.1",
+                    succeeded: false,
+                }
+            });
+        }
+
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password: "any" },
+        });
+
+        assert.strictEqual(response.statusCode, 429);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.error.code, "ACCOUNT_TEMPORARILY_LOCKED");
+    });
 });
+
+

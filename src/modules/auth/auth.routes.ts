@@ -2,12 +2,14 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { 
-    registerHandler, 
+    registerHandler,
     verifyEmailHandler,
     googleAuthHandler,
-    googleAuthCallbackHandler
+    googleAuthCallbackHandler,
+    resendVerificationHandler,
+    loginHandler
 } from "./auth.controller.js";
-import { registerSchema, verifyEmailSchema } from "./auth.schema.js";
+import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema } from "./auth.schema.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
@@ -45,6 +47,39 @@ export async function authRoutes(app: FastifyInstance) {
         },
         registerHandler
     );
+
+    router.post(
+        "/auth/resend-verification",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Resend verification email",
+                description: "Sends a new verification email to the user.",
+                body: resendVerificationSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        verificationToken: z.string(),
+                        message: z.string(),
+                    }),
+                    404: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.string(), message: z.string() })
+                    }),
+                    409: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.string(), message: z.string() })
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.string(), message: z.string() })
+                    }),
+                },
+            },
+        },
+        resendVerificationHandler
+    );
+
     router.post(
         "/auth/verify-email",
         {
@@ -84,6 +119,62 @@ export async function authRoutes(app: FastifyInstance) {
         },
         verifyEmailHandler
     );
+
+    router.post(
+        "/auth/login",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Login",
+                description: "Authenticates a user with email and password, issuing a JWT access token and a refresh token.",
+                body: loginSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            access_token: z.string(),
+                            refresh_token: z.string(),
+                            token_type: z.literal("Bearer"),
+                            expires_in: z.number(),
+                            user: z.object({
+                                id: z.string().uuid(),
+                                email: z.string(),
+                                display_name: z.string(),
+                                role: z.string(),
+                                is_premium: z.boolean(),
+                                jlpt_target_level: z.string().nullable(),
+                            }),
+                        }),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INVALID_CREDENTIALS"), message: z.string() }),
+                    }),
+                    403: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.enum(["EMAIL_NOT_VERIFIED", "ACCOUNT_SUSPENDED", "ACCOUNT_BANNED"]),
+                            message: z.string(),
+                        }),
+                    }),
+                    429: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("ACCOUNT_TEMPORARILY_LOCKED"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        loginHandler
+    );
+
 
     // ========================================================
     // [DEVELOPMENT ONLY] Google OAuth Setup endpoints

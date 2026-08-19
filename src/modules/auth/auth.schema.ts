@@ -49,3 +49,33 @@ export const verifyEmailSchema = z.object({
 });
 
 export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
+
+export const loginSchema = z.object({
+    email: z
+        .string()
+        .trim()
+        .email("Invalid email format")
+        .max(255),
+
+    password: z
+        .string()
+        .min(1, "Password cannot be empty")
+        .max(72),
+
+    device_name: z
+        .string()
+        .max(100)
+        .optional(),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export const resendVerificationSchema = z.object({
+    email: z
+        .string()
+        .trim()
+        .email("Invalid email format")
+        .max(255),
+});
+
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;

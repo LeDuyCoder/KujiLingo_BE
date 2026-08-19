@@ -2,6 +2,7 @@ import { google } from "googleapis";
 import type { IMailService, SendMailOptions } from "../mail.types.js";
 import { env } from "../../../../config/env.js";
 import { MailServiceError } from "../../../errors/mail.error.js";
+import { log } from "../../../utils/log.js";
 
 export class GmailMailService implements IMailService {
     private oauth2Client;
@@ -52,6 +53,7 @@ export class GmailMailService implements IMailService {
                 },
             });
         } catch (error: any) {
+            log.error(`[MailService] Failed to send email to ${options.to}:`, error);
             throw new MailServiceError(
                 error.message || "Failed to send email through Gmail provider.",
                 error

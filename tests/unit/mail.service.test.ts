@@ -28,7 +28,7 @@ test("Mail Service & Template Unit Tests", async (t) => {
         let capturedPayload: any = null;
 
         // Mock google.gmail
-        const gmailMock = mock.method(google, "gmail", () => {
+        const gmailMock = mock.method(google as any, "gmail", () => {
             return {
                 users: {
                     messages: {
@@ -68,7 +68,7 @@ test("Mail Service & Template Unit Tests", async (t) => {
         const originalRefreshToken = env.GOOGLE_REFRESH_TOKEN;
         (env as any).GOOGLE_REFRESH_TOKEN = "mock-refresh-token";
 
-        const gmailMock = mock.method(google, "gmail", () => {
+        const gmailMock = mock.method(google as any, "gmail", () => {
             return {
                 users: {
                     messages: {

@@ -491,6 +491,7 @@ model users {
   status                                                    String?                       @default("pending_verification") @db.VarChar
   email_verified                                            Boolean?                      @default(false)
   email_verified_at                                         DateTime?                     @db.Timestamp(6)
+  last_login_at                                             DateTime?                     @db.Timestamp(6)
   created_at                                                DateTime?                     @default(now()) @db.Timestamp(6)
   updated_at                                                DateTime?                     @db.Timestamp(6)
   deleted_at                                                DateTime?                     @db.Timestamp(6)
@@ -511,6 +512,7 @@ model users {
   user_vocabularies                                         user_vocabularies[]
   user_wallets                                              user_wallets?
   wallet_histories                                          wallet_histories[]
+  refresh_tokens                                            refresh_tokens[]
 }
 
 model email_verification_tokens {
@@ -524,6 +526,32 @@ model email_verification_tokens {
 
   @@index([user_id])
   @@index([token_hash])
+}
+
+model login_attempts {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @db.VarChar
+  ip_address String   @db.VarChar
+  succeeded  Boolean
+  user_agent String?
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([email, created_at])
+}
+
+model refresh_tokens {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  token_hash  String   @unique @db.VarChar
+  device_id   String?  @db.VarChar
+  device_name String?  @db.VarChar
+  ip_address  String   @db.VarChar
+  user_agent  String?
+  expires_at  DateTime @db.Timestamp(6)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
 }
 
 model vocabularies {

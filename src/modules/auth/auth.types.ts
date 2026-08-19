@@ -13,3 +13,24 @@ export interface RegisterResponse {
     user: UserResponse;
     verificationToken: string;
 }
+
+export interface LoginUserData {
+    id: string;
+    email: string;
+    display_name: string;
+    role: string;
+    is_premium: boolean;
+    jlpt_target_level: string | null;
+}
+
+export interface LoginResponse {
+    success: boolean;
+    data: {
+        access_token: string;
+        refresh_token: string;
+        token_type: "Bearer";
+        expires_in: number; // 900
+        user: LoginUserData;
+    };
+}
+

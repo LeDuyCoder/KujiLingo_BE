@@ -2,8 +2,9 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
+import { log } from "../../common/utils/log.js";
 
 export async function registerHandler(
     request: FastifyRequest<{ Body: RegisterInput }>,
@@ -17,6 +18,7 @@ export async function registerHandler(
         };
         return reply.code(201).send(response);
     } catch (error: any) {
+        log.error(error);
         if (error.message === "DUPLICATE_EMAIL") {
             return reply.code(409).send({ code: "REGISTER_DUPLICATE_EMAIL" });
         }
@@ -31,7 +33,7 @@ export async function verifyEmailHandler(
     try {
         const { token } = request.body;
         const result = await authService.verifyEmail(token);
-        
+
         return reply.code(200).send({
             success: true,
             data: {
@@ -66,6 +68,124 @@ export async function verifyEmailHandler(
                 error: {
                     code: "TOKEN_EXPIRED",
                     message: "This verification link has expired. Please request a new one.",
+                },
+            });
+        }
+        return reply.code(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
+            },
+        });
+    }
+}
+
+export async function resendVerificationHandler(
+    request: FastifyRequest<{ Body: ResendVerificationInput }>,
+    reply: FastifyReply
+) {
+    try {
+        const { email } = request.body;
+        const result = await authService.resendVerificationEmail(email);
+
+        return reply.code(200).send({
+            success: true,
+            verificationToken: result.verificationToken,
+            message: "Verification email sent successfully.",
+        });
+    } catch (error: any) {
+        log.error(error);
+        if (error.message === "USER_NOT_FOUND") {
+            return reply.code(404).send({
+                success: false,
+                error: {
+                    code: "USER_NOT_FOUND",
+                    message: "User not found with the provided email.",
+                },
+            });
+        }
+        if (error.message === "EMAIL_ALREADY_VERIFIED") {
+            return reply.code(409).send({
+                success: false,
+                error: {
+                    code: "EMAIL_ALREADY_VERIFIED",
+                    message: "This email address is already verified.",
+                },
+            });
+        }
+        return reply.code(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
+            },
+        });
+    }
+}
+
+export async function loginHandler(
+    request: FastifyRequest<{ Body: LoginInput }>,
+    reply: FastifyReply
+) {
+    const ipAddress = request.ip ?? "unknown";
+    const userAgent = request.headers["user-agent"];
+    const deviceId = request.headers["x-device-id"] as string | undefined;
+
+    try {
+        const result = await authService.login(request.body, {
+            ipAddress,
+            userAgent,
+            deviceId,
+        });
+
+        return reply.code(200).send({
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        if (error.message === "ACCOUNT_TEMPORARILY_LOCKED") {
+            return reply.code(429).send({
+                success: false,
+                error: {
+                    code: "ACCOUNT_TEMPORARILY_LOCKED",
+                    message: "Too many failed login attempts. Please try again in 15 minutes.",
+                },
+            });
+        }
+        if (error.message === "INVALID_CREDENTIALS") {
+            return reply.code(401).send({
+                success: false,
+                error: {
+                    code: "INVALID_CREDENTIALS",
+                    message: "Incorrect email or password.",
+                },
+            });
+        }
+        if (error.message === "EMAIL_NOT_VERIFIED") {
+            return reply.code(403).send({
+                success: false,
+                error: {
+                    code: "EMAIL_NOT_VERIFIED",
+                    message: "Please verify your email before logging in.",
+                },
+            });
+        }
+        if (error.message === "ACCOUNT_SUSPENDED") {
+            return reply.code(403).send({
+                success: false,
+                error: {
+                    code: "ACCOUNT_SUSPENDED",
+                    message: "Your account has been temporarily suspended.",
+                },
+            });
+        }
+        if (error.message === "ACCOUNT_BANNED") {
+            return reply.code(403).send({
+                success: false,
+                error: {
+                    code: "ACCOUNT_BANNED",
+                    message: "Your account has been permanently banned.",
                 },
             });
         }
@@ -136,7 +256,7 @@ export async function googleAuthCallbackHandler(
         );
 
         const { tokens } = await oauth2Client.getToken(code);
-        
+
         if (!tokens.refresh_token) {
             return reply.code(400).type("text/html").send(`
                 <h1>Lấy Refresh Token thất bại!</h1>
