@@ -220,6 +220,62 @@ export async function createSession(
     });
 }
 
+export async function findRefreshTokenByHash(tx: TransactionClient, hash: string) {
+    return tx.refresh_tokens.findUnique({
+        where: { token_hash: hash },
+    });
+}
+
+export async function revokeToken(tokenId: string) {
+    return prisma.refresh_tokens.update({
+        where: { id: tokenId },
+        data: { is_revoked: true },
+    });
+}
+
+export async function revokeAllForUser(userId: string) {
+    return prisma.refresh_tokens.updateMany({
+        where: { user_id: userId, is_revoked: false },
+        data: { is_revoked: true },
+    });
+}
+
+export async function invalidatePasswordResetTokensForUser(tx: TransactionClient, userId: string) {
+    return tx.password_reset_tokens.updateMany({
+        where: {
+            user_id: userId,
+            consumed_at: null,
+        },
+        data: {
+            consumed_at: new Date(),
+        },
+    });
+}
+
+export async function createPasswordResetToken(
+    tx: TransactionClient,
+    data: {
+        userId: string;
+        tokenHash: string;
+        expiresAt: Date;
+    }
+) {
+    return tx.password_reset_tokens.create({
+        data: {
+            id: crypto.randomUUID(),
+            user_id: data.userId,
+            token_hash: data.tokenHash,
+            expires_at: data.expiresAt,
+        },
+    });
+}
+
+export async function findPasswordResetTokenByHash(tx: TransactionClient, hash: string) {
+    return tx.password_reset_tokens.findUnique({
+        where: { token_hash: hash },
+    });
+}
+
 /**
  * Repository các hàm liên quan đến xác thực
  */
@@ -234,4 +290,10 @@ export const authRepository = {
     countRecentFailedAttempts,
     createLoginAttempt,
     createSession,
+    findRefreshTokenByHash,
+    revokeToken,
+    revokeAllForUser,
+    invalidatePasswordResetTokensForUser,
+    createPasswordResetToken,
+    findPasswordResetTokenByHash,
 };

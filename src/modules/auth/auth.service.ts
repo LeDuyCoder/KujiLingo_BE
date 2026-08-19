@@ -4,45 +4,42 @@ import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
-import type { RegisterInput } from "./auth.schema.js";
-import type { UserResponse } from "./auth.types.js";
+import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput } from "./auth.schema.js";
+import type { UserResponse, LoginResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
+import { buildForgotPasswordEmail } from "./templates/forgot-password.template.js";
 import { log } from "../../common/utils/log.js";
+import { signToken } from "../../common/utils/jwt.js";
+import { env } from "../../config/env.js";
+import { rateLimiter } from "../../common/utils/rate-limiter.js";
 
 /**
  * Register new user
- * @param data RegisterInput
- * @returns {user: UserResponse, verificationToken: string}
  */
 export async function register(data: RegisterInput): Promise<{
     user: UserResponse;
     verificationToken: string;
 }> {
     const email = data.email.trim().toLowerCase();
-    const existingUser =
-        await authRepository.findActiveUserByEmail(email);
+    const existingUser = await authRepository.findActiveUserByEmail(email);
 
     if (existingUser) {
         throw new Error("DUPLICATE_EMAIL");
     }
 
     const passwordHash = await bcrypt.hash(data.password, 12);
-    const { token, tokenHash } =
-        generateVerificationToken();
-    const expiresAt = new Date(
-        Date.now() + 24 * 60 * 60 * 1000
-    );
+    const { token, tokenHash } = generateVerificationToken();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const user = await db.prisma.$transaction(async (tx) => {
-        const createdUser =
-            await authRepository.createUser(tx, {
-                email,
-                passwordHash,
-                displayName: data.display_name,
-                acceptedTerms: data.accepted_terms,
-                jlptTargetLevel: data.jlpt_target_level,
-            });
+        const createdUser = await authRepository.createUser(tx, {
+            email,
+            passwordHash,
+            displayName: data.display_name,
+            acceptedTerms: data.accepted_terms,
+            jlptTargetLevel: data.jlpt_target_level,
+        });
 
         await authRepository.createEmailVerificationToken(tx, {
             userId: createdUser.id,
@@ -53,7 +50,6 @@ export async function register(data: RegisterInput): Promise<{
         return createdUser;
     });
 
-    // Gửi email xác thực SAU KHI transaction COMMIT thành công
     try {
         const { html, text } = buildVerificationEmail({
             displayName: user.display_name!,
@@ -66,8 +62,6 @@ export async function register(data: RegisterInput): Promise<{
             text,
         });
     } catch (mailError) {
-        // Log lỗi gửi mail nhưng KHÔNG crash registration
-        // User vẫn có thể yêu cầu gửi lại email xác thực
         log.error("[Auth] Failed to send verification email:", mailError);
     }
 
@@ -80,7 +74,6 @@ export async function register(data: RegisterInput): Promise<{
             email_verified: false,
             created_at: user.created_at!,
         },
-
         verificationToken: token,
     };
 }
@@ -100,7 +93,6 @@ export async function verifyEmail(token: string): Promise<{
         }
 
         if (tokenRecord.consumed_at) {
-            // Rule 6: Nếu trạng thái user đã là active, trả về thành công để đảm bảo tính idempotent
             const user = await tx.users.findUnique({
                 where: { id: tokenRecord.user_id }
             });
@@ -130,15 +122,8 @@ export async function verifyEmail(token: string): Promise<{
     });
 }
 
-import type { LoginInput } from "./auth.schema.js";
-import type { LoginResponse } from "./auth.types.js";
-import { signToken } from "../../common/utils/jwt.js";
-import { env } from "../../config/env.js";
-
 /**
- * Đăng nhập người dùng bằng email và mật khẩu
- * @param data LoginInput dữ liệu đầu vào
- * @param reqInfo Thông tin thiết bị/kết nối của client
+ * Đăng nhập
  */
 export async function login(
     data: LoginInput,
@@ -150,17 +135,13 @@ export async function login(
 ): Promise<LoginResponse["data"]> {
     const email = data.email.trim().toLowerCase();
 
-    // 1. Kiểm tra chính sách Lockout (Brute-Force Protection)
-    // Nếu có >= 10 lượt đăng nhập thất bại trong 15 phút, khoá tài khoản ngay lập tức.
     const failedAttempts = await authRepository.countRecentFailedAttempts(email, 15);
     if (failedAttempts >= 10) {
         throw new Error("ACCOUNT_TEMPORARILY_LOCKED");
     }
 
-    // 2. Tìm kiếm user trong DB (chấp nhận cả các trạng thái)
     const user = await authRepository.findUserByEmail(email);
     if (!user) {
-        // Ghi lại lượt thất bại ngoài transaction
         await authRepository.createLoginAttempt({
             email,
             ipAddress: reqInfo.ipAddress,
@@ -170,7 +151,6 @@ export async function login(
         throw new Error("INVALID_CREDENTIALS");
     }
 
-    // 3. So khớp mật khẩu đã hash bcrypt
     const isPasswordValid = await bcrypt.compare(data.password, user.password_hash || "");
     if (!isPasswordValid) {
         await authRepository.createLoginAttempt({
@@ -182,7 +162,6 @@ export async function login(
         throw new Error("INVALID_CREDENTIALS");
     }
 
-    // 4. Kiểm tra trạng thái tài khoản (Status Verification)
     if (user.status === "pending_verification" && !env.ALLOW_LOGIN_BEFORE_VERIFICATION) {
         throw new Error("EMAIL_NOT_VERIFIED");
     }
@@ -193,10 +172,8 @@ export async function login(
         throw new Error("ACCOUNT_BANNED");
     }
 
-    // 5. Sinh cặp Token
-    // Access Token chứa claims: sub (userId), role, is_premium
-    const role = "user"; // Mặc định role là user
-    const isPremium = false; // Mặc định chưa nâng cấp premium
+    const role = "user";
+    const isPremium = false;
 
     const accessToken = signToken({
         sub: user.id,
@@ -204,13 +181,10 @@ export async function login(
         is_premium: isPremium,
     });
 
-    // Refresh Token là một chuỗi ngẫu nhiên dài 32 ký tự
     const rawRefreshToken = crypto.randomBytes(16).toString("hex");
     const refreshTokenHash = crypto.createHash("sha256").update(rawRefreshToken).digest("hex");
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 ngày
-
-    // 6. Ghi nhận thành công vào login_attempts (best-effort ngoài transaction)
     await authRepository.createLoginAttempt({
         email,
         ipAddress: reqInfo.ipAddress,
@@ -218,7 +192,6 @@ export async function login(
         succeeded: true,
     });
 
-    // 7. Lưu session (refresh token) và cập nhật last_login_at (trong transaction)
     await db.prisma.$transaction(async (tx) => {
         await authRepository.createSession(tx, {
             userId: user.id,
@@ -235,12 +208,12 @@ export async function login(
         access_token: accessToken,
         refresh_token: rawRefreshToken,
         token_type: "Bearer",
-        expires_in: 900, // 15 phút = 900 giây
+        expires_in: 900,
         user: {
             id: user.id,
             email: user.email!,
             display_name: user.display_name!,
-            role: role,
+            role,
             is_premium: isPremium,
             jlpt_target_level: user.jlpt_target_level,
         },
@@ -249,7 +222,6 @@ export async function login(
 
 /**
  * Gửi lại email kích hoạt tài khoản
- * @param email Email của user cần gửi lại
  */
 export async function resendVerificationEmail(email: string): Promise<{ success: boolean; verificationToken: string }> {
     const trimmedEmail = email.trim().toLowerCase();
@@ -264,7 +236,7 @@ export async function resendVerificationEmail(email: string): Promise<{ success:
     }
 
     const { token, tokenHash } = generateVerificationToken();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 giờ
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await db.prisma.$transaction(async (tx) => {
         await authRepository.createEmailVerificationToken(tx, {
@@ -274,7 +246,6 @@ export async function resendVerificationEmail(email: string): Promise<{ success:
         });
     });
 
-    // Gửi email xác thực
     const { html, text } = buildVerificationEmail({
         displayName: user.display_name!,
         token,
@@ -291,4 +262,94 @@ export async function resendVerificationEmail(email: string): Promise<{ success:
         success: true,
         verificationToken: token,
     };
+}
+
+/**
+ * Đăng xuất
+ */
+export async function logout(userId: string, data: LogoutInput): Promise<{ success: boolean }> {
+    if (data.all_devices) {
+        await authRepository.revokeAllForUser(userId);
+    } else if (data.refresh_token) {
+        const hash = crypto.createHash("sha256").update(data.refresh_token).digest("hex");
+        const tokenRecord = await authRepository.findRefreshTokenByHash(db.prisma, hash);
+
+        if (tokenRecord) {
+            if (tokenRecord.user_id !== userId) {
+                throw new Error("TOKEN_OWNERSHIP_MISMATCH");
+            }
+            await authRepository.revokeToken(tokenRecord.id);
+        }
+    }
+    return { success: true };
+}
+
+/**
+ * Quên mật khẩu
+ */
+export async function forgotPassword(
+    data: ForgotPasswordInput,
+    ipAddress: string
+): Promise<{ success: boolean; message: string }> {
+    const email = data.email.trim().toLowerCase();
+    
+    // 1. Kiểm tra rate limit
+    // Mỗi email: tối đa 3 lần/giờ. Mỗi IP: tối đa 10 lần/giờ.
+    const emailKey = `rate_forgot_email:${email}`;
+    const ipKey = `rate_forgot_ip:${ipAddress}`;
+    const oneHourMs = 60 * 60 * 1000;
+    
+    const emailAllowed = rateLimiter.checkLimit(emailKey, 3, oneHourMs);
+    const ipAllowed = rateLimiter.checkLimit(ipKey, 10, oneHourMs);
+    
+    const genericSuccessResponse = {
+        success: true,
+        message: "If an account with that email exists, a password reset link has been sent.",
+    };
+    
+    if (!emailAllowed || !ipAllowed) {
+        // Silently cap: Trả về thành công giả nhưng không thực hiện gửi email hay tạo token
+        return genericSuccessResponse;
+    }
+    
+    // 2. Tìm kiếm người dùng theo email (chỉ người dùng active)
+    const user = await authRepository.findUserByEmail(email);
+    if (!user || user.status !== "active") {
+        // Trả về thành công giả để tránh enumeration
+        return genericSuccessResponse;
+    }
+    
+    // 3. Tạo token đặt lại mật khẩu và thực hiện trong transaction
+    const rawResetToken = crypto.randomBytes(16).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(rawResetToken).digest("hex");
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 giờ
+    
+    await db.prisma.$transaction(async (tx) => {
+        // Vô hiệu hóa tất cả các token trước đó của user này chưa được sử dụng
+        await authRepository.invalidatePasswordResetTokensForUser(tx, user.id);
+        // Lưu token mới
+        await authRepository.createPasswordResetToken(tx, {
+            userId: user.id,
+            tokenHash,
+            expiresAt,
+        });
+    });
+    
+    // 4. Gửi email xác thực bất đồng bộ
+    try {
+        const { html, text } = buildForgotPasswordEmail({
+            displayName: user.display_name!,
+            token: rawResetToken,
+        });
+        await mailService.sendMail({
+            to: user.email!,
+            subject: "Đặt lại mật khẩu tài khoản KujiLingo của bạn",
+            html,
+            text,
+        });
+    } catch (mailError) {
+        log.error("[Auth] Failed to send password reset email:", mailError);
+    }
+    
+    return genericSuccessResponse;
 }

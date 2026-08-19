@@ -2,9 +2,10 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
 import { log } from "../../common/utils/log.js";
+import { verifyToken } from "../../common/utils/jwt.js";
 
 export async function registerHandler(
     request: FastifyRequest<{ Body: RegisterInput }>,
@@ -114,6 +115,70 @@ export async function resendVerificationHandler(
                 },
             });
         }
+        return reply.code(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
+            },
+        });
+    }
+}
+
+export async function logoutHandler(
+    request: FastifyRequest<{ Body: LogoutInput }>,
+    reply: FastifyReply
+) {
+    try {
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+            });
+        }
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+            });
+        }
+        const decoded = verifyToken(token) as { sub: string };
+
+        await authService.logout(decoded.sub, request.body);
+        return reply.code(200).send({ success: true, message: "Logged out successfully." });
+    } catch (error: any) {
+        log.error(error);
+        if (error.message === "TOKEN_OWNERSHIP_MISMATCH") {
+            return reply.code(403).send({
+                success: false,
+                error: {
+                    code: "TOKEN_OWNERSHIP_MISMATCH",
+                    message: "This refresh token does not belong to the authenticated user.",
+                },
+            });
+        }
+        return reply.code(401).send({
+            success: false,
+            error: {
+                code: "UNAUTHORIZED",
+                message: "Access token is missing, invalid, or expired.",
+            },
+        });
+    }
+}
+
+export async function forgotPasswordHandler(
+    request: FastifyRequest<{ Body: ForgotPasswordInput }>,
+    reply: FastifyReply
+) {
+    const ipAddress = request.ip ?? "unknown";
+    try {
+        const result = await authService.forgotPassword(request.body, ipAddress);
+        return reply.code(200).send(result);
+    } catch (error: any) {
+        log.error(error);
         return reply.code(500).send({
             success: false,
             error: {

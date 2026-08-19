@@ -1,6 +1,6 @@
 import { test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
-import { register, verifyEmail, login } from "../../src/modules/auth/auth.service.js";
+import { register, verifyEmail, login, logout, forgotPassword } from "../../src/modules/auth/auth.service.js";
 import bcrypt from "bcrypt";
 import { authRepository } from "../../src/modules/auth/auth.repository.js";
 import { db } from "../../src/config/prisma.js";
@@ -277,6 +277,161 @@ test("Auth Service - Login Unit Tests", async (t) => {
             ),
             /ACCOUNT_BANNED/
         );
+    });
+});
+
+test("Auth Service - Logout Unit Tests", async (t) => {
+    beforeEach(() => {
+        mock.restoreAll();
+    });
+
+    await t.test("should revoke single token successfully", async () => {
+        const mockToken = { id: "token-123", user_id: "user-456" };
+        
+        mock.method(authRepository, "findRefreshTokenByHash", async () => mockToken);
+        const revokeTokenMock = mock.method(authRepository, "revokeToken", async () => ({}));
+
+        const result = await logout("user-456", { 
+            refresh_token: "valid-token",
+            all_devices: false 
+        });
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(revokeTokenMock.mock.callCount(), 1);
+    });
+
+    await t.test("should throw TOKEN_OWNERSHIP_MISMATCH if token belongs to another user", async () => {
+        const mockToken = { id: "token-123", user_id: "other-user" };
+        
+        mock.method(authRepository, "findRefreshTokenByHash", async () => mockToken);
+
+        await assert.rejects(
+            logout("my-user-id", { 
+                refresh_token: "someone-elses-token",
+                all_devices: false 
+            }),
+            /TOKEN_OWNERSHIP_MISMATCH/
+        );
+    });
+
+    await t.test("should revoke all tokens for user successfully", async () => {
+        const revokeAllMock = mock.method(authRepository, "revokeAllForUser", async () => ({}));
+
+        const result = await logout("user-123", { 
+            all_devices: true 
+        });
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(revokeAllMock.mock.callCount(), 1);
+    });
+
+    await t.test("should be idempotent if token not found", async () => {
+        mock.method(authRepository, "findRefreshTokenByHash", async () => null);
+        const revokeTokenMock = mock.method(authRepository, "revokeToken", async () => ({}));
+
+        const result = await logout("user-123", { 
+            refresh_token: "non-existent",
+            all_devices: false 
+        });
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(revokeTokenMock.mock.callCount(), 0);
+    });
+});
+
+test("Auth Service - Forgot Password Unit Tests", async (t) => {
+    beforeEach(() => {
+        mock.restoreAll();
+        db.prisma = {
+            $transaction: async (callback: any) => {
+                return callback({});
+            }
+        } as any;
+    });
+
+    afterEach(() => {
+        db.prisma = originalPrisma;
+    });
+
+    await t.test("should return generic success message and create a reset token for existing active user", async () => {
+        const mockUser = {
+            id: "user-uuid-123",
+            email: "active@example.com",
+            display_name: "Active User",
+            status: "active",
+        };
+
+        const findUserMock = mock.method(authRepository, "findUserByEmail", async () => mockUser);
+        const invalidateMock = mock.method(authRepository, "invalidatePasswordResetTokensForUser", async () => ({}));
+        const createTokenMock = mock.method(authRepository, "createPasswordResetToken", async () => ({}));
+
+        const result = await forgotPassword({ email: "active@example.com" }, "127.0.0.1");
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.message, "If an account with that email exists, a password reset link has been sent.");
+        assert.strictEqual(findUserMock.mock.callCount(), 1);
+        assert.strictEqual(invalidateMock.mock.callCount(), 1);
+        assert.strictEqual(createTokenMock.mock.callCount(), 1);
+    });
+
+    await t.test("should return generic success message but create no token for non-existent email", async () => {
+        const findUserMock = mock.method(authRepository, "findUserByEmail", async () => null);
+        const invalidateMock = mock.method(authRepository, "invalidatePasswordResetTokensForUser", async () => ({}));
+        const createTokenMock = mock.method(authRepository, "createPasswordResetToken", async () => ({}));
+
+        const result = await forgotPassword({ email: "nonexistent@example.com" }, "127.0.0.1");
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.message, "If an account with that email exists, a password reset link has been sent.");
+        assert.strictEqual(findUserMock.mock.callCount(), 1);
+        assert.strictEqual(invalidateMock.mock.callCount(), 0);
+        assert.strictEqual(createTokenMock.mock.callCount(), 0);
+    });
+
+    await t.test("should return generic success message but create no token for suspended or banned email", async () => {
+        const mockUser = {
+            id: "user-uuid-123",
+            email: "suspended@example.com",
+            display_name: "Suspended User",
+            status: "suspended",
+        };
+
+        const findUserMock = mock.method(authRepository, "findUserByEmail", async () => mockUser);
+        const invalidateMock = mock.method(authRepository, "invalidatePasswordResetTokensForUser", async () => ({}));
+        const createTokenMock = mock.method(authRepository, "createPasswordResetToken", async () => ({}));
+
+        const result = await forgotPassword({ email: "suspended@example.com" }, "127.0.0.1");
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.message, "If an account with that email exists, a password reset link has been sent.");
+        assert.strictEqual(findUserMock.mock.callCount(), 1);
+        assert.strictEqual(invalidateMock.mock.callCount(), 0);
+        assert.strictEqual(createTokenMock.mock.callCount(), 0);
+    });
+
+    await t.test("should return 200 but create no token beyond rate limit (max 3 per email per hour)", async () => {
+        const mockUser = {
+            id: "user-uuid-123",
+            email: "ratelimit@example.com",
+            display_name: "Rate User",
+            status: "active",
+        };
+
+        mock.method(authRepository, "findUserByEmail", async () => mockUser);
+        const invalidateMock = mock.method(authRepository, "invalidatePasswordResetTokensForUser", async () => ({}));
+        const createTokenMock = mock.method(authRepository, "createPasswordResetToken", async () => ({}));
+        
+        // Call it 3 times (success)
+        for (let i = 0; i < 3; i++) {
+            const res = await forgotPassword({ email: "ratelimit@example.com" }, "127.0.0.1");
+            assert.strictEqual(res.success, true);
+        }
+        assert.strictEqual(createTokenMock.mock.callCount(), 3);
+
+        // 4th call should be silently capped
+        const res4 = await forgotPassword({ email: "ratelimit@example.com" }, "127.0.0.1");
+        assert.strictEqual(res4.success, true);
+        assert.strictEqual(createTokenMock.mock.callCount(), 3); // still 3
     });
 });
 

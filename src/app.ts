@@ -11,6 +11,20 @@ const app = Fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+// Register global error handler before registering routes so it is correctly inherited
+app.setErrorHandler((error: any, request, reply) => {
+    if (error.validation) {
+        return reply.status(400).send({
+            success: false,
+            error: {
+                code: "VALIDATION_ERROR",
+                message: error.message,
+            },
+        });
+    }
+    reply.send(error);
+});
+
 await registerSwagger(app);
 await registerRoutes(app);
 

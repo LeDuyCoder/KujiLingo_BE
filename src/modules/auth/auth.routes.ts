@@ -7,9 +7,11 @@ import {
     googleAuthHandler,
     googleAuthCallbackHandler,
     resendVerificationHandler,
-    loginHandler
+    loginHandler,
+    logoutHandler,
+    forgotPasswordHandler
 } from "./auth.controller.js";
-import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema } from "./auth.schema.js";
+import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema } from "./auth.schema.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
@@ -173,6 +175,68 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         loginHandler
+    );
+
+    router.post(
+        "/auth/logout",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Logout",
+                description: "Revokes a specific refresh token (single-device logout) or all refresh tokens for the current user.",
+                body: logoutSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        message: z.string(),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }),
+                    }),
+                    403: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("TOKEN_OWNERSHIP_MISMATCH"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        logoutHandler
+    );
+
+    router.post(
+        "/auth/forgot-password",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Forgot Password",
+                description: "Initiates the password-reset flow by emailing a single-use reset token.",
+                body: forgotPasswordSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        message: z.string(),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        forgotPasswordHandler
     );
 
 

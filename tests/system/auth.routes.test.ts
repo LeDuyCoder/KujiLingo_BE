@@ -9,6 +9,7 @@ async function clearDatabase() {
     // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
     await prisma.login_attempts.deleteMany({});
     await prisma.refresh_tokens.deleteMany({});
+    await prisma.password_reset_tokens.deleteMany({});
     await prisma.email_verification_tokens.deleteMany({});
     await prisma.users.deleteMany({});
 }
@@ -357,6 +358,217 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(response.statusCode, 429);
         const body = JSON.parse(response.body);
         assert.strictEqual(body.error.code, "ACCOUNT_TEMPORARILY_LOCKED");
+    });
+
+    await t.test("POST /auth/logout - success 200", async () => {
+        // 1. Register a user
+        const email = "logout@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Logout User",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        const token = regBody.verificationToken;
+
+        // 2. Verify email
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token },
+        });
+
+        // 3. Login
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+        const refreshToken = loginBody.data.refresh_token;
+
+        // 4. Logout
+        const logoutRes = await app.inject({
+            method: "POST",
+            url: "/auth/logout",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            payload: {
+                refresh_token: refreshToken,
+            },
+        });
+
+        assert.strictEqual(logoutRes.statusCode, 200);
+        const logoutBody = JSON.parse(logoutRes.body);
+        assert.strictEqual(logoutBody.success, true);
+        assert.strictEqual(logoutBody.message, "Logged out successfully.");
+
+        // 5. Verify token status in DB
+        const hash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+        const dbToken = await prisma.refresh_tokens.findUnique({ where: { token_hash: hash } });
+        assert.ok(dbToken);
+        assert.strictEqual(dbToken.is_revoked, true);
+    });
+
+    await t.test("POST /auth/logout - unauthorized 401", async () => {
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/logout",
+            payload: {
+                refresh_token: "any-token",
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+    });
+
+    await t.test("POST /auth/logout - token ownership mismatch 403", async () => {
+        // 1. Register and login User A
+        const regResA = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email: "usera@example.com",
+                password: "Password123",
+                password_confirmation: "Password123",
+                display_name: "User A",
+                accepted_terms: true,
+            },
+        });
+        const regBodyA = JSON.parse(regResA.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBodyA.verificationToken },
+        });
+        const loginResA = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email: "usera@example.com", password: "Password123" },
+        });
+        const loginBodyA = JSON.parse(loginResA.body);
+        const accessTokenA = loginBodyA.data.access_token;
+
+        // 2. Register and login User B
+        const regResB = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email: "userb@example.com",
+                password: "Password123",
+                password_confirmation: "Password123",
+                display_name: "User B",
+                accepted_terms: true,
+            },
+        });
+        const regBodyB = JSON.parse(regResB.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBodyB.verificationToken },
+        });
+        const loginResB = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email: "userb@example.com", password: "Password123" },
+        });
+        const loginBodyB = JSON.parse(loginResB.body);
+        const refreshTokenB = loginBodyB.data.refresh_token;
+
+        // 3. User A tries to log out User B's refresh token
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/logout",
+            headers: {
+                Authorization: `Bearer ${accessTokenA}`,
+            },
+            payload: {
+                refresh_token: refreshTokenB,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 403);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.error.code, "TOKEN_OWNERSHIP_MISMATCH");
+    });
+
+    await t.test("POST /auth/forgot-password - success 200 (existing active user)", async () => {
+        // 1. Register a user and verify email to make them active
+        const email = "forgot_active@example.com";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password: "Password123",
+                password_confirmation: "Password123",
+                display_name: "Active Forgot",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        // 2. Request forgot-password
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/forgot-password",
+            payload: { email },
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.message, "If an account with that email exists, a password reset link has been sent.");
+
+        // 3. Verify token was created in DB
+        const userInDb = await prisma.users.findUnique({ where: { email } });
+        assert.ok(userInDb);
+        const tokens = await prisma.password_reset_tokens.findMany({
+            where: { user_id: userInDb.id },
+        });
+        assert.strictEqual(tokens.length, 1);
+        assert.ok(tokens[0].token_hash);
+        assert.strictEqual(tokens[0].consumed_at, null);
+    });
+
+    await t.test("POST /auth/forgot-password - success 200 (non-existent email)", async () => {
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/forgot-password",
+            payload: { email: "doesnotexist@example.com" },
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.message, "If an account with that email exists, a password reset link has been sent.");
+    });
+
+    await t.test("POST /auth/forgot-password - validation error 400 (malformed email)", async () => {
+        const response = await app.inject({
+            method: "POST",
+            url: "/auth/forgot-password",
+            payload: { email: "invalid-email" },
+        });
+
+        assert.strictEqual(response.statusCode, 400);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "VALIDATION_ERROR");
     });
 });
 

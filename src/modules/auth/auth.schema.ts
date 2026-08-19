@@ -78,4 +78,36 @@ export const resendVerificationSchema = z.object({
         .max(255),
 });
 
-export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
+
+export const logoutSchema = z.object({
+    refresh_token: z
+        .string()
+        .trim()
+        .min(1)
+        .optional(),
+    all_devices: z
+        .boolean()
+        .default(false)
+        .optional(),
+}).superRefine((data, ctx) => {
+    if (!data.all_devices && !data.refresh_token) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["refresh_token"],
+            message: "refresh_token is required when all_devices is false.",
+        });
+    }
+});
+
+export type LogoutInput = z.infer<typeof logoutSchema>;
+
+export const forgotPasswordSchema = z.object({
+    email: z
+        .string()
+        .trim()
+        .email("A valid email is required.")
+        .max(255, "A valid email is required."),
+});
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
