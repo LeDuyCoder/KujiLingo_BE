@@ -5,7 +5,7 @@ import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
 import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput } from "./auth.schema.js";
-import type { UserResponse, LoginResponse } from "./auth.types.js";
+import type { UserResponse, LoginResponse, CurrentUserResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
 import { buildForgotPasswordEmail } from "./templates/forgot-password.template.js";
@@ -422,4 +422,39 @@ export async function resetPassword(data: ResetPasswordInput): Promise<{ success
             message: "Password has been reset successfully. Please log in with your new password.",
         };
     });
+}
+
+/**
+ * Lấy thông tin người dùng hiện tại theo ID từ JWT sub
+ */
+export async function getCurrentUser(userId: string): Promise<CurrentUserResponse> {
+    const user = await authRepository.findUserById(userId);
+
+    if (!user) {
+        throw new Error("UNAUTHORIZED");
+    }
+
+    if (user.status === "suspended") {
+        throw new Error("ACCOUNT_SUSPENDED");
+    }
+    if (user.status === "banned") {
+        throw new Error("ACCOUNT_BANNED");
+    }
+
+    return {
+        id: user.id,
+        email: user.email!,
+        display_name: user.display_name || "",
+        avatar_url: user.avatar ?? null,
+        role: "user",
+        is_premium: false,
+        premium_expires_at: null,
+        jlpt_target_level: user.jlpt_target_level,
+        status: user.status || "pending_verification",
+        email_verified_at: user.email_verified_at ? user.email_verified_at.toISOString() : null,
+        last_login_at: user.last_login_at ? user.last_login_at.toISOString() : null,
+        timezone: "Asia/Ho_Chi_Minh",
+        locale: "vi-VN",
+        created_at: user.created_at ? user.created_at.toISOString() : new Date().toISOString(),
+    };
 }

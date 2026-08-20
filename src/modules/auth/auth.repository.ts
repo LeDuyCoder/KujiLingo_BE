@@ -298,11 +298,26 @@ export async function findPasswordResetTokenByHash(tx: TransactionClient, hash: 
 }
 
 /**
+ * Tìm người dùng theo ID (chỉ người dùng chưa bị xoá mềm)
+ * @param id UUID của người dùng
+ * @returns Người dùng hoặc null
+ */
+export async function findUserById(id: string) {
+    return prisma.users.findFirst({
+        where: {
+            id,
+            deleted_at: null,
+        },
+    });
+}
+
+/**
  * Repository các hàm liên quan đến xác thực
  */
 export const authRepository = {
     findActiveUserByEmail,
     findUserByEmail,
+    findUserById,
     createUser,
     createEmailVerificationToken,
     findTokenByHash,

@@ -1,9 +1,11 @@
-import { test, beforeEach, after } from "node:test";
+import { test, beforeEach, after, mock } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
+import * as jwtUtils from "../../src/common/utils/jwt.js";
+import jwt from "jsonwebtoken";
 
 async function clearDatabase() {
     // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
@@ -730,6 +732,361 @@ test("Auth API - Database Integration Tests", async (t) => {
         const expiredBody = JSON.parse(expiredRes.body);
         assert.strictEqual(expiredBody.error.code, "TOKEN_EXPIRED");
     });
+
+    await t.test("GET /auth/me - success 200", async () => {
+        // 1. Register, verify and login user
+        const email = "me.success@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Me Success",
+                accepted_terms: true,
+                jlpt_target_level: "N3",
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Call GET /auth/me
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.data.email, email);
+        assert.strictEqual(body.data.display_name, "Me Success");
+        assert.strictEqual(body.data.role, "user");
+        assert.strictEqual(body.data.is_premium, false);
+        assert.strictEqual(body.data.jlpt_target_level, "N3");
+        assert.strictEqual(body.data.status, "active");
+        assert.strictEqual(body.data.timezone, "Asia/Ho_Chi_Minh");
+        assert.strictEqual(body.data.locale, "vi-VN");
+        assert.ok(body.data.created_at);
+        assert.strictEqual(body.data.password_hash, undefined);
+    });
+
+    await t.test("GET /auth/me - unauthorized 401 (missing header)", async () => {
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "UNAUTHORIZED");
+    });
+
+    await t.test("GET /auth/me - unauthorized 401 (expired token)", async () => {
+        // Mock verifyToken to throw TokenExpiredError
+        mock.method(jwtUtils, "verifyToken", () => {
+            throw new jwt.TokenExpiredError("jwt expired", new Date());
+        });
+
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: "Bearer expired-token",
+            },
+        });
+
+        // Restore mock
+        mock.restoreAll();
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "UNAUTHORIZED");
+    });
+
+    await t.test("GET /auth/me - unauthorized 401 (malformed token)", async () => {
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: "Bearer malformed-token",
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "UNAUTHORIZED");
+    });
+
+    await t.test("GET /auth/me - unauthorized 401 (since deleted user)", async () => {
+        // 1. Register, verify and login user
+        const email = "deleted.user@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Soon Deleted",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Soft delete user in DB
+        await prisma.users.update({
+            where: { email },
+            data: { deleted_at: new Date() },
+        });
+
+        // 3. Call GET /auth/me
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "UNAUTHORIZED");
+    });
+
+    await t.test("GET /auth/me - forbidden 403 (suspended user)", async () => {
+        // 1. Register, verify and login user
+        const email = "suspended.user@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Suspended",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Suspend user in DB
+        await prisma.users.update({
+            where: { email },
+            data: { status: "suspended" },
+        });
+
+        // 3. Call GET /auth/me
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 403);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "ACCOUNT_SUSPENDED");
+    });
+
+    await t.test("GET /auth/me - forbidden 403 (banned user)", async () => {
+        // 1. Register, verify and login user
+        const email = "banned.user@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Banned",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Ban user in DB
+        await prisma.users.update({
+            where: { email },
+            data: { status: "banned" },
+        });
+
+        // 3. Call GET /auth/me
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 403);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "ACCOUNT_BANNED");
+    });
+
+    await t.test("GET /auth/me - tampered signature 401", async () => {
+        // 1. Register, verify and login user
+        const email = "tamper@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Tamper",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Tamper with signature part of JWT
+        const parts = accessToken.split(".");
+        const tamperedSignature = parts[2] ? parts[2].substring(0, parts[2].length - 4) + "AAAA" : "AAAA";
+        const tamperedToken = `${parts[0]}.${parts[1]}.${tamperedSignature}`;
+
+        // 3. Call GET /auth/me
+        const response = await app.inject({
+            method: "GET",
+            url: "/auth/me",
+            headers: {
+                Authorization: `Bearer ${tamperedToken}`,
+            },
+        });
+
+        assert.strictEqual(response.statusCode, 401);
+        const body = JSON.parse(response.body);
+        assert.strictEqual(body.success, false);
+        assert.strictEqual(body.error.code, "UNAUTHORIZED");
+    });
+
+    await t.test("GET /auth/me - idempotency check", async () => {
+        // 1. Register, verify and login user
+        const email = "idemp@example.com";
+        const password = "Password123";
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password,
+                password_confirmation: password,
+                display_name: "Idemp",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const accessToken = loginBody.data.access_token;
+
+        // 2. Call GET /auth/me multiple times
+        for (let i = 0; i < 3; i++) {
+            const response = await app.inject({
+                method: "GET",
+                url: "/auth/me",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            assert.strictEqual(response.statusCode, 200);
+            const body = JSON.parse(response.body);
+            assert.strictEqual(body.success, true);
+            assert.strictEqual(body.data.email, email);
+        }
+    });
 });
+
 
 

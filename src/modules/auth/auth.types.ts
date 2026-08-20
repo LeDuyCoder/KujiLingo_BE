@@ -34,3 +34,20 @@ export interface LoginResponse {
     };
 }
 
+export interface CurrentUserResponse {
+    id: string;
+    email: string;
+    display_name: string;
+    avatar_url: string | null;
+    role: string;
+    is_premium: boolean;
+    premium_expires_at: string | null;
+    jlpt_target_level: string | null;
+    status: string;
+    email_verified_at: string | null;
+    last_login_at: string | null;
+    timezone: string;
+    locale: string;
+    created_at: string;
+}
+

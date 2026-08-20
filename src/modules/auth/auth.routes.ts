@@ -10,7 +10,8 @@ import {
     loginHandler,
     logoutHandler,
     forgotPasswordHandler,
-    resetPasswordHandler
+    resetPasswordHandler,
+    meHandler
 } from "./auth.controller.js";
 import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema } from "./auth.schema.js";
 
@@ -281,6 +282,61 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         resetPasswordHandler
+    );
+
+
+    router.get(
+        "/auth/me",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Get Current User (Me)",
+                description: "Returns the authenticated user's profile information.",
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            id: z.string().uuid(),
+                            email: z.string().email(),
+                            display_name: z.string().nullable(),
+                            avatar_url: z.string().nullable(),
+                            role: z.string(),
+                            is_premium: z.boolean(),
+                            premium_expires_at: z.string().nullable(),
+                            jlpt_target_level: z.string().nullable(),
+                            status: z.string(),
+                            email_verified_at: z.string().nullable(),
+                            last_login_at: z.string().nullable(),
+                            timezone: z.string(),
+                            locale: z.string(),
+                            created_at: z.string(),
+                        }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("UNAUTHORIZED"),
+                            message: z.string(),
+                        }),
+                    }),
+                    403: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.enum(["ACCOUNT_SUSPENDED", "ACCOUNT_BANNED"]),
+                            message: z.string(),
+                        }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("INTERNAL_ERROR"),
+                            message: z.string(),
+                        }),
+                    }),
+                },
+            },
+        },
+        meHandler
     );
 
 

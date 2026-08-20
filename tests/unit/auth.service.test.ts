@@ -1,6 +1,6 @@
 import { test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
-import { register, verifyEmail, login, logout, forgotPassword, resetPassword } from "../../src/modules/auth/auth.service.js";
+import { register, verifyEmail, login, logout, forgotPassword, resetPassword, getCurrentUser } from "../../src/modules/auth/auth.service.js";
 import bcrypt from "bcrypt";
 import { authRepository } from "../../src/modules/auth/auth.repository.js";
 import { db } from "../../src/config/prisma.js";
@@ -562,4 +562,87 @@ test("Auth Service - Reset Password Unit Tests", async (t) => {
         );
     });
 });
+
+test("Auth Service - Get Current User (Me) Unit Tests", async (t) => {
+    beforeEach(() => {
+        mock.restoreAll();
+    });
+
+    await t.test("should return sanitized profile for an active user successfully", async () => {
+        const mockUser = {
+            id: "user-uuid-1",
+            email: "me@example.com",
+            display_name: "Me User",
+            avatar: "avatar-url",
+            status: "active",
+            jlpt_target_level: "N3",
+            email_verified_at: new Date("2026-08-04T03:20:11.000Z"),
+            last_login_at: new Date("2026-08-04T03:25:00.000Z"),
+            created_at: new Date("2026-08-04T03:15:22.000Z"),
+            password_hash: "secret_hash",
+        };
+
+        mock.method(authRepository, "findUserById", async () => mockUser);
+
+        const result = await getCurrentUser("user-uuid-1");
+
+        assert.strictEqual(result.id, mockUser.id);
+        assert.strictEqual(result.email, mockUser.email);
+        assert.strictEqual(result.display_name, mockUser.display_name);
+        assert.strictEqual(result.avatar_url, "avatar-url");
+        assert.strictEqual(result.role, "user");
+        assert.strictEqual(result.is_premium, false);
+        assert.strictEqual(result.premium_expires_at, null);
+        assert.strictEqual(result.jlpt_target_level, "N3");
+        assert.strictEqual(result.status, "active");
+        assert.strictEqual(result.email_verified_at, mockUser.email_verified_at.toISOString());
+        assert.strictEqual(result.last_login_at, mockUser.last_login_at.toISOString());
+        assert.strictEqual(result.timezone, "Asia/Ho_Chi_Minh");
+        assert.strictEqual(result.locale, "vi-VN");
+        assert.strictEqual(result.created_at, mockUser.created_at.toISOString());
+        assert.strictEqual((result as any).password_hash, undefined);
+    });
+
+    await t.test("should throw UNAUTHORIZED if user does not exist", async () => {
+        mock.method(authRepository, "findUserById", async () => null);
+
+        await assert.rejects(
+            getCurrentUser("user-uuid-nonexistent"),
+            /UNAUTHORIZED/
+        );
+    });
+
+    await t.test("should throw ACCOUNT_SUSPENDED if user is suspended", async () => {
+        const mockUser = {
+            id: "user-uuid-1",
+            email: "me@example.com",
+            display_name: "Me User",
+            status: "suspended",
+        };
+
+        mock.method(authRepository, "findUserById", async () => mockUser);
+
+        await assert.rejects(
+            getCurrentUser("user-uuid-1"),
+            /ACCOUNT_SUSPENDED/
+        );
+    });
+
+    await t.test("should throw ACCOUNT_BANNED if user is banned", async () => {
+        const mockUser = {
+            id: "user-uuid-1",
+            email: "me@example.com",
+            display_name: "Me User",
+            status: "banned",
+        };
+
+        mock.method(authRepository, "findUserById", async () => mockUser);
+
+        await assert.rejects(
+            getCurrentUser("user-uuid-1"),
+            /ACCOUNT_BANNED/
+        );
+    });
+});
+
 

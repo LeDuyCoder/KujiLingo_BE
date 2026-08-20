@@ -397,3 +397,52 @@ export async function googleAuthCallbackHandler(
         });
     }
 }
+
+export async function meHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+            });
+        }
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+            });
+        }
+
+        const decoded = verifyToken(token) as { sub: string };
+        const user = await authService.getCurrentUser(decoded.sub);
+
+        return reply.code(200).send({
+            success: true,
+            data: user,
+        });
+    } catch (error: any) {
+        log.error(error);
+        if (error.message === "ACCOUNT_SUSPENDED") {
+            return reply.code(403).send({
+                success: false,
+                error: { code: "ACCOUNT_SUSPENDED", message: "Your account is currently suspended." },
+            });
+        }
+        if (error.message === "ACCOUNT_BANNED") {
+            return reply.code(403).send({
+                success: false,
+                error: { code: "ACCOUNT_BANNED", message: "Your account has been permanently banned." },
+            });
+        }
+        return reply.code(401).send({
+            success: false,
+            error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+        });
+    }
+}
+
