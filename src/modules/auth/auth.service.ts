@@ -173,7 +173,7 @@ export async function login(
         throw new Error("ACCOUNT_BANNED");
     }
 
-    const role = "user";
+    const role = user.role || "user";
     const isPremium = false;
 
     const accessToken = signToken({
@@ -446,7 +446,7 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
         email: user.email!,
         display_name: user.display_name || "",
         avatar_url: user.avatar ?? null,
-        role: "user",
+        role: user.role || "user",
         is_premium: false,
         premium_expires_at: null,
         jlpt_target_level: user.jlpt_target_level,

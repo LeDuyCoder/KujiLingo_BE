@@ -488,6 +488,7 @@ model users {
   streak                                                    Int?
   accepted_terms                                            Boolean?                      @default(false)
   jlpt_target_level                                         JLPTLevel?
+  role                                                      String                        @default("user") @db.VarChar
   status                                                    String?                       @default("pending_verification") @db.VarChar
   email_verified                                            Boolean?                      @default(false)
   email_verified_at                                         DateTime?                     @db.Timestamp(6)
@@ -514,6 +515,7 @@ model users {
   wallet_histories                                          wallet_histories[]
   refresh_tokens                                            refresh_tokens[]
   password_reset_tokens                                     password_reset_tokens[]
+  admin_audit_logs                                          admin_audit_logs[]
 }
 
 model password_reset_tokens {
@@ -526,6 +528,20 @@ model password_reset_tokens {
   users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
+}
+
+model admin_audit_logs {
+  id           String   @id @default(uuid()) @db.Uuid
+  admin_id     String   @db.Uuid
+  action       String   @db.VarChar
+  entity_id    String?  @db.VarChar
+  before_state Json?
+  after_state  Json?
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  users        users    @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at(sort: Desc)])
+  @@index([admin_id, created_at(sort: Desc)])
 }
 
 model email_verification_tokens {
