@@ -12,10 +12,7 @@ type TransactionClient = Prisma.TransactionClient;
 export async function findActiveUserByEmail(email: string) {
     return prisma.users.findFirst({
         where: {
-            email: {
-                equals: email,
-                mode: "insensitive",
-            },
+            email: email.trim().toLowerCase(),
             deleted_at: null,
         },
     });
@@ -129,10 +126,7 @@ export async function updateUserStatus(tx: TransactionClient, userId: string, no
 export async function findUserByEmail(email: string) {
     return prisma.users.findFirst({
         where: {
-            email: {
-                equals: email,
-                mode: "insensitive",
-            },
+            email: email.trim().toLowerCase(),
             deleted_at: null,
         },
     });
@@ -148,10 +142,7 @@ export async function countRecentFailedAttempts(email: string, windowMinutes: nu
     const cutoff = new Date(Date.now() - windowMinutes * 60 * 1000);
     return prisma.login_attempts.count({
         where: {
-            email: {
-                equals: email,
-                mode: "insensitive",
-            },
+            email: email.trim().toLowerCase(),
             succeeded: false,
             created_at: {
                 gte: cutoff,

@@ -252,6 +252,7 @@ export async function loginHandler(
             data: result,
         });
     } catch (error: any) {
+        log.error(error);
         if (error.message === "ACCOUNT_TEMPORARILY_LOCKED") {
             return reply.code(429).send({
                 success: false,
