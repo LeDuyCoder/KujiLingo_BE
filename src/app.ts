@@ -22,7 +22,17 @@ app.setErrorHandler((error: any, request, reply) => {
             },
         });
     }
-    reply.send(error);
+
+    const statusCode = error.statusCode || 500;
+    const errorCode = error.code === "FST_ERR_FAILED_ERROR_SERIALIZATION" ? "INTERNAL_ERROR" : (error.code || "INTERNAL_ERROR");
+
+    return reply.status(statusCode).send({
+        success: false,
+        error: {
+            code: errorCode,
+            message: error.message || "An unexpected error occurred. Please try again later.",
+        },
+    });
 });
 
 await registerSwagger(app);
