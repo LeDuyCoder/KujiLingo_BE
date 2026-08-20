@@ -78,7 +78,7 @@ export async function updateUserStatus(params: {
     adminId: string;
     userId: string;
     status: string;
-    reason?: string;
+    reason?: string | undefined;
 }) {
     const { adminId, userId, status, reason } = params;
 
