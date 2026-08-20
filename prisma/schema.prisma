@@ -27,6 +27,7 @@ model courses {
   description String?
   image       String?   @db.VarChar
   order_no    Int?
+  deleted_at  DateTime? @db.Timestamp(6)
   lessons     lessons[]
 
   @@index([order_no])

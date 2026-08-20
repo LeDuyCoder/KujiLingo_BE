@@ -801,8 +801,8 @@ test("Auth API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /auth/me - unauthorized 401 (expired token)", async () => {
-        // Mock verifyToken to throw TokenExpiredError
-        mock.method(jwtUtils, "verifyToken", () => {
+        // Mock jwt.verify to throw TokenExpiredError
+        mock.method(jwt, "verify", () => {
             throw new jwt.TokenExpiredError("jwt expired", new Date());
         });
 

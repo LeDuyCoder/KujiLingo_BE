@@ -8,9 +8,9 @@ type TransactionClient = Prisma.TransactionClient;
  * Tìm kiếm danh sách người dùng có lọc và phân trang
  */
 export async function findFilteredUsers(params: {
-    status?: string;
-    role?: string;
-    search?: string;
+    status?: string | undefined;
+    role?: string | undefined;
+    search?: string | undefined;
     page: number;
     limit: number;
 }) {
@@ -60,9 +60,9 @@ export async function findFilteredUsers(params: {
  * Đếm tổng số người dùng khớp bộ lọc
  */
 export async function countFilteredUsers(params: {
-    status?: string;
-    role?: string;
-    search?: string;
+    status?: string | undefined;
+    role?: string | undefined;
+    search?: string | undefined;
 }) {
     const { status, role, search } = params;
     const where: Prisma.usersWhereInput = {
@@ -152,9 +152,9 @@ export async function createAuditLog(
     data: {
         adminId: string;
         action: string;
-        entityId?: string;
-        beforeState?: any;
-        afterState?: any;
+        entityId?: string | undefined;
+        beforeState?: any | undefined;
+        afterState?: any | undefined;
     }
 ) {
     return tx.admin_audit_logs.create({
@@ -173,10 +173,10 @@ export async function createAuditLog(
  * Tìm kiếm danh sách log kiểm toán có lọc và phân trang
  */
 export async function findAuditLogs(params: {
-    adminId?: string;
-    action?: string;
-    startDate?: Date;
-    endDate?: Date;
+    adminId?: string | undefined;
+    action?: string | undefined;
+    startDate?: Date | undefined;
+    endDate?: Date | undefined;
     page: number;
     limit: number;
 }) {
@@ -225,10 +225,10 @@ export async function findAuditLogs(params: {
  * Đếm tổng số log kiểm toán khớp bộ lọc
  */
 export async function countAuditLogs(params: {
-    adminId?: string;
-    action?: string;
-    startDate?: Date;
-    endDate?: Date;
+    adminId?: string | undefined;
+    action?: string | undefined;
+    startDate?: Date | undefined;
+    endDate?: Date | undefined;
 }) {
     const { adminId, action, startDate, endDate } = params;
     const where: Prisma.admin_audit_logsWhereInput = {};
