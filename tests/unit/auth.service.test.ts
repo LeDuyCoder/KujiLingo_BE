@@ -1,6 +1,6 @@
 import { test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
-import { register, verifyEmail, login, logout, forgotPassword } from "../../src/modules/auth/auth.service.js";
+import { register, verifyEmail, login, logout, forgotPassword, resetPassword } from "../../src/modules/auth/auth.service.js";
 import bcrypt from "bcrypt";
 import { authRepository } from "../../src/modules/auth/auth.repository.js";
 import { db } from "../../src/config/prisma.js";
@@ -432,6 +432,134 @@ test("Auth Service - Forgot Password Unit Tests", async (t) => {
         const res4 = await forgotPassword({ email: "ratelimit@example.com" }, "127.0.0.1");
         assert.strictEqual(res4.success, true);
         assert.strictEqual(createTokenMock.mock.callCount(), 3); // still 3
+    });
+});
+
+test("Auth Service - Reset Password Unit Tests", async (t) => {
+    beforeEach(() => {
+        mock.restoreAll();
+        db.prisma = {
+            $transaction: async (callback: any) => {
+                return callback({
+                    users: {
+                        findUnique: async () => ({
+                            id: "user-123",
+                            email: "test@example.com",
+                            password_hash: await bcrypt.hash("OldPassword123", 12),
+                            display_name: "Test User",
+                        }),
+                    },
+                });
+            }
+        } as any;
+    });
+
+    afterEach(() => {
+        db.prisma = originalPrisma;
+    });
+
+    await t.test("should successfully reset password with valid token and new password", async () => {
+        const mockTokenRecord = {
+            id: "token-123",
+            user_id: "user-123",
+            token_hash: "hashed_token",
+            expires_at: new Date(Date.now() + 3600000), // 1 hour in future
+            consumed_at: null,
+        };
+
+        const findTokenMock = mock.method(authRepository, "findPasswordResetTokenByHash", async () => mockTokenRecord);
+        const updatePasswordMock = mock.method(authRepository, "updatePasswordHash", async () => ({}));
+        const markConsumedMock = mock.method(authRepository, "markPasswordResetTokenAsConsumed", async () => ({}));
+        const revokeAllMock = mock.method(authRepository, "revokeAllForUser", async () => ({}));
+
+        const result = await resetPassword({
+            token: "raw_token",
+            new_password: "NewPassword123",
+            new_password_confirmation: "NewPassword123",
+        });
+
+        assert.strictEqual(result.success, true);
+        assert.strictEqual(result.message, "Password has been reset successfully. Please log in with your new password.");
+        assert.strictEqual(findTokenMock.mock.callCount(), 1);
+        assert.strictEqual(updatePasswordMock.mock.callCount(), 1);
+        assert.strictEqual(markConsumedMock.mock.callCount(), 1);
+        assert.strictEqual(revokeAllMock.mock.callCount(), 1);
+    });
+
+    await t.test("should throw TOKEN_NOT_FOUND if token not found", async () => {
+        mock.method(authRepository, "findPasswordResetTokenByHash", async () => null);
+
+        await assert.rejects(
+            resetPassword({
+                token: "invalid_token",
+                new_password: "NewPassword123",
+                new_password_confirmation: "NewPassword123",
+            }),
+            { message: "TOKEN_NOT_FOUND" }
+        );
+    });
+
+    await t.test("should throw TOKEN_ALREADY_USED if token is already consumed", async () => {
+        const mockTokenRecord = {
+            id: "token-123",
+            user_id: "user-123",
+            token_hash: "hashed_token",
+            expires_at: new Date(Date.now() + 3600000),
+            consumed_at: new Date(),
+        };
+
+        mock.method(authRepository, "findPasswordResetTokenByHash", async () => mockTokenRecord);
+
+        await assert.rejects(
+            resetPassword({
+                token: "used_token",
+                new_password: "NewPassword123",
+                new_password_confirmation: "NewPassword123",
+            }),
+            { message: "TOKEN_ALREADY_USED" }
+        );
+    });
+
+    await t.test("should throw TOKEN_EXPIRED if token has expired", async () => {
+        const mockTokenRecord = {
+            id: "token-123",
+            user_id: "user-123",
+            token_hash: "hashed_token",
+            expires_at: new Date(Date.now() - 3600000), // 1 hour ago
+            consumed_at: null,
+        };
+
+        mock.method(authRepository, "findPasswordResetTokenByHash", async () => mockTokenRecord);
+
+        await assert.rejects(
+            resetPassword({
+                token: "expired_token",
+                new_password: "NewPassword123",
+                new_password_confirmation: "NewPassword123",
+            }),
+            { message: "TOKEN_EXPIRED" }
+        );
+    });
+
+    await t.test("should throw PASSWORD_UNCHANGED if new password is same as old password", async () => {
+        const mockTokenRecord = {
+            id: "token-123",
+            user_id: "user-123",
+            token_hash: "hashed_token",
+            expires_at: new Date(Date.now() + 3600000),
+            consumed_at: null,
+        };
+
+        mock.method(authRepository, "findPasswordResetTokenByHash", async () => mockTokenRecord);
+
+        await assert.rejects(
+            resetPassword({
+                token: "valid_token",
+                new_password: "OldPassword123",
+                new_password_confirmation: "OldPassword123",
+            }),
+            { message: "PASSWORD_UNCHANGED" }
+        );
     });
 });
 

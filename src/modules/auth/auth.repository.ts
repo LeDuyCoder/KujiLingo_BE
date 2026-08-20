@@ -233,10 +233,27 @@ export async function revokeToken(tokenId: string) {
     });
 }
 
-export async function revokeAllForUser(userId: string) {
-    return prisma.refresh_tokens.updateMany({
+export async function revokeAllForUser(tx: TransactionClient, userId: string) {
+    return tx.refresh_tokens.updateMany({
         where: { user_id: userId, is_revoked: false },
         data: { is_revoked: true },
+    });
+}
+
+export async function updatePasswordHash(tx: TransactionClient, userId: string, newHash: string) {
+    return tx.users.update({
+        where: { id: userId },
+        data: {
+            password_hash: newHash,
+            updated_at: new Date(),
+        },
+    });
+}
+
+export async function markPasswordResetTokenAsConsumed(tx: TransactionClient, tokenId: string, now: Date) {
+    return tx.password_reset_tokens.update({
+        where: { id: tokenId },
+        data: { consumed_at: now },
     });
 }
 
@@ -271,9 +288,13 @@ export async function createPasswordResetToken(
 }
 
 export async function findPasswordResetTokenByHash(tx: TransactionClient, hash: string) {
-    return tx.password_reset_tokens.findUnique({
-        where: { token_hash: hash },
-    });
+    const tokens = await tx.$queryRaw<any[]>`
+        SELECT * FROM "password_reset_tokens"
+        WHERE "token_hash" = ${hash}
+        LIMIT 1
+        FOR UPDATE
+    `;
+    return tokens[0] || null;
 }
 
 /**
@@ -296,4 +317,6 @@ export const authRepository = {
     invalidatePasswordResetTokensForUser,
     createPasswordResetToken,
     findPasswordResetTokenByHash,
+    updatePasswordHash,
+    markPasswordResetTokenAsConsumed,
 };

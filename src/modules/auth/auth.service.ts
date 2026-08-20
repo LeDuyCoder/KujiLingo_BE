@@ -4,11 +4,12 @@ import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
-import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput } from "./auth.schema.js";
+import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput } from "./auth.schema.js";
 import type { UserResponse, LoginResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
 import { buildForgotPasswordEmail } from "./templates/forgot-password.template.js";
+import { buildPasswordChangedEmail } from "./templates/password-changed.template.js";
 import { log } from "../../common/utils/log.js";
 import { signToken } from "../../common/utils/jwt.js";
 import { env } from "../../config/env.js";
@@ -269,7 +270,7 @@ export async function resendVerificationEmail(email: string): Promise<{ success:
  */
 export async function logout(userId: string, data: LogoutInput): Promise<{ success: boolean }> {
     if (data.all_devices) {
-        await authRepository.revokeAllForUser(userId);
+        await authRepository.revokeAllForUser(db.prisma, userId);
     } else if (data.refresh_token) {
         const hash = crypto.createHash("sha256").update(data.refresh_token).digest("hex");
         const tokenRecord = await authRepository.findRefreshTokenByHash(db.prisma, hash);
@@ -352,4 +353,73 @@ export async function forgotPassword(
     }
     
     return genericSuccessResponse;
+}
+
+/**
+ * Đặt lại mật khẩu bằng token
+ */
+export async function resetPassword(data: ResetPasswordInput): Promise<{ success: boolean; message: string }> {
+    const tokenHash = crypto.createHash("sha256").update(data.token).digest("hex");
+
+    return await db.prisma.$transaction(async (tx) => {
+        // 1. Tìm kiếm reset token FOR UPDATE
+        const tokenRecord = await authRepository.findPasswordResetTokenByHash(tx, tokenHash);
+        if (!tokenRecord) {
+            throw new Error("TOKEN_NOT_FOUND");
+        }
+
+        // 2. Kiểm tra xem token đã được sử dụng chưa
+        if (tokenRecord.consumed_at) {
+            throw new Error("TOKEN_ALREADY_USED");
+        }
+
+        // 3. Kiểm tra xem token đã hết hạn chưa
+        if (new Date(tokenRecord.expires_at) < new Date()) {
+            throw new Error("TOKEN_EXPIRED");
+        }
+
+        // 4. Tìm kiếm người dùng tương ứng
+        const user = await tx.users.findUnique({
+            where: { id: tokenRecord.user_id },
+        });
+
+        if (!user || user.deleted_at) {
+            throw new Error("TOKEN_NOT_FOUND");
+        }
+
+        // 5. Kiểm tra mật khẩu mới có giống mật khẩu cũ không
+        const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
+        if (isIdentical) {
+            throw new Error("PASSWORD_UNCHANGED");
+        }
+
+        // 6. Thực hiện đổi mật khẩu, tiêu thụ token, và hủy toàn bộ refresh tokens
+        const passwordHash = await bcrypt.hash(data.new_password, 12);
+        
+        await authRepository.updatePasswordHash(tx, user.id, passwordHash);
+        await authRepository.markPasswordResetTokenAsConsumed(tx, tokenRecord.id, new Date());
+        await authRepository.revokeAllForUser(tx, user.id);
+
+        return user;
+    }).then(async (user) => {
+        // Gửi email xác nhận đặt lại mật khẩu thành công
+        try {
+            const { html, text } = buildPasswordChangedEmail({
+                displayName: user.display_name!,
+            });
+            await mailService.sendMail({
+                to: user.email!,
+                subject: "Mật khẩu tài khoản KujiLingo của bạn đã được thay đổi",
+                html,
+                text,
+            });
+        } catch (mailError) {
+            log.error("[Auth] Failed to send password changed confirmation email:", mailError);
+        }
+
+        return {
+            success: true,
+            message: "Password has been reset successfully. Please log in with your new password.",
+        };
+    });
 }

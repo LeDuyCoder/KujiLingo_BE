@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
 import { log } from "../../common/utils/log.js";
 import { verifyToken } from "../../common/utils/jwt.js";
@@ -179,6 +179,49 @@ export async function forgotPasswordHandler(
         return reply.code(200).send(result);
     } catch (error: any) {
         log.error(error);
+        return reply.code(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
+            },
+        });
+    }
+}
+
+export async function resetPasswordHandler(
+    request: FastifyRequest<{ Body: ResetPasswordInput }>,
+    reply: FastifyReply
+) {
+    try {
+        const result = await authService.resetPassword(request.body);
+        return reply.code(200).send(result);
+    } catch (error: any) {
+        log.error(error);
+        if (error.message === "TOKEN_NOT_FOUND") {
+            return reply.code(404).send({
+                success: false,
+                error: { code: "TOKEN_NOT_FOUND", message: "This password reset link is invalid." },
+            });
+        }
+        if (error.message === "TOKEN_ALREADY_USED") {
+            return reply.code(409).send({
+                success: false,
+                error: { code: "TOKEN_ALREADY_USED", message: "This password reset link has already been used." },
+            });
+        }
+        if (error.message === "TOKEN_EXPIRED") {
+            return reply.code(410).send({
+                success: false,
+                error: { code: "TOKEN_EXPIRED", message: "This password reset link has expired. Please request a new one." },
+            });
+        }
+        if (error.message === "PASSWORD_UNCHANGED") {
+            return reply.code(422).send({
+                success: false,
+                error: { code: "PASSWORD_UNCHANGED", message: "New password must be different from your current password." },
+            });
+        }
         return reply.code(500).send({
             success: false,
             error: {

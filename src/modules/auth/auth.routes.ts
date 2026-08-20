@@ -9,9 +9,10 @@ import {
     resendVerificationHandler,
     loginHandler,
     logoutHandler,
-    forgotPasswordHandler
+    forgotPasswordHandler,
+    resetPasswordHandler
 } from "./auth.controller.js";
-import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema } from "./auth.schema.js";
+import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema } from "./auth.schema.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
@@ -237,6 +238,49 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         forgotPasswordHandler
+    );
+
+    router.post(
+        "/auth/reset-password",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Reset Password",
+                description: "Completes the password-reset flow by validating a reset token and setting a new password.",
+                body: resetPasswordSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        message: z.string(),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() }),
+                    }),
+                    404: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("TOKEN_NOT_FOUND"), message: z.string() }),
+                    }),
+                    409: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("TOKEN_ALREADY_USED"), message: z.string() }),
+                    }),
+                    410: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("TOKEN_EXPIRED"), message: z.string() }),
+                    }),
+                    422: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("PASSWORD_UNCHANGED"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        resetPasswordHandler
     );
 
 

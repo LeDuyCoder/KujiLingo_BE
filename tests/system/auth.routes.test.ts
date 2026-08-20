@@ -570,6 +570,166 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(body.success, false);
         assert.strictEqual(body.error.code, "VALIDATION_ERROR");
     });
+
+    await t.test("POST /auth/reset-password - integration flow", async (st) => {
+        const email = "reset_flow@example.com";
+        const oldPassword = "Password123";
+        const newPassword = "NewPassword123!";
+
+        // 1. Register and verify user
+        const regRes = await app.inject({
+            method: "POST",
+            url: "/auth/register",
+            payload: {
+                email,
+                password: oldPassword,
+                password_confirmation: oldPassword,
+                display_name: "Reset Flow User",
+                accepted_terms: true,
+            },
+        });
+        const regBody = JSON.parse(regRes.body);
+        await app.inject({
+            method: "POST",
+            url: "/auth/verify-email",
+            payload: { token: regBody.verificationToken },
+        });
+
+        // 2. Login to establish a session (so we can verify session revocation on reset)
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password: oldPassword },
+        });
+        const loginBody = JSON.parse(loginRes.body);
+        const activeRefreshToken = loginBody.data.refresh_token;
+
+        // 3. Create a reset token manually
+        const userInDb = await prisma.users.findUnique({ where: { email } });
+        assert.ok(userInDb);
+
+        const rawToken = "d41d8cd98f00b204e9800998ecf8427e";
+        const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+        const expiresAt = new Date(Date.now() + 3600000); // 1 hr in future
+
+        await prisma.password_reset_tokens.create({
+            data: {
+                id: crypto.randomUUID(),
+                user_id: userInDb.id,
+                token_hash: hashedToken,
+                expires_at: expiresAt,
+            },
+        });
+
+        // 4. Reset password using the valid token
+        const resetRes = await app.inject({
+            method: "POST",
+            url: "/auth/reset-password",
+            payload: {
+                token: rawToken,
+                new_password: newPassword,
+                new_password_confirmation: newPassword,
+            },
+        });
+
+        assert.strictEqual(resetRes.statusCode, 200);
+        const resetBody = JSON.parse(resetRes.body);
+        assert.strictEqual(resetBody.success, true);
+        assert.strictEqual(resetBody.message, "Password has been reset successfully. Please log in with your new password.");
+
+        // 5. Verify the token was marked consumed
+        const consumedToken = await prisma.password_reset_tokens.findFirst({
+            where: { token_hash: hashedToken },
+        });
+        assert.ok(consumedToken?.consumed_at);
+
+        // 6. Verify that the previous refresh token is now revoked
+        const dbRefreshToken = await prisma.refresh_tokens.findUnique({
+            where: { token_hash: crypto.createHash("sha256").update(activeRefreshToken).digest("hex") },
+        });
+        assert.strictEqual(dbRefreshToken?.is_revoked, true);
+
+        // 7. Verify login with old password fails
+        const oldLoginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password: oldPassword },
+        });
+        assert.strictEqual(oldLoginRes.statusCode, 401);
+
+        // 8. Verify login with new password succeeds
+        const newLoginRes = await app.inject({
+            method: "POST",
+            url: "/auth/login",
+            payload: { email, password: newPassword },
+        });
+        assert.strictEqual(newLoginRes.statusCode, 200);
+
+        // 9. Try resetting again with the same token -> should fail 409
+        const rerunRes = await app.inject({
+            method: "POST",
+            url: "/auth/reset-password",
+            payload: {
+                token: rawToken,
+                new_password: newPassword,
+                new_password_confirmation: newPassword,
+            },
+        });
+        assert.strictEqual(rerunRes.statusCode, 409);
+        const rerunBody = JSON.parse(rerunRes.body);
+        assert.strictEqual(rerunBody.error.code, "TOKEN_ALREADY_USED");
+
+        // 10. Try resetting with same password as current -> should fail 422
+        // Let's create another token for this
+        const rawToken2 = "e51d8cd98f00b204e9800998ecf8427f";
+        const hashedToken2 = crypto.createHash("sha256").update(rawToken2).digest("hex");
+        await prisma.password_reset_tokens.create({
+            data: {
+                id: crypto.randomUUID(),
+                user_id: userInDb.id,
+                token_hash: hashedToken2,
+                expires_at: expiresAt,
+            },
+        });
+
+        const samePasswordRes = await app.inject({
+            method: "POST",
+            url: "/auth/reset-password",
+            payload: {
+                token: rawToken2,
+                new_password: newPassword,
+                new_password_confirmation: newPassword,
+            },
+        });
+        assert.strictEqual(samePasswordRes.statusCode, 422);
+        const samePasswordBody = JSON.parse(samePasswordRes.body);
+        assert.strictEqual(samePasswordBody.error.code, "PASSWORD_UNCHANGED");
+
+        // 11. Try resetting with an expired token -> should fail 410
+        const rawTokenExpired = "f61d8cd98f00b204e9800998ecf84270";
+        const hashedTokenExpired = crypto.createHash("sha256").update(rawTokenExpired).digest("hex");
+        await prisma.password_reset_tokens.create({
+            data: {
+                id: crypto.randomUUID(),
+                user_id: userInDb.id,
+                token_hash: hashedTokenExpired,
+                expires_at: new Date(Date.now() - 3600000), // 1 hour in past
+            },
+        });
+
+        const expiredRes = await app.inject({
+            method: "POST",
+            url: "/auth/reset-password",
+            payload: {
+                token: rawTokenExpired,
+                new_password: "AnotherNewPassword123",
+                new_password_confirmation: "AnotherNewPassword123",
+            },
+        });
+        assert.strictEqual(expiredRes.statusCode, 410);
+        const expiredBody = JSON.parse(expiredRes.body);
+        assert.strictEqual(expiredBody.error.code, "TOKEN_EXPIRED");
+    });
 });
 
 
