@@ -3,13 +3,10 @@ import { grammarService, GrammarCustomError } from "./grammar.service.js";
 import type { CreateGrammarDto, ListGrammarQuery, UpdateGrammarDto } from "./grammar.types.js";
 
 export const grammarController = {
-    async list(
-        request: FastifyRequest<{ Querystring: ListGrammarQuery }>,
-        reply: FastifyReply
-    ) {
+    async list(request: FastifyRequest, reply: FastifyReply) {
         try {
             const userId = request.user?.id;
-            const result = await grammarService.listGrammarPoints(request.query, userId);
+            const result = await grammarService.listGrammarPoints((request.query as ListGrammarQuery) || {}, userId);
             return reply.status(200).send(result);
         } catch (error: any) {
             if (error instanceof GrammarCustomError) {
@@ -25,13 +22,11 @@ export const grammarController = {
         }
     },
 
-    async getById(
-        request: FastifyRequest<{ Params: { id: string } }>,
-        reply: FastifyReply
-    ) {
+    async getById(request: FastifyRequest, reply: FastifyReply) {
         try {
             const userId = request.user?.id;
-            const result = await grammarService.getGrammarDetail(request.params.id, userId);
+            const params = request.params as { id: string };
+            const result = await grammarService.getGrammarDetail(params.id, userId);
             return reply.status(200).send(result);
         } catch (error: any) {
             if (error instanceof GrammarCustomError) {
@@ -47,13 +42,10 @@ export const grammarController = {
         }
     },
 
-    async create(
-        request: FastifyRequest<{ Body: CreateGrammarDto }>,
-        reply: FastifyReply
-    ) {
+    async create(request: FastifyRequest, reply: FastifyReply) {
         try {
             const adminId = request.user?.id || "admin-id";
-            const result = await grammarService.createGrammarPoint(adminId, request.body);
+            const result = await grammarService.createGrammarPoint(adminId, request.body as CreateGrammarDto);
             return reply.status(201).send(result);
         } catch (error: any) {
             if (error instanceof GrammarCustomError) {
@@ -69,16 +61,14 @@ export const grammarController = {
         }
     },
 
-    async update(
-        request: FastifyRequest<{ Params: { id: string }; Body: UpdateGrammarDto }>,
-        reply: FastifyReply
-    ) {
+    async update(request: FastifyRequest, reply: FastifyReply) {
         try {
             const adminId = request.user?.id || "admin-id";
+            const params = request.params as { id: string };
             const result = await grammarService.updateGrammarPoint(
                 adminId,
-                request.params.id,
-                request.body
+                params.id,
+                request.body as UpdateGrammarDto
             );
             return reply.status(200).send(result);
         } catch (error: any) {
@@ -95,13 +85,11 @@ export const grammarController = {
         }
     },
 
-    async delete(
-        request: FastifyRequest<{ Params: { id: string } }>,
-        reply: FastifyReply
-    ) {
+    async delete(request: FastifyRequest, reply: FastifyReply) {
         try {
             const adminId = request.user?.id || "admin-id";
-            const result = await grammarService.deleteGrammarPoint(adminId, request.params.id);
+            const params = request.params as { id: string };
+            const result = await grammarService.deleteGrammarPoint(adminId, params.id);
             return reply.status(200).send(result);
         } catch (error: any) {
             if (error instanceof GrammarCustomError) {
