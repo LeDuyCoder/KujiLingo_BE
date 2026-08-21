@@ -15,6 +15,7 @@
     "test:admin": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/admin.service.test.ts tests/system/admin.routes.test.ts",
     "test:courses": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/courses.service.test.ts tests/system/courses.routes.test.ts",
     "test:dashboard": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dashboard.routes.test.ts",
+    "test:dictionary": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dictionary.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts"
   },
   "keywords": [],
