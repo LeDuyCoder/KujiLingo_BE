@@ -17,9 +17,9 @@
     "test:courses": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/courses.service.test.ts tests/system/courses.routes.test.ts",
     "test:dashboard": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dashboard.routes.test.ts",
     "test:dictionary": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dictionary.routes.test.ts",
+    "test:folder": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/folder.routes.test.ts",
     "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
-    "mail:test": "node --import tsx scripts/test-mail.ts",
-    "lint": "eslint ."
+    "mail:test": "node --import tsx scripts/test-mail.ts"
   },
   "keywords": [],
   "author": "",
