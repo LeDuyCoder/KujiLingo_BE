@@ -1,9 +1,17 @@
-import { test, beforeEach } from "node:test";
+import { test, before, after } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
 import { signToken } from "../../src/common/utils/jwt.js";
+
+async function clearDatabase() {
+    await prisma.grammar_points.deleteMany({});
+    await prisma.admin_audit_logs.deleteMany({});
+    await prisma.users.deleteMany({
+        where: { email: { in: ["admin_gram_sys@example.com", "user_gram_sys@example.com"] } },
+    });
+}
 
 test("Grammar API System Tests", async (t) => {
     let adminToken: string;
@@ -12,13 +20,8 @@ test("Grammar API System Tests", async (t) => {
     let regularUserId: string;
     let testGrammarId: string;
 
-    beforeEach(async () => {
-        // Clear test data
-        await prisma.grammar_points.deleteMany({});
-        await prisma.admin_audit_logs.deleteMany({});
-        await prisma.users.deleteMany({
-            where: { email: { in: ["admin_gram_sys@example.com", "user_gram_sys@example.com"] } },
-        });
+    async function setupTestData() {
+        await clearDatabase();
 
         // Create Admin user
         adminUserId = crypto.randomUUID();
@@ -64,9 +67,18 @@ test("Grammar API System Tests", async (t) => {
                 created_by: adminUserId,
             },
         });
+    }
+
+    before(async () => {
+        await app.ready();
+    });
+
+    after(async () => {
+        await clearDatabase();
     });
 
     await t.test("GET /api/v1/grammar - 200 OK list all grammar points", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "GET",
             url: "/api/v1/grammar",
@@ -80,6 +92,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/grammar - 200 OK filtered by jlpt_level=N3", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "GET",
             url: "/api/v1/grammar?jlpt_level=N3",
@@ -92,6 +105,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/grammar - 400 Bad Request on invalid jlpt_level", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "GET",
             url: "/api/v1/grammar?jlpt_level=INVALID",
@@ -104,6 +118,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/grammar/:id - 200 OK detail", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "GET",
             url: `/api/v1/grammar/${testGrammarId}`,
@@ -117,6 +132,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/grammar/:id - 404 Not Found", async () => {
+        await setupTestData();
         const fakeId = crypto.randomUUID();
         const response = await app.inject({
             method: "GET",
@@ -130,6 +146,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("POST /api/v1/admin/grammar - 401 Unauthenticated", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "POST",
             url: "/api/v1/admin/grammar",
@@ -145,6 +162,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("POST /api/v1/admin/grammar - 403 Forbidden for non-admin user", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "POST",
             url: "/api/v1/admin/grammar",
@@ -163,6 +181,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("POST /api/v1/admin/grammar - 201 Created by Admin", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "POST",
             url: "/api/v1/admin/grammar",
@@ -184,6 +203,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("POST /api/v1/admin/grammar - 409 DUPLICATE_GRAMMAR", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "POST",
             url: "/api/v1/admin/grammar",
@@ -204,6 +224,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("PUT /api/v1/admin/grammar/:id - 200 OK update explanation", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "PUT",
             url: `/api/v1/admin/grammar/${testGrammarId}`,
@@ -222,6 +243,7 @@ test("Grammar API System Tests", async (t) => {
     });
 
     await t.test("DELETE /api/v1/admin/grammar/:id - 200 OK soft delete", async () => {
+        await setupTestData();
         const response = await app.inject({
             method: "DELETE",
             url: `/api/v1/admin/grammar/${testGrammarId}`,
