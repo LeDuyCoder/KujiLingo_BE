@@ -48,6 +48,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    needs:
+      - typecheck
+
     services:
       postgres:
         image: postgres:17
