@@ -70,7 +70,7 @@ test("Auth API - Database Integration Tests", async (t) => {
             method: "POST",
             url: "/auth/register",
             payload: {
-                email: "duyga544@gmail.com",
+                email: "duybeo@gmail.com",
                 password: "Password123",
                 password_confirmation: "WrongPassword",
                 display_name: "New User",
@@ -277,7 +277,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const email = "login.success@example.com";
         const password = "ValidPassword123";
         const passwordHash = await bcrypt.hash(password, 10);
-        
+
         await prisma.users.create({
             data: {
                 id: crypto.randomUUID(),
@@ -304,7 +304,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(body.data.user.email, email);
 
         // 3. Kiểm tra DB: last_login_at và refresh_token
-        const user = await prisma.users.findUnique({ 
+        const user = await prisma.users.findUnique({
             where: { email },
             include: { refresh_tokens: true }
         });
@@ -350,7 +350,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
     await t.test("POST /auth/login - account temporarily locked 429", async () => {
         const email = "bruteforce@example.com";
-        
+
         // 1. Tạo 10 lượt failed attempts thủ công
         for (let i = 0; i < 10; i++) {
             await prisma.login_attempts.create({
