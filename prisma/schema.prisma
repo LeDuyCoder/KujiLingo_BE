@@ -487,6 +487,8 @@ model users {
   level                                                     Int?
   exp                                                       Int?
   streak                                                    Int?
+  longest_streak                                            Int?                            @default(0)
+  learning_goal_minutes                                     Int?                            @default(15) 
   accepted_terms                                            Boolean?                      @default(false)
   jlpt_target_level                                         JLPTLevel?
   role                                                      String                        @default("user") @db.VarChar
@@ -517,6 +519,18 @@ model users {
   refresh_tokens                                            refresh_tokens[]
   password_reset_tokens                                     password_reset_tokens[]
   admin_audit_logs                                          admin_audit_logs[]
+  user_statistics_daily                                     user_statistics_daily[]
+}
+
+model user_statistics_daily {
+  user_id           String   @db.Uuid
+  stat_date         DateTime @db.Date
+  minutes_studied   Int      @default(0)
+  lessons_completed Int      @default(0)
+  exp_earned        Int      @default(0)
+  users             users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@id([user_id, stat_date])
+  @@index([user_id, stat_date])
 }
 
 model password_reset_tokens {
