@@ -1,4 +1,4 @@
-import { test, beforeEach, after } from "node:test";
+import { test, before, after } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
@@ -37,7 +37,7 @@ async function createUserInDb(email: string, role: string = "user", status: stri
             id: userId,
             email,
             password_hash: passwordHash,
-            display_name: email.split("@")[0],
+            display_name: `Test ${role}`,
             status,
             role,
             email_verified: true,
@@ -48,6 +48,7 @@ async function createUserInDb(email: string, role: string = "user", status: stri
 }
 
 async function createAuthenticatedUser(email: string, role: string = "user", status: string = "active") {
+    await app.ready();
     const { id, password } = await createUserInDb(email, role, status);
     const token = signToken({ sub: id, role });
     return {
@@ -58,8 +59,8 @@ async function createAuthenticatedUser(email: string, role: string = "user", sta
 }
 
 test("Admin API - Database Integration Tests", async (t) => {
-    beforeEach(async () => {
-        await clearDatabase();
+    before(async () => {
+        await app.ready();
     });
 
     after(async () => {
@@ -67,6 +68,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - success 200 (admin access)", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         await createAuthenticatedUser("user@example.com", "user");
 
@@ -86,6 +88,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - forbidden 403 (regular user access)", async () => {
+        await clearDatabase();
         const user = await createAuthenticatedUser("user@example.com", "user");
 
         const response = await app.inject({
@@ -103,6 +106,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - filter by status", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         await createUserInDb("suspended@example.com", "user", "suspended");
 
@@ -121,6 +125,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users/:id - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -142,6 +147,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/status - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -182,6 +188,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/status - cannot modify self 422", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
 
         const response = await app.inject({
@@ -201,6 +208,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/role - promote to admin", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -224,6 +232,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/audit-logs - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 

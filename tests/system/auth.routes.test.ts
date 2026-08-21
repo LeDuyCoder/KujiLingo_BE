@@ -375,6 +375,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     });
 
     await t.test("POST /auth/logout - success 200", async () => {
+        await clearDatabase();
         // 1. Register a user
         const email = "logout@example.com";
         const password = "Password123";
@@ -446,6 +447,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     });
 
     await t.test("POST /auth/logout - token ownership mismatch 403", async () => {
+        await clearDatabase();
         // 1. Register and login User A
         const regResA = await app.inject({
             method: "POST",
