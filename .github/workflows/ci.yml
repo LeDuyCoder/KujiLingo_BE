@@ -58,10 +58,6 @@ jobs:
       # Frontend
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 
-      # JWT Authentication
-      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
-
       # Authentication
       ALLOW_LOGIN_BEFORE_VERIFICATION: "false"
 
@@ -91,31 +87,47 @@ jobs:
         run: npm ci
 
       # =========================
-      # 4. Generate Prisma Client
+      # 4. Generate RSA Keys for Testing
+      # =========================
+      - name: Generate RSA Keys for Testing
+        run: |
+          openssl genrsa -out private.pem 2048
+          openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+          
+          echo "JWT_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+          cat private.pem >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          
+          echo "JWT_PUBLIC_KEY<<EOF" >> $GITHUB_ENV
+          cat public.pem >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      # =========================
+      # 5. Generate Prisma Client
       # =========================
       - name: Generate Prisma Client
         run: npm run prisma:generate
 
       # =========================
-      # 5. Run database migrations
+      # 6. Run database migrations
       # =========================
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
 
       # =========================
-      # 6. Type check
+      # 7. Type check
       # =========================
       - name: Type check
         run: npm run typecheck
 
       # =========================
-      # 7. Run tests
+      # 8. Run tests
       # =========================
       - name: Run tests
         run: npm test
 
       # =========================
-      # 8. Build
+      # 9. Build
       # =========================
       - name: Build
         run: npm run build
