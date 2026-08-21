@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -16,7 +17,9 @@
     "test:courses": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/courses.service.test.ts tests/system/courses.routes.test.ts",
     "test:dashboard": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dashboard.routes.test.ts",
     "test:dictionary": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dictionary.routes.test.ts",
-    "mail:test": "node --import tsx scripts/test-mail.ts"
+    "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
+    "mail:test": "node --import tsx scripts/test-mail.ts",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
