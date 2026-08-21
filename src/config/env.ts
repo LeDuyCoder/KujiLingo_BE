@@ -13,6 +13,7 @@ const envSchema = z.object({
     MAIL_FROM_EMAIL: z.string().email(),
     MAIL_FROM_NAME: z.string().min(1),
     FRONTEND_URL: z.string().url(),
+    JISHO_API_URL: z.string().url().default("https://jisho.org/api/v1/search/words"),
 });
 
 export const env = envSchema.parse(process.env);
