@@ -17,6 +17,20 @@ export async function registerSwagger(app: FastifyInstance) {
                     description: "Development Server",
                 },
             ],
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: "http",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                    },
+                },
+            },
+            security: [
+                {
+                    bearerAuth: [],
+                },
+            ],
         },
         transform: jsonSchemaTransform,
     });
