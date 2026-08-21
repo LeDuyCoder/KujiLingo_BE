@@ -4,6 +4,7 @@ import { adminRoutes } from "../modules/admin/index.js";
 import { coursesRoutes } from "../modules/courses/index.js";
 import { dashboardRoutes } from "../modules/dashboard/dashboard.routes.js";
 import { dictionaryRoutes } from "../modules/dictionary/dictionary.routes.js";
+import { favoriteVocabulariesRoutes } from "../modules/favorite-vocabularies/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
@@ -11,4 +12,6 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(coursesRoutes);
     await app.register(dashboardRoutes);
     await app.register(dictionaryRoutes);
+    await app.register(favoriteVocabulariesRoutes);
 }
+

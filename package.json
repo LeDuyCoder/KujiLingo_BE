@@ -16,6 +16,8 @@
     "test:courses": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/courses.service.test.ts tests/system/courses.routes.test.ts",
     "test:dashboard": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dashboard.routes.test.ts",
     "test:dictionary": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/system/dictionary.routes.test.ts",
+    "test:favorites": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/favorite-vocabularies.service.test.ts tests/system/favorite-vocabularies.routes.test.ts",
+    "seed:favorites": "node --import tsx scripts/seed-favorites.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts"
   },
   "keywords": [],
