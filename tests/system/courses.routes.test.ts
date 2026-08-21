@@ -7,6 +7,18 @@ import { prisma } from "../../src/config/prisma.js";
 import { memoryCache } from "../../src/common/utils/cache.js";
 
 async function clearDatabase() {
+    await prisma.favorite_vocabularies.deleteMany({});
+    await prisma.grammar_points.deleteMany({});
+    await prisma.payment_transactions.deleteMany({});
+    await prisma.wallet_histories.deleteMany({});
+    await prisma.user_wallets.deleteMany({});
+    await prisma.user_achievements.deleteMany({});
+    await prisma.learning_progress.deleteMany({});
+    await prisma.review_histories.deleteMany({});
+    await prisma.user_vocabularies.deleteMany({});
+    await prisma.user_shop_items.deleteMany({});
+    await prisma.user_equipped_items.deleteMany({});
+    await prisma.user_statistics_daily.deleteMany({});
     await prisma.admin_audit_logs.deleteMany({});
     await prisma.login_attempts.deleteMany({});
     await prisma.refresh_tokens.deleteMany({});
