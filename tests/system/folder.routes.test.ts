@@ -96,7 +96,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         const listBody = JSON.parse(listRes.body);
         assert.strictEqual(listBody.success, true);
         assert.strictEqual(listBody.data.length, 2);
-        
+
         // Sắp xếp Alphabetical name ASC: "Grammar Set" đứng trước "Weak Words"
         assert.strictEqual(listBody.data[0].name, "Grammar Set");
         assert.strictEqual(listBody.data[1].name, "Weak Words");
