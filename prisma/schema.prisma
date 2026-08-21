@@ -139,17 +139,32 @@ model grammar_examples {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model grammar_points {
-  id               String             @id @db.Uuid
-  lesson_id        String?            @db.Uuid
-  title            String?            @db.VarChar
-  structure        String?
-  meaning          String?
-  usage            String?
-  jlpt             JLPTLevel?
-  grammar_examples grammar_examples[]
-  lessons          lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String             @id @db.Uuid
+  lesson_id         String?            @db.Uuid
+  topic_id          String?            @db.Uuid
+  title_jp          String?            @db.VarChar
+  title             String?            @db.VarChar
+  structure         String?
+  meaning_vi        String?
+  meaning           String?
+  explanation       String?
+  usage             String?
+  jlpt_level        JLPTLevel?
+  jlpt              JLPTLevel?
+  example_sentences Json?
+  audio_url         String?            @db.VarChar
+  created_by        String?            @db.Uuid
+  created_at        DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?          @updatedAt @db.Timestamp(6)
+  deleted_at        DateTime?          @db.Timestamp(6)
+  grammar_examples  grammar_examples[]
+  lessons           lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topics            topics?            @relation(fields: [topic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([lesson_id, jlpt])
+  @@index([lesson_id, jlpt_level])
+  @@index([topic_id])
+  @@index([jlpt_level])
+  @@index([deleted_at])
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -391,6 +406,7 @@ model topics {
   order_no           Int?
   quizzes            quizzes[]
   topic_vocabularies topic_vocabularies[]
+  grammar_points     grammar_points[]
   lessons            lessons?             @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([lesson_id, order_no])
