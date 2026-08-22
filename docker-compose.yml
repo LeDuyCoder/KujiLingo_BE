@@ -1,0 +1,112 @@
+services:
+
+  # ==========================================
+  # BACKEND
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: kujilingo-backend
+
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      DATABASE_URL: postgresql://postgres:123456@postgres:5432/kujilingo
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - kujilingo-network
+
+
+  # ==========================================
+  # POSTGRESQL
+  # ==========================================
+  postgres:
+    image: postgres:17
+
+    container_name: kujilingo-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: kujilingo
+
+    # Production không cần expose PostgreSQL ra Internet.
+    # Backend truy cập thông qua:
+    # postgres:5432
+    #
+    # Nếu cần connect PostgreSQL từ máy local thì
+    # tạm thời uncomment:
+    #
+    # ports:
+    #   - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kujilingo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - kujilingo-network
+
+
+  # ==========================================
+  # PGADMIN
+  # ==========================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+
+    container_name: kujilingo-pgadmin
+
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@kujilingo.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+
+    ports:
+      - "5050:80"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+    networks:
+      - kujilingo-network
+
+
+# ==========================================
+# VOLUMES
+# ==========================================
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+
+# ==========================================
+# NETWORK
+# ==========================================
+networks:
+  kujilingo-network:
+    driver: bridge

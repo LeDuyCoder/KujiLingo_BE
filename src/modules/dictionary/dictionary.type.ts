@@ -26,7 +26,7 @@ export interface DictionarySearchResponse {
         limit: number;
         total: number;
         total_pages: number;
-    };
+    }
 }
 
 export interface DictionaryDetailResponse {
@@ -34,5 +34,5 @@ export interface DictionaryDetailResponse {
     data: DictionaryDTO & {
         vocabulary: any | null;
         kanji: any | null;
-    };
+    }
 }

@@ -38,10 +38,4 @@ app.setErrorHandler((error: any, request, reply) => {
 await registerSwagger(app);
 await registerRoutes(app);
 
-app.get("/", async () => {
-    return {
-        message: "KujiLingo API is running 🚀",
-    };
-});
-
 export default app;
