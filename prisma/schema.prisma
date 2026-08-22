@@ -139,17 +139,32 @@ model grammar_examples {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model grammar_points {
-  id               String             @id @db.Uuid
-  lesson_id        String?            @db.Uuid
-  title            String?            @db.VarChar
-  structure        String?
-  meaning          String?
-  usage            String?
-  jlpt             JLPTLevel?
-  grammar_examples grammar_examples[]
-  lessons          lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String             @id @db.Uuid
+  lesson_id         String?            @db.Uuid
+  topic_id          String?            @db.Uuid
+  title_jp          String?            @db.VarChar
+  title             String?            @db.VarChar
+  structure         String?
+  meaning_vi        String?
+  meaning           String?
+  explanation       String?
+  usage             String?
+  jlpt_level        JLPTLevel?
+  jlpt              JLPTLevel?
+  example_sentences Json?
+  audio_url         String?            @db.VarChar
+  created_by        String?            @db.Uuid
+  created_at        DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?          @updatedAt @db.Timestamp(6)
+  deleted_at        DateTime?          @db.Timestamp(6)
+  grammar_examples  grammar_examples[]
+  lessons           lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topics            topics?            @relation(fields: [topic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([lesson_id, jlpt])
+  @@index([lesson_id, jlpt_level])
+  @@index([topic_id])
+  @@index([jlpt_level])
+  @@index([deleted_at])
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -391,6 +406,7 @@ model topics {
   order_no           Int?
   quizzes            quizzes[]
   topic_vocabularies topic_vocabularies[]
+  grammar_points     grammar_points[]
   lessons            lessons?             @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([lesson_id, order_no])
@@ -479,35 +495,35 @@ model user_wallets {
 }
 
 model users {
-  id                                                        String                        @id @db.Uuid
-  email                                                     String?                       @unique @db.VarChar
-  password_hash                                             String?                       @db.VarChar
-  display_name                                              String?                       @db.VarChar
-  avatar                                                    String?                       @db.VarChar
+  id                                                        String                      @id @db.Uuid
+  email                                                     String?                     @unique @db.VarChar
+  password_hash                                             String?                     @db.VarChar
+  display_name                                              String?                     @db.VarChar
+  avatar                                                    String?                     @db.VarChar
   level                                                     Int?
   exp                                                       Int?
   streak                                                    Int?
-  longest_streak                                            Int?                            @default(0)
-  learning_goal_minutes                                     Int?                            @default(15) 
-  accepted_terms                                            Boolean?                      @default(false)
+  longest_streak                                            Int?                        @default(0)
+  learning_goal_minutes                                     Int?                        @default(15)
+  accepted_terms                                            Boolean?                    @default(false)
   jlpt_target_level                                         JLPTLevel?
-  role                                                      String                        @default("user") @db.VarChar
-  status                                                    String?                       @default("pending_verification") @db.VarChar
-  email_verified                                            Boolean?                      @default(false)
-  email_verified_at                                         DateTime?                     @db.Timestamp(6)
-  last_login_at                                             DateTime?                     @db.Timestamp(6)
-  created_at                                                DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                                                DateTime?                     @db.Timestamp(6)
-  deleted_at                                                DateTime?                     @db.Timestamp(6)
+  role                                                      String                      @default("user") @db.VarChar
+  status                                                    String?                     @default("pending_verification") @db.VarChar
+  email_verified                                            Boolean?                    @default(false)
+  email_verified_at                                         DateTime?                   @db.Timestamp(6)
+  last_login_at                                             DateTime?                   @db.Timestamp(6)
+  created_at                                                DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                                                DateTime?                   @db.Timestamp(6)
+  deleted_at                                                DateTime?                   @db.Timestamp(6)
   email_verification_tokens                                 email_verification_tokens[]
   favorite_vocabularies                                     favorite_vocabularies[]
   folders                                                   folders[]
   learning_progress                                         learning_progress[]
   payment_transactions                                      payment_transactions[]
   purchase_histories                                        purchase_histories[]
-  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]         @relation("pvp_match_histories_player1_idTousers")
-  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]         @relation("pvp_match_histories_player2_idTousers")
-  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]         @relation("pvp_match_histories_winner_idTousers")
+  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player1_idTousers")
+  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player2_idTousers")
+  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]       @relation("pvp_match_histories_winner_idTousers")
   review_histories                                          review_histories[]
   user_achievements                                         user_achievements[]
   user_equipped_items                                       user_equipped_items[]
@@ -529,6 +545,7 @@ model user_statistics_daily {
   lessons_completed Int      @default(0)
   exp_earned        Int      @default(0)
   users             users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
   @@id([user_id, stat_date])
   @@index([user_id, stat_date])
 }

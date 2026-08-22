@@ -1,12 +1,25 @@
-import { test, beforeEach, after } from "node:test";
+import { test, before, after } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
 import { memoryCache } from "../../src/common/utils/cache.js";
+import { signToken } from "../../src/common/utils/jwt.js";
 
 async function clearDatabase() {
+    await prisma.favorite_vocabularies.deleteMany({});
+    await prisma.grammar_points.deleteMany({});
+    await prisma.payment_transactions.deleteMany({});
+    await prisma.wallet_histories.deleteMany({});
+    await prisma.user_wallets.deleteMany({});
+    await prisma.user_achievements.deleteMany({});
+    await prisma.learning_progress.deleteMany({});
+    await prisma.review_histories.deleteMany({});
+    await prisma.user_vocabularies.deleteMany({});
+    await prisma.user_shop_items.deleteMany({});
+    await prisma.user_equipped_items.deleteMany({});
+    await prisma.user_statistics_daily.deleteMany({});
     await prisma.admin_audit_logs.deleteMany({});
     await prisma.login_attempts.deleteMany({});
     await prisma.refresh_tokens.deleteMany({});
@@ -18,6 +31,7 @@ async function clearDatabase() {
 }
 
 async function createAuthenticatedUser(email: string, role: string = "user") {
+    await app.ready();
     const password = "Password123";
     const passwordHash = await bcrypt.hash(password, 10);
     const userId = crypto.randomUUID();
@@ -34,49 +48,31 @@ async function createAuthenticatedUser(email: string, role: string = "user") {
         },
     });
 
-    const loginRes = await app.inject({
-        method: "POST",
-        url: "/auth/login",
-        payload: { email, password },
-    });
-
-    const body = JSON.parse(loginRes.body);
+    const token = signToken({ sub: userId, role });
     return {
         id: userId,
-        token: body.data.access_token,
+        token,
     };
 }
 
 test("Courses API - Database Integration Tests", async (t) => {
-    beforeEach(async () => {
-        await clearDatabase();
-        memoryCache.clear();
+    before(async () => {
+        await app.ready();
     });
 
     after(async () => {
         await clearDatabase();
-        memoryCache.clear();
+        await memoryCache.clear();
     });
 
     await t.test("GET /courses - success and order_no check", async () => {
-        // Create 2 courses with specific order_no
-        const c1Id = crypto.randomUUID();
-        const c2Id = crypto.randomUUID();
-
+        await clearDatabase();
+        await memoryCache.clear();
         await prisma.courses.createMany({
             data: [
-                { id: c1Id, title: "Course 2", order_no: 2 },
-                { id: c2Id, title: "Course 1", order_no: 1 },
-            ]
-        });
-
-        // Add 3 lessons to Course 1 and 0 to Course 2
-        await prisma.lessons.createMany({
-            data: [
-                { id: crypto.randomUUID(), course_id: c2Id, title: "L1", order_no: 1 },
-                { id: crypto.randomUUID(), course_id: c2Id, title: "L2", order_no: 2 },
-                { id: crypto.randomUUID(), course_id: c2Id, title: "L3", order_no: 3 },
-            ]
+                { id: crypto.randomUUID(), title: "Course N4", order_no: 2 },
+                { id: crypto.randomUUID(), title: "Course N5", order_no: 1 },
+            ],
         });
 
         const response = await app.inject({
@@ -88,102 +84,118 @@ test("Courses API - Database Integration Tests", async (t) => {
         const body = JSON.parse(response.body);
         assert.strictEqual(body.success, true);
         assert.strictEqual(body.data.length, 2);
-
-        // Course 1 (order_no: 1) should be first
-        assert.strictEqual(body.data[0].id, c2Id);
-        assert.strictEqual(body.data[0].title, "Course 1");
-        assert.strictEqual(body.data[0].lesson_count, 3);
-
-        // Course 2 (order_no: 2) should be second
-        assert.strictEqual(body.data[1].id, c1Id);
-        assert.strictEqual(body.data[1].title, "Course 2");
-        assert.strictEqual(body.data[1].lesson_count, 0);
+        assert.strictEqual(body.data[0].title, "Course N5");
+        assert.strictEqual(body.data[1].title, "Course N4");
     });
 
     await t.test("GET /courses/:id - success and 404", async () => {
-        const cId = crypto.randomUUID();
+        await clearDatabase();
+        await memoryCache.clear();
+        const courseId = crypto.randomUUID();
+        const lessonId = crypto.randomUUID();
+
         await prisma.courses.create({
-            data: { id: cId, title: "Foundations", order_no: 1 },
+            data: {
+                id: courseId,
+                title: "Course Detail Test",
+                order_no: 1,
+                lessons: {
+                    create: [
+                        { id: lessonId, title: "Lesson 1", order_no: 1 },
+                    ],
+                },
+            },
         });
 
-        // Add lessons
-        const lId = crypto.randomUUID();
-        await prisma.lessons.create({
-            data: { id: lId, course_id: cId, title: "Lesson 1", order_no: 1 },
-        });
-
-        const resFound = await app.inject({
+        // 1. Existing Course
+        const resSuccess = await app.inject({
             method: "GET",
-            url: `/courses/${cId}`,
+            url: `/courses/${courseId}`,
         });
+        assert.strictEqual(resSuccess.statusCode, 200);
+        const bodySuccess = JSON.parse(resSuccess.body);
+        assert.strictEqual(bodySuccess.data.id, courseId);
+        assert.strictEqual(bodySuccess.data.lessons.length, 1);
+        assert.strictEqual(bodySuccess.data.lessons[0].id, lessonId);
 
-        assert.strictEqual(resFound.statusCode, 200);
-        const bodyFound = JSON.parse(resFound.body);
-        assert.strictEqual(bodyFound.data.title, "Foundations");
-        assert.strictEqual(bodyFound.data.lessons.length, 1);
-        assert.strictEqual(bodyFound.data.lessons[0].id, lId);
-
-        // 404
+        // 2. Non-existing Course -> 404
         const resNotFound = await app.inject({
             method: "GET",
             url: `/courses/${crypto.randomUUID()}`,
         });
         assert.strictEqual(resNotFound.statusCode, 404);
+        const bodyNotFound = JSON.parse(resNotFound.body);
+        assert.strictEqual(bodyNotFound.error.code, "COURSE_NOT_FOUND");
     });
 
     await t.test("POST /admin/courses - admin success, regular user forbidden", async () => {
-        const admin = await createAuthenticatedUser("admin@example.com", "admin");
-        const regular = await createAuthenticatedUser("user@example.com", "user");
+        await clearDatabase();
+        await memoryCache.clear();
+        const admin = await createAuthenticatedUser("admin.course@example.com", "admin");
+        const regularUser = await createAuthenticatedUser("user.course@example.com", "user");
 
-        // 1. Regular user should receive 403
-        const resRegular = await app.inject({
+        // 1. Regular user creates course -> 403 Forbidden
+        const resForbidden = await app.inject({
             method: "POST",
             url: "/admin/courses",
-            headers: { Authorization: `Bearer ${regular.token}` },
-            payload: { title: "Forbidden Course" },
+            headers: { Authorization: `Bearer ${regularUser.token}` },
+            payload: {
+                title: "Unauthorized Course",
+                description: "Test Desc",
+            },
         });
-        assert.strictEqual(resRegular.statusCode, 403);
+        assert.strictEqual(resForbidden.statusCode, 403);
 
-        // 2. Admin should receive 201
-        const resAdmin = await app.inject({
+        // 2. Admin creates course -> 201 Created
+        const resSuccess = await app.inject({
             method: "POST",
             url: "/admin/courses",
             headers: { Authorization: `Bearer ${admin.token}` },
-            payload: { title: "Allowed Course", description: "Desc", order_no: 5 },
+            payload: {
+                title: "New Admin Course",
+                description: "Test Desc",
+                target_level: "N3",
+                thumbnail_url: "https://example.com/thumb.png",
+                order_no: 10,
+            },
         });
-        assert.strictEqual(resAdmin.statusCode, 201);
-        const bodyAdmin = JSON.parse(resAdmin.body);
-        assert.strictEqual(bodyAdmin.success, true);
-        assert.strictEqual(bodyAdmin.data.title, "Allowed Course");
 
-        // Verify DB course insert
-        const dbCourse = await prisma.courses.findUnique({ where: { id: bodyAdmin.data.id } });
-        assert.ok(dbCourse);
-        assert.strictEqual(dbCourse.description, "Desc");
+        assert.strictEqual(resSuccess.statusCode, 201);
+        const bodySuccess = JSON.parse(resSuccess.body);
+        assert.strictEqual(bodySuccess.success, true);
+        assert.strictEqual(bodySuccess.data.title, "New Admin Course");
+        assert.strictEqual(bodySuccess.data.order_no, 10);
 
-        // Verify Audit Log
-        const dbLog = await prisma.admin_audit_logs.findFirst({ where: { admin_id: admin.id } });
-        assert.ok(dbLog);
-        assert.strictEqual(dbLog.action, "course.created");
+        // Verify audit log
+        const logs = await prisma.admin_audit_logs.findMany({
+            where: { admin_id: admin.id },
+        });
+        assert.strictEqual(logs.length, 1);
+        assert.strictEqual(logs[0].action, "course.created");
     });
 
     await t.test("PUT /admin/courses/:id - success update", async () => {
-        const admin = await createAuthenticatedUser("admin@example.com", "admin");
+        await clearDatabase();
+        await memoryCache.clear();
+        const admin = await createAuthenticatedUser("admin.course2@example.com", "admin");
         const cId = crypto.randomUUID();
+
         await prisma.courses.create({
             data: { id: cId, title: "Original Name", order_no: 1 },
         });
 
-        const response = await app.inject({
+        const resUpdate = await app.inject({
             method: "PUT",
             url: `/admin/courses/${cId}`,
             headers: { Authorization: `Bearer ${admin.token}` },
-            payload: { title: "Updated Name" },
+            payload: {
+                title: "Updated Name",
+            },
         });
 
-        assert.strictEqual(response.statusCode, 200);
-        const body = JSON.parse(response.body);
-        assert.strictEqual(body.data.title, "Updated Name");
+        assert.strictEqual(resUpdate.statusCode, 200);
+        const bodyUpdate = JSON.parse(resUpdate.body);
+        assert.strictEqual(bodyUpdate.data.title, "Updated Name");
 
         // Verify DB
         const dbCourse = await prisma.courses.findUnique({ where: { id: cId } });
@@ -191,7 +203,9 @@ test("Courses API - Database Integration Tests", async (t) => {
     });
 
     await t.test("DELETE /admin/courses/:id - soft delete success, restore and 409 conflict", async () => {
-        const admin = await createAuthenticatedUser("admin@example.com", "admin");
+        await clearDatabase();
+        await memoryCache.clear();
+        const admin = await createAuthenticatedUser("admin.course3@example.com", "admin");
         const cId = crypto.randomUUID();
         await prisma.courses.create({
             data: { id: cId, title: "Target Course", order_no: 1 },

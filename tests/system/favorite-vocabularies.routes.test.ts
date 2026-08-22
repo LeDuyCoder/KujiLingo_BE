@@ -45,7 +45,6 @@ test("Favorite Vocabularies API System Tests", async (t) => {
 
     after(async () => {
         await clearDatabase();
-        await prisma.$disconnect();
     });
 
     // =========================================================================

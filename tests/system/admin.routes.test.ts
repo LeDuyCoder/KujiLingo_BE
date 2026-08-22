@@ -1,11 +1,24 @@
-import { test, beforeEach, after } from "node:test";
+import { test, before, after } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
+import { signToken } from "../../src/common/utils/jwt.js";
 
 async function clearDatabase() {
+    await prisma.favorite_vocabularies.deleteMany({});
+    await prisma.grammar_points.deleteMany({});
+    await prisma.payment_transactions.deleteMany({});
+    await prisma.wallet_histories.deleteMany({});
+    await prisma.user_wallets.deleteMany({});
+    await prisma.user_achievements.deleteMany({});
+    await prisma.learning_progress.deleteMany({});
+    await prisma.review_histories.deleteMany({});
+    await prisma.user_vocabularies.deleteMany({});
+    await prisma.user_shop_items.deleteMany({});
+    await prisma.user_equipped_items.deleteMany({});
+    await prisma.user_statistics_daily.deleteMany({});
     await prisma.admin_audit_logs.deleteMany({});
     await prisma.login_attempts.deleteMany({});
     await prisma.refresh_tokens.deleteMany({});
@@ -35,25 +48,19 @@ async function createUserInDb(email: string, role: string = "user", status: stri
 }
 
 async function createAuthenticatedUser(email: string, role: string = "user", status: string = "active") {
+    await app.ready();
     const { id, password } = await createUserInDb(email, role, status);
-
-    const loginRes = await app.inject({
-        method: "POST",
-        url: "/auth/login",
-        payload: { email, password },
-    });
-
-    const body = JSON.parse(loginRes.body);
+    const token = signToken({ sub: id, role });
     return {
         id,
-        token: body.data.access_token,
-        refresh_token: body.data.refresh_token,
+        token,
+        refresh_token: "mock-refresh-token",
     };
 }
 
 test("Admin API - Database Integration Tests", async (t) => {
-    beforeEach(async () => {
-        await clearDatabase();
+    before(async () => {
+        await app.ready();
     });
 
     after(async () => {
@@ -61,6 +68,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - success 200 (admin access)", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         await createAuthenticatedUser("user@example.com", "user");
 
@@ -80,6 +88,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - forbidden 403 (regular user access)", async () => {
+        await clearDatabase();
         const user = await createAuthenticatedUser("user@example.com", "user");
 
         const response = await app.inject({
@@ -97,6 +106,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users - filter by status", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         await createUserInDb("suspended@example.com", "user", "suspended");
 
@@ -115,6 +125,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/users/:id - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -136,6 +147,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/status - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -176,6 +188,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/status - cannot modify self 422", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
 
         const response = await app.inject({
@@ -195,6 +208,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("PUT /admin/users/:id/role - promote to admin", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 
@@ -218,6 +232,7 @@ test("Admin API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /admin/audit-logs - success 200", async () => {
+        await clearDatabase();
         const admin = await createAuthenticatedUser("admin@example.com", "admin");
         const target = await createAuthenticatedUser("target@example.com", "user");
 

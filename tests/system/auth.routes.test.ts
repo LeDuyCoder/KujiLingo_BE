@@ -9,6 +9,18 @@ import jwt from "jsonwebtoken";
 
 async function clearDatabase() {
     // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
+    await prisma.favorite_vocabularies.deleteMany({});
+    await prisma.grammar_points.deleteMany({});
+    await prisma.payment_transactions.deleteMany({});
+    await prisma.wallet_histories.deleteMany({});
+    await prisma.user_wallets.deleteMany({});
+    await prisma.user_achievements.deleteMany({});
+    await prisma.learning_progress.deleteMany({});
+    await prisma.review_histories.deleteMany({});
+    await prisma.user_vocabularies.deleteMany({});
+    await prisma.user_shop_items.deleteMany({});
+    await prisma.user_equipped_items.deleteMany({});
+    await prisma.user_statistics_daily.deleteMany({});
     await prisma.login_attempts.deleteMany({});
     await prisma.refresh_tokens.deleteMany({});
     await prisma.password_reset_tokens.deleteMany({});
@@ -58,7 +70,7 @@ test("Auth API - Database Integration Tests", async (t) => {
             method: "POST",
             url: "/auth/register",
             payload: {
-                email: "duyga544@gmail.com",
+                email: "duybeo@gmail.com",
                 password: "Password123",
                 password_confirmation: "WrongPassword",
                 display_name: "New User",
@@ -265,7 +277,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const email = "login.success@example.com";
         const password = "ValidPassword123";
         const passwordHash = await bcrypt.hash(password, 10);
-        
+
         await prisma.users.create({
             data: {
                 id: crypto.randomUUID(),
@@ -292,7 +304,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         assert.strictEqual(body.data.user.email, email);
 
         // 3. Kiểm tra DB: last_login_at và refresh_token
-        const user = await prisma.users.findUnique({ 
+        const user = await prisma.users.findUnique({
             where: { email },
             include: { refresh_tokens: true }
         });
@@ -338,7 +350,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
     await t.test("POST /auth/login - account temporarily locked 429", async () => {
         const email = "bruteforce@example.com";
-        
+
         // 1. Tạo 10 lượt failed attempts thủ công
         for (let i = 0; i < 10; i++) {
             await prisma.login_attempts.create({
@@ -363,6 +375,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     });
 
     await t.test("POST /auth/logout - success 200", async () => {
+        await clearDatabase();
         // 1. Register a user
         const email = "logout@example.com";
         const password = "Password123";
@@ -434,6 +447,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     });
 
     await t.test("POST /auth/logout - token ownership mismatch 403", async () => {
+        await clearDatabase();
         // 1. Register and login User A
         const regResA = await app.inject({
             method: "POST",
