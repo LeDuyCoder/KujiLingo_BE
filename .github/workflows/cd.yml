@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # Hoặc master tùy nhánh chính của bạn
+      - cd/github-actions
 
 jobs:
   deploy:

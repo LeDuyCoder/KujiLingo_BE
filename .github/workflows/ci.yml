@@ -6,6 +6,7 @@ on:
       - main
       - dev
       - ci/github-actions
+      - cd/github-actions
 
   pull_request:
     branches:
