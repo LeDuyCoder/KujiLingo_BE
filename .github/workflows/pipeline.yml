@@ -15,10 +15,37 @@ on:
 
 jobs:
   # ==========================================
-  # JOB 1: CI (Test & Build Check)
+  # JOB 1: Type Check
+  # ==========================================
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+
+      - name: Run Type Check
+        run: npm run typecheck
+
+  # ==========================================
+  # JOB 2: Unit / Integration Tests
   # ==========================================
   test:
-    name: Test & Build Check
+    name: Unit & Integration Tests
+    needs: typecheck # Chạy sau khi Type Check xong
     runs-on: ubuntu-latest
 
     services:
@@ -80,21 +107,42 @@ jobs:
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
 
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Run tests
+      - name: Run Unit Tests
         run: npm test
 
-      - name: Build
+  # ==========================================
+  # JOB 3: Build Verification
+  # ==========================================
+  build:
+    name: Build Project
+    needs: test # Chạy sau khi Test thành công
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+
+      - name: Run Build
         run: npm run build
 
   # ==========================================
-  # JOB 2: CD (Deploy to Debian Server)
+  # JOB 4: CD (Deploy to Server)
   # ==========================================
   deploy:
     name: Deploy to Debian Server
-    needs: test # Bắt buộc JOB 'test' phải PASS xanh hoàn toàn mới chạy tiếp
+    needs: build # Đợi toàn bộ các bước CI (Type Check -> Test -> Build) hoàn tất
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/cd/github-actions')
     runs-on: ubuntu-latest
 
