@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -14,82 +14,53 @@ on:
       - dev
 
 jobs:
+  # ==========================================
+  # JOB 1: CI (Test & Build Check)
+  # ==========================================
   test:
-    name: Test & Build
+    name: Test & Build Check
     runs-on: ubuntu-latest
 
-    # =========================
-    # PostgreSQL service
-    # =========================
     services:
       postgres:
         image: postgres:17
-
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: 123456
           POSTGRES_DB: kujilingo
-
         ports:
           - 5432:5432
-
         options: >-
           --health-cmd="pg_isready -U postgres -d kujilingo"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
-    # =========================
-    # Environment variables
-    # =========================
     env:
-      # Database
       DATABASE_URL: postgresql://postgres:123456@localhost:5432/kujilingo?schema=public
-
-      # Google OAuth
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
       GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-
-      # Mail
       MAIL_FROM_EMAIL: ${{ secrets.MAIL_FROM_EMAIL }}
       MAIL_FROM_NAME: KujiLingo
-
-      # Frontend
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-
-      # Authentication
       ALLOW_LOGIN_BEFORE_VERIFICATION: "false"
-
-      # Jisho API
       JISHO_API_URL: https://jisho.org/api/v1/search/words
 
     steps:
-      # =========================
-      # 1. Checkout
-      # =========================
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # =========================
-      # 2. Setup Node.js
-      # =========================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      # =========================
-      # 3. Install dependencies
-      # =========================
       - name: Install dependencies
         run: npm ci
 
-      # =========================
-      # 4. Generate RSA Keys for Testing
-      # =========================
       - name: Generate RSA Keys for Testing
         run: |
           openssl genrsa -out private.pem 2048
@@ -103,32 +74,41 @@ jobs:
           cat public.pem >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      # =========================
-      # 5. Generate Prisma Client
-      # =========================
       - name: Generate Prisma Client
         run: npm run prisma:generate
 
-      # =========================
-      # 6. Run database migrations
-      # =========================
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
 
-      # =========================
-      # 7. Type check
-      # =========================
       - name: Type check
         run: npm run typecheck
 
-      # =========================
-      # 8. Run tests
-      # =========================
       - name: Run tests
         run: npm test
 
-      # =========================
-      # 9. Build
-      # =========================
       - name: Build
         run: npm run build
+
+  # ==========================================
+  # JOB 2: CD (Deploy to Debian Server)
+  # ==========================================
+  deploy:
+    name: Deploy to Debian Server
+    needs: test # Bắt buộc JOB 'test' phải PASS xanh hoàn toàn mới chạy tiếp
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/cd/github-actions')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploying to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /var/www/KujiLingo_BE
+            git checkout cd/github-actions
+            git pull origin cd/github-actions
+            docker compose build --no-cache backend
+            docker compose up -d
+            docker image prune -f
