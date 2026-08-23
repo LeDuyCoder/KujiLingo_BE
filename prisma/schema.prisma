@@ -179,15 +179,19 @@ model kanji_vocabularies {
 }
 
 model kanjis {
-  id                 String               @id @db.Uuid
-  kanji              String?              @db.VarChar
-  meaning            String?
-  onyomi             String?              @db.VarChar
-  kunyomi            String?              @db.VarChar
-  stroke_count       Int?
-  jlpt               JLPTLevel?
-  kanji_vocabularies kanji_vocabularies[]
-
+  id                     String               @id @db.Uuid
+  kanji                  String?              @db.VarChar
+  meaning                String?
+  onyomi                 String?              @db.VarChar
+  kunyomi                String?              @db.VarChar
+  stroke_count           Int?
+  jlpt                   JLPTLevel?
+  radical                String?              @db.VarChar
+  stroke_order_image_url String?              @db.VarChar
+  examples               Json?                // Lưu mảng ví dụ: [{word_jp, reading, meaning_vi}]
+  created_at             DateTime             @default(now()) @db.Timestamp(6)
+  deleted_at             DateTime?            @db.Timestamp(6)
+  kanji_vocabularies     kanji_vocabularies[]
   @@index([jlpt])
   @@index([kanji])
 }

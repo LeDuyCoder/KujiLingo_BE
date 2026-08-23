@@ -7,6 +7,7 @@ import { dictionaryRoutes } from "../modules/dictionary/dictionary.routes.js";
 import { favoriteVocabulariesRoutes } from "../modules/favorite-vocabularies/index.js";
 import { grammarRoutes } from "../modules/grammar/index.js";
 import { folderRoutes } from "../modules/folder/folder.routes.js";
+import { kanjiRoutes } from "../modules/kanji/kanji.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
@@ -17,5 +18,6 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(favoriteVocabulariesRoutes);
     await app.register(grammarRoutes);
     await app.register(folderRoutes);
+    await app.register(kanjiRoutes);
 }
 
