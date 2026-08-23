@@ -25,6 +25,7 @@ async function clearDatabase() {
     await prisma.email_verification_tokens.deleteMany({});
     await prisma.lessons.deleteMany({});
     await prisma.courses.deleteMany({});
+    await prisma.folders.deleteMany({});
     await prisma.users.deleteMany({});
 }
 
