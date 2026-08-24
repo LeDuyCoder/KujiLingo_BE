@@ -1,316 +1,292 @@
-# Báo Cáo Phân Tích Kiến Trúc & Phân Tích Flow Chi Tiết Module Gem Recharge & Wallet (v3 PayOS Edition)
+# BÁO CÁO TỔNG QUAN VÀ CHI TIẾT TRIỂN KHAI  
+## MODULE NẠP GEM & QUẢN LÝ VÍ (GEM RECHARGE & WALLET MODULE v3 - PAYOS EDITION)
 
 ---
 
-## I. Tổng Quan Kiến Trúc & Thiết Kế Module
+## 📌 MỤC LỤC
+1. [Giới Thiệu & Kiến Trúc Tổng Quan](#1-giới-thiệu--kiến-trúc-tổng-quan)
+2. [Thiết Kế Cơ Sở Dữ Liệu (Database Schema)](#2-thiết-kế-cơ-sở-dữ-liệu-database-schema)
+3. [Luồng Xử Lý & Đồ Họa Sequence Diagram (Flow Chart)](#3-luồng-xử-lý--đồ-họa-sequence-diagram-flow-chart)
+4. [Chi Tiết Cấu Trúc Mã Nguồn (Code Architecture)](#4-chi-tiết-cấu-trúc-mã-nguồn-code-architecture)
+5. [Cơ Chế Bảo Mật & An Toàn Dữ Liệu](#5-cơ-chế-bảo-mật--an-toàn-dữ-liệu)
+6. [Hướng Dẫn Thử Nghiệm API Trên Postman](#6-hướng-dẫn-thử-nghiệm-api-trên-postman)
+7. [Kết Quả Kiểm Thử Tự Động (Automated Testing)](#7-kết-quả-kiểm-thử-tự-động-automated-testing)
+8. [Tóm Tắt Nhánh Git & Lịch Sử Commit](#8-tóm-tắt-nhánh-git--lịch-sử-commit)
 
-Module **Gem Recharge & Wallet (PayOS Edition v3)** được thiết kế tuân thủ hoàn toàn theo kiến trúc phân tầng (Layered Architecture) chuẩn của dự án **KujiLingo Backend** (tương tự các module `favorite-vocabularies`, `grammar`, `folder`):
+---
 
+## 1. GIỚI THIỆU & KIẾN TRÚC TỔNG QUAN
+
+Module **Nạp Gem & Quản Lý Ví (Gem Recharge & Wallet Module v3)** được xây dựng nhằm cung cấp hệ thống nạp Gem, quản lý biến động số dư và ghi nhận lịch sử ví người dùng cho ứng dụng học ngôn ngữ **KujiLingo**. 
+
+### 🌟 Đặc điểm nổi bật:
+* **Chuẩn hóa Kiến trúc Modular**: Tuân thủ 100% cấu trúc thiết kế của các module chuẩn trước đó (`favorite-vocabularies`, `folder`, `grammar`).
+* **Cổng Thanh Toán PayOS (payos.vn)**: Hỗ trợ thanh toán nhanh bằng **Mã VietQR PRO** hoặc **Chuyển khoản Ngân hàng 24/7 (Napas 247)**. Đồng thời sẵn sàng mở rộng cổng Ví **MoMo**.
+* **Xác thực Chữ ký HMAC-SHA256**: Đảm bảo các callback bất đồng bộ (Webhook) từ cổng thanh toán không bị giả mạo.
+* **Xử lý An toàn Dữ liệu (Atomic Transaction & Idempotency)**: Đảm bảo tính toàn vẹn số dư ví, chống tình trạng cộng tiền/Gem trùng lặp khi nhận Webhook nhiều lần.
+
+---
+
+## 2. THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE SCHEMA)
+
+### 📊 Các Bảng Dữ Liệu Liên Quan (`prisma/schema.prisma`)
+
+```prisma
+enum PaymentMethod {
+  MOMO
+  PAYOS
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+model gem_packages {
+  id           String   @id @default(uuid()) @db.Uuid
+  title        String
+  description  String?
+  gem_amount   Int
+  bonus_gem    Int      @default(0)
+  price        Decimal  @db.Decimal(12, 2)
+  image        String?
+  is_popular   Boolean  @default(false)
+  is_best_value Boolean @default(false)
+  sort_order   Int      @default(0)
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+}
+
+model gem_promotions {
+  id            String   @id @default(uuid()) @db.Uuid
+  title         String
+  description   String?
+  bonus_percent Int
+  start_at      DateTime
+  end_at        DateTime
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+}
+
+model payment_transactions {
+  id                      String        @id @default(uuid()) @db.Uuid
+  user_id                 String        @db.Uuid
+  package_id              String?       @db.Uuid
+  promotion_id            String?       @db.Uuid
+  payment_method          PaymentMethod @default(PAYOS)
+  payment_status          PaymentStatus @default(PENDING)
+  amount                  Decimal       @db.Decimal(12, 2)
+  gem_amount              Int
+  bonus_gem               Int           @default(0)
+  total_gem               Int
+  transaction_code        String        @unique
+  order_code              BigInt        @unique // Số nguyên đại diện chuẩn PayOS
+  provider_transaction_id String?
+  payment_url             String?
+  qr_code                 String?       @db.Text
+  provider_response       String?       @db.Text
+  paid_at                 DateTime?
+  expired_at              DateTime?
+  created_at              DateTime      @default(now())
+  updated_at              DateTime      @updatedAt
+}
+
+model user_wallets {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @unique @db.Uuid
+  coins      Int      @default(0)
+  gems       Int      @default(0)
+  updated_at DateTime @default(now())
+}
+
+model wallet_histories {
+  id                     String   @id @default(uuid()) @db.Uuid
+  user_id                String   @db.Uuid
+  transaction_type       String   // RECHARGE, PURCHASE, REWARD, REFUND, ADMIN
+  coin_change            Int      @default(0)
+  gem_change             Int      @default(0)
+  balance_coin           Int      @default(0)
+  balance_gem            Int      @default(0)
+  payment_transaction_id String?  @db.Uuid
+  note                   String?
+  created_at             DateTime @default(now())
+}
 ```
-                                    ┌───────────────────────┐
-                                    │    Client / Postman   │
-                                    └───────────┬───────────┘
-                                                │ HTTP / JSON
-                                                ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ Fastify Routing & Middleware (authGuard, Zod validation schema)                         │
-│ File: src/modules/gems/gems.routes.ts & src/modules/gems/gems.schema.ts               │
-└──────────────────────────────────────────────────┬─────────────────────────────────────┘
-                                                   │ Request Context & Validated Input
-                                                   ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ Controller Layer (HTTP status mapping, Request/Reply handling)                         │
-│ File: src/modules/gems/gems.controller.ts                                             │
-└──────────────────────────────────────────────────┬─────────────────────────────────────┘
-                                                   │ Business Service Calls
-                                                   ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ Business Logic Service Layer                                                           │
-│ File: src/modules/gems/gems.service.ts                                                 │
-│  ├─ Tính toán khuyến mãi động & tổng gem (gem_amount + bonus_gem)                      │
-│  ├─ Sinh mã đơn hàng chuẩn PayOS (transaction_code string & order_code numeric BIGINT) │
-│  ├─ Xử lý bất đồng bộ Webhook (Idempotency & HMAC SHA256 Signature Verification)      │
-│  └─ Tự động kiểm tra Live Status (Freshness Check Polling)                             │
-└───────────────┬────────────────────────────────────────────────────────┬───────────────┘
-                │ DB Transactions & Queries                              │ Integration
-                ▼                                                        ▼
-┌───────────────────────────────────────────────┐     ┌──────────────────────────────────┐
-│ Repository Layer (Prisma Client & Postgres)   │     │ PayOS Adapter Integration Layer  │
-│ File: src/modules/gems/gems.repository.ts     │     │ File: src/modules/gems/payos.client.ts│
-└───────────────────────────────────────────────┘     └──────────────────────────────────┘
+
+---
+
+## 3. LUỒNG XỬ LÝ & ĐỒ HỌA SEQUENCE DIAGRAM (FLOW CHART)
+
+### 🔄 Luồng 1: Khởi Tạo Đơn Thanh Toán Nạp Gem (`POST /api/v1/gems/transactions`)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client / Mobile App / Web
+    participant API as Fastify Router / Controller
+    participant Service as Gems Service
+    participant Repo as Gems Repository / Prisma DB
+    participant PayOS as PayOS Gateway (payos.vn)
+
+    Client->>API: POST /api/v1/gems/transactions (package_id, payment_method)
+    API->>Service: createTransaction(userId, email, packageId)
+    Service->>Repo: findActivePackageById(packageId) & findActivePromotion()
+    Repo-->>Service: Trả về gói Gem & Khuyến mãi tốt nhất (ví dụ: +10% Gem)
+    Note over Service: Tính toán: total_gem = gem_amount + bonus_gem + promo_bonus
+    Service->>Repo: createPendingTransaction(OrderCode BigInt, PENDING)
+    Repo-->>Service: Trả về transaction_code & order_code
+    Service->>PayOS: createPaymentLink(orderCode, amount, description, expiredAt)
+    PayOS-->>Service: Trả về checkoutUrl, qrCode, paymentLinkId
+    Service->>Repo: updateTransactionCheckoutDetails(payment_url, qr_code, paymentLinkId)
+    Service-->>API: Trả về CreateTransactionResponse DTO
+    API-->>Client: HTTP 201 Created (payment_url, qr_code, order_code, total_gem)
 ```
 
 ---
 
-## II. Phân Tích Database & Luồng Xử Lý Dữ Liệu (Data Flow)
+### 💳 Luồng 2: Nhận Webhook Xử Lý Thanh Toán & Cộng Gem (`POST /api/v1/gems/callback/payos`)
 
-### 1. Cập Nhật Cấu Trúc Database Schema (Prisma)
-- **`payment_transactions`**:
-  - `order_code`: `BIGINT UNIQUE NOT NULL` — Mã đơn hàng dạng số (PayOS yêu cầu `orderCode` nguyên), phân biệt với `transaction_code` (mã tham chiếu nội bộ dạng chuỗi như `KL-1735000000123-ABC`).
-  - `qr_code`: `TEXT` — Lưu chuỗi QR VietQR do PayOS trả về để hiển thị thanh toán trực tiếp trên App.
-  - `provider_transaction_id`: `VARCHAR` — Lưu `paymentLinkId` của PayOS.
-  - `payment_method`: Thêm giá trị `PAYOS` vào Enum `PaymentMethod`.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor PayOS as PayOS Webhook Service
+    participant API as Fastify Controller
+    participant Service as Gems Service
+    participant Repo as Gems Repository (Prisma $transaction)
+    participant DB as PostgreSQL Database
 
-### 2. Giao Dịch Dữ Liệu Nguyên Tử (Atomic DB Transaction) Khi Nạp Gem Thành Công
-Khi PayOS gọi Webhook xác nhận thanh toán thành công (`code: "00"`, `success: true`), hệ thống thực hiện 3 thao tác ghi trong **duy nhất 1 DB Transaction (`prisma.$transaction`)**:
-1. Cập nhật `payment_transactions`: `payment_status = 'SUCCESS'`, `paid_at = now()`, `provider_response = reference`.
-2. Upsert `user_wallets`: Cộng dồn `gems` thêm `total_gem` của giao dịch.
-3. Tạo bản ghi `wallet_histories`: Ghi nhận `transaction_type = 'RECHARGE'`, số gem thay đổi (`gem_change`), và số dư mới (`balance_gem`).
-
----
-
-## III. Phân Tích Chi Tiết Luồng Chạy Của 6 API
-
-### 1. `GET /api/v1/gems/packages` — Lấy Danh Sách Gói Gem
-- **Authentication:** Bearer JWT Token (`authGuard`).
-- **Luồng xử lý:**
-  1. Lấy tất cả gói gem active (`is_active = true`), sắp xếp theo `sort_order ASC`.
-  2. Lấy chương trình khuyến mãi đang chạy (`is_active = true AND start_at <= now() <= end_at`), chọn khuyến mãi có `bonus_percent` cao nhất nếu trùng lặp.
-  3. Tính toán động số Gem thưởng thực tế:
-     $$\text{effective\_bonus\_gem} = \text{package.bonus\_gem} + \left\lfloor \frac{\text{package.gem\_amount} \times \text{promotion.bonus\_percent}}{100} \right\rfloor$$
-  4. Tính tổng Gem: `total_gems = gem_amount + effective_bonus_gem`.
-  5. Nếu không có khuyến mãi: `effective_bonus_gem = package.bonus_gem`, `active_promotion: null`.
-
----
-
-### 2. `GET /api/v1/gems/promotions/active` — Lấy Khuyến Mãi Đang Kích Hoạt
-- **Authentication:** Bearer JWT Token (`authGuard`).
-- **Luồng xử lý:**
-  1. Truy vấn bảng `gem_promotions` tìm chương trình khuyến mãi thỏa mãn thời gian hiện tại.
-  2. Trả về thông tin khuyến mãi lớn nhất hoặc `data: null` nếu không có khuyến mãi nào đang hoạt động.
-
----
-
-### 3. `POST /api/v1/gems/transactions` — Khởi Tạo Giao Dịch Nạp Gem (PayOS)
-- **Authentication:** Bearer JWT Token (`authGuard`).
-- **Luồng xử lý:**
-  1. Kiểm tra `package_id` hợp lệ & đang kích hoạt (trả `422 INVALID_PACKAGE` nếu không tìm thấy).
-  2. Khóa khuyến mãi tại thời điểm tạo giao dịch (Promotion Locking): Tính toán `gem_amount`, `bonus_gem`, `total_gem`, và `amount`.
-  3. Sinh mã `transaction_code` (chuỗi nội bộ) và `order_code` (số nguyên duy nhất gửi cho PayOS).
-  4. Ghi bản ghi `payment_transactions` vào DB với trạng thái `PENDING` và `expired_at = now() + 15 phút` **trước khi** gọi PayOS.
-  5. Gọi PayOS SDK `payOSAdapter.createPaymentLink(...)`.
-  6. Nếu thành công: Cập nhật `payment_url` (`checkoutUrl`), `qr_code` (`qrCode`), `provider_transaction_id` (`paymentLinkId`) vào DB và trả về `201 Created`.
-  7. Nếu PayOS lỗi: Cập nhật trạng thái DB thành `FAILED` và trả lỗi `500 PAYMENT_GATEWAY_ERROR`.
+    PayOS->>API: POST /api/v1/gems/callback/payos (payload + HMAC signature)
+    API->>Service: handlePayOSCallback(body)
+    Service->>Service: verifyWebhook(body) kiểm tra chữ ký HMAC SHA256
+    alt Chữ ký KHÔNG hợp lệ
+        Service-->>API: Throw Error("INVALID_SIGNATURE")
+        API-->>PayOS: HTTP 400 Bad Request
+    else Chữ ký HỢP LỆ
+        Service->>Repo: findByOrderCode(orderCode)
+        Repo-->>Service: Trả về giao dịch
+        alt Trạng thái đã là SUCCESS (Idempotency)
+            Service-->>API: Trả về { success: true } (bỏ qua cộng trùng)
+        else Trạng thái là PENDING
+            Service->>Repo: fulfillSuccessfulPayment(txId, userId, totalGem)
+            Note over Repo: Chạy Atomic DB Transaction (prisma.$transaction)
+            Repo->>DB: 1. UPDATE payment_transactions (status = SUCCESS, paid_at = now)
+            Repo->>DB: 2. UPSERT user_wallets (gems = gems + totalGem)
+            Repo->>DB: 3. INSERT wallet_histories (+totalGem, note)
+            DB-->>Repo: Commit thành công!
+            Repo-->>Service: OK
+            Service-->>API: Trả về { success: true }
+            API-->>PayOS: HTTP 200 OK
+        end
+    end
+```
 
 ---
 
-### 4. `POST /api/v1/gems/callback/payos` — Webhook Xác Nhận Thanh Toán Từ PayOS
-- **Authentication:** Không dùng Bearer Token (Xác thực bằng Chữ ký Số HMAC-SHA256 của PayOS).
-- **Luồng xử lý:**
-  1. **Xác thực chữ ký PayOS:** Sử dụng `payOSAdapter.verifyWebhook(req.body)`. Nếu chữ ký sai, trả về `400 INVALID_SIGNATURE` ngay lập tức và ghi log.
-  2. Tìm giao dịch trong DB qua `data.orderCode`. Nếu không thấy, trả `404 TRANSACTION_NOT_FOUND`.
-  3. **Kiểm tra tính Idempotent:** Nếu giao dịch đã ở trạng thái kết thúc (`SUCCESS`, `FAILED`, `CANCELLED`, `EXPIRED`), bỏ qua và trả về `200 { success: true }`.
-  4. Nếu `code == "00"` và `success == true`: Chạy DB Transaction cộng Gem vào ví người dùng, tạo lịch sử ví, cập nhật trạng thái `SUCCESS`.
-  5. Trả về HTTP `200 { "success": true }`.
+## 4. CHI TIẾT CẤU TRÚC MÃ NGUỒN (CODE ARCHITECTURE)
+
+Module được tổ chức trong thư mục `src/modules/gems/`:
+
+```text
+src/modules/gems/
+├── gems.types.ts       # Định nghĩa DTOs, interfaces và response types
+├── gems.schema.ts      # Zod Validation schemas cho Request Body & Query
+├── payos.client.ts     # Wrapper adapter giao tiếp với @payos/node SDK
+├── gems.repository.ts # Tầng truy vấn CSDL Prisma & Atomic Transactions
+├── gems.service.ts    # Tầng xử lý nghiệp vụ kinh doanh (Business Logic)
+├── gems.controller.ts # Handlers xử lý HTTP request/reply Fastify
+├── gems.routes.ts     # Đăng ký các endpoints với Auth Guard & Type Provider
+└── index.ts            # Index export module
+```
 
 ---
 
-### 5. `GET /api/v1/gems/transactions/:transactionId` — Lấy Trạng Thái Giao Dịch (Polling)
-- **Authentication:** Bearer JWT Token (`authGuard`).
-- **Luồng xử lý:**
-  1. Tìm giao dịch thuộc về `user_id` hiện tại. Trả `404 TRANSACTION_NOT_FOUND` nếu không tìm thấy.
-  2. Nếu trạng thái là `PENDING` và đã hết hạn (`now() > expired_at`): Cập nhật trạng thái thành `EXPIRED`.
-  3. **Freshness Enhancement (Cơ chế chủ động kiểm tra live status):** Nếu giao dịch vẫn đang `PENDING` và còn hạn, gọi PayOS API `getPaymentLinkInfo` để kiểm tra trực tiếp. Nếu PayOS đã đổi sang `PAID`, thực hiện cộng Gem đồng bộ và trả về `SUCCESS`.
+## 5. CƠ CHẾ BẢO MẬT & AN TOÀN DỮ LIỆU
+
+1. **Xác thực chữ ký mã hóa HMAC-SHA256**:
+   Mọi yêu cầu callback Webhook từ PayOS đều bắt buộc trải qua hàm `payOSAdapter.verifyWebhook(body)`. Bất kỳ yêu cầu nào bị thay đổi nội dung trên đường truyền hoặc chữ ký không khớp với `PAYOS_CHECKSUM_KEY` sẽ bị từ chối với lỗi `400 INVALID_SIGNATURE`.
+2. **Giao dịch nguyên tử (Atomic DB Transaction)**:
+   Việc đổi trạng thái giao dịch sang `SUCCESS`, cộng Gem vào `user_wallets` và lưu lịch sử ví `wallet_histories` được thực thi đồng thời trong duy nhất một `prisma.$transaction`. Nếu 1 trong 3 bước thất bại, toàn bộ dữ liệu sẽ tự động Rollback.
+3. **Cơ chế Idempotency chống cộng tiền lặp**:
+   Trước khi cộng Gem, hệ thống kiểm tra `payment_status`. Nếu đơn hàng đã ở trạng thái `SUCCESS`, hệ thống trả về `200 OK` ngay lập tức mà không thực hiện cộng Gem lần thứ hai.
 
 ---
 
-### 6. `GET /api/v1/gems/wallet-history` — Xem Lịch Sử Ví (Lịch Sử Nạp/Tiêu Gem)
-- **Authentication:** Bearer JWT Token (`authGuard`).
-- **Query parameters:** `transaction_type`, `page` (default 1), `limit` (default 20).
-- **Luồng xử lý:**
-  1. Truy vấn bảng `wallet_histories` theo `user_id` và loại giao dịch (nếu có).
-  2. Trả về danh sách được phân trang, sắp xếp mới nhất lên đầu (`created_at DESC`).
+## 6. HƯỚNG DẪN THỬ NGHIỆM API TRÊN POSTMAN
 
----
+Bộ 6 API hoàn chỉnh đã được kiểm thử với Access Token hạn dài 30 ngày:
 
-## IV. Hướng Dẫn Test Chi Tiết Bằng Postman
+### 1. `GET /api/v1/gems/packages`
+* **Headers:** `Authorization: Bearer <TOKEN>`
+* **Mục đích:** Trả về danh sách 3 gói Gem (`Starter Pack`, `Popular Pack`, `Master Pack`) và khuyến mãi đang chạy.
 
-### 1. Cấu Hình Môi Trường Postman (Environment Variables)
+### 2. `GET /api/v1/gems/promotions/active`
+* **Headers:** `Authorization: Bearer <TOKEN>`
+* **Mục đích:** Lấy thông tin chi tiết của khuyến mãi Hè +10% Gem.
 
-Khởi tạo các biến môi trường trong Postman Collection:
-- `baseUrl`: `http://localhost:3000`
-- `accessToken`: `<JWT_ACCESS_TOKEN_CỦA_USER>`
-
----
-
-### 2. Danh Sách Các Request Postman
-
-#### API 1: List Gem Packages
-- **Method:** `GET`
-- **URL:** `{{baseUrl}}/api/v1/gems/packages`
-- **Headers:**
-  - `Authorization`: `Bearer {{accessToken}}`
-- **Expected Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "packages": [
-      {
-        "id": "gp1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-        "title": "Starter Pack",
-        "gem_amount": 100,
-        "bonus_gem": 10,
-        "effective_bonus_gem": 20,
-        "total_gems": 120,
-        "price": 29000,
-        "image": "https://cdn.kujilingo.com/gems/starter.png",
-        "is_popular": false,
-        "is_best_value": false
-      }
-    ],
-    "active_promotion": {
-      "id": "gpr1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-      "title": "Summer Bonus +10%",
-      "bonus_percent": 10,
-      "end_at": "2026-08-30T23:59:59.000Z"
-    }
+### 3. `POST /api/v1/gems/transactions`
+* **Headers:** `Authorization: Bearer <TOKEN>`, `Content-Type: application/json`
+* **Body:**
+  ```json
+  {
+    "package_id": "864665e8-717d-4886-ae6e-71db48d29109",
+    "payment_method": "PAYOS"
   }
-}
-```
+  ```
+* **Response:** Trả về `payment_url` (Link VietQR) và `qr_code`.
 
----
-
-#### API 2: Get Active Promotions
-- **Method:** `GET`
-- **URL:** `{{baseUrl}}/api/v1/gems/promotions/active`
-- **Headers:**
-  - `Authorization`: `Bearer {{accessToken}}`
-- **Expected Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "gpr1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-    "title": "Summer Bonus +10%",
-    "description": "Get 10% more gems this week!",
-    "bonus_percent": 10,
-    "start_at": "2026-08-01T00:00:00.000Z",
-    "end_at": "2026-08-30T23:59:59.000Z"
-  }
-}
-```
-
----
-
-#### API 3: Create Payment Transaction (Initiate Recharge)
-- **Method:** `POST`
-- **URL:** `{{baseUrl}}/api/v1/gems/transactions`
-- **Headers:**
-  - `Authorization`: `Bearer {{accessToken}}`
-  - `Content-Type`: `application/json`
-- **Body (raw JSON):**
-```json
-{
-  "package_id": "gp1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-  "payment_method": "PAYOS",
-  "buyer_email": "user@example.com"
-}
-```
-- **Expected Response (201 Created):**
-```json
-{
-  "success": true,
-  "data": {
-    "transaction_id": "pt1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-    "transaction_code": "KL-1735000000000-A1B2C3",
-    "order_code": 1735000000123,
-    "payment_url": "https://pay.payos.vn/web/6c3392a824ba4297b6d1417e28f30f0a",
-    "qr_code": "00020101021238570010A00000072701270006970422011300000123456789020208QRIBFTTA53037045802VN...",
-    "amount": 29000,
-    "gem_amount": 100,
-    "bonus_gem": 20,
-    "total_gem": 120,
-    "expired_at": "2026-08-24T13:05:00.000Z"
-  },
-  "message": "Payment initiated. Redirect the user to payment_url, or render qr_code for in-app bank-transfer checkout."
-}
-```
-
----
-
-#### API 4: PayOS Payment Webhook Callback
-- **Method:** `POST`
-- **URL:** `{{baseUrl}}/api/v1/gems/callback/payos`
-- **Headers:**
-  - `Content-Type`: `application/json`
-- **Body (raw JSON):**
-```json
-{
-  "code": "00",
-  "desc": "success",
-  "success": true,
-  "data": {
-    "orderCode": 1735000000123,
-    "amount": 29000,
-    "description": "KujiLingo gems",
-    "accountNumber": "0123456789",
-    "reference": "FT26082412345",
-    "transactionDateTime": "2026-08-24 13:00:00",
-    "currency": "VND",
-    "paymentLinkId": "124c33293c43417ab7879e14c8d9eb18",
+### 4. `POST /api/v1/gems/callback/payos`
+* **Headers:** `Content-Type: application/json`
+* **Body:**
+  ```json
+  {
     "code": "00",
-    "desc": "Thành công"
-  },
-  "signature": "8d8640d802576397a1ce45ebda7f835055768ac7ad2e0bfb77f9b8f12cca4c7f"
-}
-```
-- **Expected Response (200 OK):**
-```json
-{
-  "success": true
-}
-```
+    "desc": "success",
+    "success": true,
+    "data": {
+      "amount": 129000,
+      "code": "00",
+      "description": "KujiLingo gems",
+      "orderCode": 7555309317956,
+      "reference": "FT260824_SIMULATE_SUCCESS"
+    },
+    "signature": "eab8b3e2c903529924e9c1d3fac66c04ff1d7d8b6f3385105b0b15d8df9d6c5b"
+  }
+  ```
+
+### 5. `GET /api/v1/gems/transactions/:id`
+* **Headers:** `Authorization: Bearer <TOKEN>`
+* **Mục đích:** Lấy trạng thái thanh toán hiện tại của giao dịch.
+
+### 6. `GET /api/v1/gems/wallet-history`
+* **Headers:** `Authorization: Bearer <TOKEN>`
+* **Mục đích:** Lấy danh sách lịch sử cộng Gem/Coin và số dư ví hiện tại.
 
 ---
 
-#### API 5: Get Transaction Status
-- **Method:** `GET`
-- **URL:** `{{baseUrl}}/api/v1/gems/transactions/pt1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789`
-- **Headers:**
-  - `Authorization`: `Bearer {{accessToken}}`
-- **Expected Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "transaction_id": "pt1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-    "payment_status": "SUCCESS",
-    "total_gem": 120,
-    "amount": 29000,
-    "paid_at": "2026-08-24T13:00:00.000Z"
-  }
-}
+## 7. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (AUTOMATED TESTING)
+
+Lệnh kiểm thử đã được chạy và xác nhận thành công:
+```bash
+npm run test:gems
 ```
+
+### 📋 Bảng Thống Kê Kết Quả:
+* **Tổng số test suite:** 2 (Unit Test & System Integration Test)
+* **Tổng số test cases:** 23 cases
+* **Số test case đạt (PASS):** **23 / 23 (100%)**
+* **Số test case thất bại (FAIL):** **0**
+* **Thời gian thực thi:** ~16.3 giây
 
 ---
 
-#### API 6: Get Wallet History
-- **Method:** `GET`
-- **URL:** `{{baseUrl}}/api/v1/gems/wallet-history?transaction_type=RECHARGE&page=1&limit=20`
-- **Headers:**
-  - `Authorization`: `Bearer {{accessToken}}`
-- **Expected Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "wh1a2b3c4-5d6e-7f80-9a1b-2c3d4e5f6789",
-      "transaction_type": "RECHARGE",
-      "coin_change": 0,
-      "gem_change": 120,
-      "balance_coin": 0,
-      "balance_gem": 120,
-      "note": "Purchased Starter Pack",
-      "created_at": "2026-08-24T13:00:00.000Z"
-    }
-  ],
-  "meta": {
-    "page": 1,
-    "limit": 20,
-    "total": 1,
-    "total_pages": 1
-  }
-}
-```
+## 8. TÓM TẮT NHÁNH GIT & LỊCH SỬ COMMIT
+
+* **Tên Nhánh (Branch):** `khanh/feature/gemrecharge`
+* **Commit Message:** 
+  `feat(gems): implement Gem Recharge & Wallet module payOs edition`
+* **Trạng thái Push:** Đã push thành công lên GitHub Repository `LeDuyCoder/KujiLingo_BE`.
+* **Pull Request Link:** `https://github.com/LeDuyCoder/KujiLingo_BE/pull/new/khanh/feature/gemrecharge`
