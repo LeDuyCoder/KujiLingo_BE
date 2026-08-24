@@ -86,6 +86,10 @@ jobs:
 
       JISHO_API_URL: https://jisho.org/api/v1/search/words
 
+      PAYOS_CLIENT_ID: ${{ secrets.PAYOS_CLIENT_ID }}
+      PAYOS_CLIENT_SECRET: ${{ secrets.PAYOS_CLIENT_SECRET }}
+      PAYOS_CHECKSUM_KEY: ${{ secrets.PAYOS_CHECKSUM_KEY }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

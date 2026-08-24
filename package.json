@@ -23,6 +23,8 @@
     "seed:grammar": "node --import tsx scripts/seed-grammar.ts",
     "test:folder": "node --import tsx --import ./tests/setup.ts --test tests/system/folder.routes.test.ts",
     "test:leaderboard": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/leaderboard.service.test.ts tests/system/leaderboard.routes.test.ts",
+    "test:lessons": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/lessons.service.test.ts tests/system/lessons.routes.test.ts",
+    "test:topics": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/topics.service.test.ts tests/system/topics.routes.test.ts",
     "test:learning-progress": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/learning-progress.service.test.ts tests/system/learning-progress.routes.test.ts",
     "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
     "mail:test": "node --import tsx scripts/test-mail.ts",
