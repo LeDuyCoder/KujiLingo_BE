@@ -17,6 +17,8 @@ import {
     updateCourseBodySchema,
 } from "./courses.schema.js";
 
+const looseUuid = z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, "Invalid UUID format.");
+
 export async function coursesRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
 
@@ -38,7 +40,7 @@ export async function coursesRoutes(app: FastifyInstance) {
                         success: z.boolean(),
                         data: z.array(
                             z.object({
-                                id: z.string().uuid(),
+                                id: looseUuid,
                                 title: z.string().nullable(),
                                 description: z.string().nullable(),
                                 image: z.string().nullable(),
@@ -80,13 +82,13 @@ export async function coursesRoutes(app: FastifyInstance) {
                     200: z.object({
                         success: z.boolean(),
                         data: z.object({
-                            id: z.string().uuid(),
+                            id: looseUuid,
                             title: z.string().nullable(),
                             description: z.string().nullable(),
                             image: z.string().nullable(),
                             lessons: z.array(
                                 z.object({
-                                    id: z.string().uuid(),
+                                    id: looseUuid,
                                     title: z.string().nullable(),
                                     description: z.string().nullable(),
                                     order_no: z.number().nullable(),
@@ -132,7 +134,7 @@ export async function coursesRoutes(app: FastifyInstance) {
                         201: z.object({
                             success: z.boolean(),
                             data: z.object({
-                                id: z.string().uuid(),
+                                id: looseUuid,
                                 title: z.string().nullable(),
                                 order_no: z.number().nullable(),
                             }),
@@ -174,7 +176,7 @@ export async function coursesRoutes(app: FastifyInstance) {
                         200: z.object({
                             success: z.boolean(),
                             data: z.object({
-                                id: z.string().uuid(),
+                                id: looseUuid,
                                 title: z.string().nullable(),
                             }),
                             message: z.string(),

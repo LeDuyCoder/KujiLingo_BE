@@ -16,8 +16,10 @@ export const listCoursesQuerySchema = z.object({
 
 export type ListCoursesQuery = z.infer<typeof listCoursesQuerySchema>;
 
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
 export const courseIdParamsSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string().regex(uuidRegex, "Invalid UUID format."),
 });
 
 export type CourseIdParams = z.infer<typeof courseIdParamsSchema>;
