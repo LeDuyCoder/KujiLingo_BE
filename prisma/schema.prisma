@@ -544,6 +544,8 @@ model users {
   admin_audit_logs                                          admin_audit_logs[]
   user_statistics_daily                                     user_statistics_daily[]
   leaderboard_snapshots                                     leaderboard_snapshots[]
+  srs_cards                                                 srs_cards[]
+  srs_review_histories                                      srs_review_histories[]
 }
 
 model user_statistics_daily {
@@ -552,6 +554,7 @@ model user_statistics_daily {
   minutes_studied   Int      @default(0)
   lessons_completed Int      @default(0)
   exp_earned        Int      @default(0)
+  words_reviewed    Int      @default(0)
   users             users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@id([user_id, stat_date])
@@ -789,4 +792,60 @@ enum WordType {
   PARTICLE
   CONJUNCTION
   EXPRESSION
+}
+
+model srs_cards {
+  id                   String                 @id @db.Uuid
+  user_id              String                 @db.Uuid
+  item_type            SRSItemType
+  item_id              String                 @db.Uuid
+  ease_factor          Decimal                @default(2.5) @db.Decimal(4, 2)
+  interval_days        Int                    @default(0)
+  repetitions          Int                    @default(0)
+  due_at               DateTime               @db.Timestamp(6)
+  state                SRSState               @default(new)
+  created_at           DateTime               @default(now()) @db.Timestamp(6)
+  updated_at           DateTime               @updatedAt @db.Timestamp(6)
+  users                users                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  srs_review_histories srs_review_histories[]
+
+  @@unique([user_id, item_type, item_id])
+  @@index([user_id, due_at])
+}
+
+model srs_review_histories {
+  id                   String      @id @db.Uuid
+  srs_card_id          String      @db.Uuid
+  user_id              String      @db.Uuid
+  rating               SRSRating
+  interval_before_days Int
+  interval_after_days  Int
+  ease_factor_before   Decimal     @db.Decimal(4, 2)
+  ease_factor_after    Decimal     @db.Decimal(4, 2)
+  reviewed_at          DateTime    @db.Timestamp(6)
+  srs_cards            srs_cards   @relation(fields: [srs_card_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([srs_card_id])
+}
+
+enum SRSItemType {
+  vocabulary
+  kanji
+  grammar
+}
+
+enum SRSState {
+  new
+  learning
+  review
+  relearning
+}
+
+enum SRSRating {
+  again
+  hard
+  good
+  easy
 }

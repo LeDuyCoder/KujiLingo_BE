@@ -14,6 +14,7 @@ import { lessonsRoutes } from "../modules/lessons/index.js";
 import { topicsRoutes } from "../modules/topics/index.js";
 import { shopRoutes } from "../modules/shop/index.js";
 import { gemsRoutes } from "../modules/gems/index.js";
+import { srsRoutes } from "../modules/srs/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
@@ -31,4 +32,5 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(lessonsRoutes);
     await app.register(topicsRoutes);
     await app.register(shopRoutes);
+    await app.register(srsRoutes);
 }
