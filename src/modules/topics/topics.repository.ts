@@ -16,6 +16,22 @@ export const topicsRepository = {
     },
 
     /**
+     * Find active grammar points linked to a topic
+     */
+    async findGrammarPointsByTopicId(topicId: string, tx?: TransactionClient) {
+        const client = tx || prisma;
+        return client.grammar_points.findMany({
+            where: {
+                topic_id: topicId,
+                deleted_at: null
+            },
+            orderBy: {
+                created_at: "asc"
+            }
+        });
+    },
+
+    /**
      * Find vocabularies linked to a topic
      */
     async findVocabulariesByTopicId(topicId: string, tx?: TransactionClient) {

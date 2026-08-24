@@ -18,7 +18,11 @@ export const topicsService = {
                 throw new Error("TOPIC_NOT_FOUND");
             }
 
-            const vocabularies = await topicsRepository.findVocabulariesByTopicId(topicId);
+            const [vocabularies, grammarPoints] = await Promise.all([
+                topicsRepository.findVocabulariesByTopicId(topicId),
+                topicsRepository.findGrammarPointsByTopicId(topicId)
+            ]);
+
             const vocabIds = vocabularies.map(v => v.id);
 
             // Fetch primary meanings
@@ -58,13 +62,24 @@ export const topicsService = {
                 };
             });
 
+            const grammarList = grammarPoints.map(g => ({
+                id: g.id,
+                title_jp: g.title_jp || g.title || "",
+                structure: g.structure,
+                meaning_vi: g.meaning_vi || g.meaning || "",
+                explanation: g.explanation || g.usage || null,
+                usage: g.usage || null,
+                jlpt_level: g.jlpt_level || g.jlpt || "N5"
+            }));
+
             cached = {
                 id: topic.id,
                 lesson_id: topic.lesson_id,
                 title: topic.title,
                 description: topic.description,
                 image: topic.image,
-                vocabularies: vocabList
+                vocabularies: vocabList,
+                grammar_points: grammarList
             };
 
             memoryCache.set(cacheKey, cached, 3600); // 1 hour TTL

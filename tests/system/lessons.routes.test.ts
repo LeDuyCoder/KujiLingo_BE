@@ -1,12 +1,12 @@
 import { test, mock, beforeEach } from "node:test";
 import assert from "node:assert";
 import app from "../../src/app.js";
-import { topicsRepository } from "../../src/modules/topics/topics.repository.js";
+import { lessonsRepository } from "../../src/modules/lessons/lessons.repository.js";
 import { authRepository } from "../../src/modules/auth/auth.repository.js";
 import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 import { signToken } from "../../src/common/utils/jwt.js";
 
-test("Topics Routes - System Tests", async (t) => {
+test("Lessons Routes - System Tests", async (t) => {
     const adminUserId = "723b10b0-394e-4f7f-85db-e877de25272a";
     const regularUserId = "11111111-2222-4333-8444-555555555555";
     let adminToken: string;
@@ -31,34 +31,33 @@ test("Topics Routes - System Tests", async (t) => {
         });
     });
 
-    await t.test("GET /api/v1/topics/:id - returns 200 with topic details (Public)", async () => {
-        mock.method(topicsRepository, "findById", async () => ({
+    await t.test("GET /api/v1/lessons/{id} - returns 200 with lesson details (Public)", async () => {
+        mock.method(lessonsRepository, "findLessonDetail", async () => ({
             id: "723b10b0-394e-4f7f-85db-e877de25272a",
-            lesson_id: "10000000-0000-4000-8000-000000000001",
+            course_id: "10000000-0000-4000-8000-000000000001",
             title: "Greetings",
             description: "Say hello",
-            image: "img.png"
+            topics: []
         }));
-        mock.method(topicsRepository, "findVocabulariesByTopicId", async () => []);
-        mock.method(topicsRepository, "findMeaningsByVocabulariesAndLanguages", async () => []);
-        mock.method(topicsRepository, "findGrammarPointsByTopicId", async () => []);
 
         const response = await app.inject({
             method: "GET",
-            url: "/api/v1/topics/723b10b0-394e-4f7f-85db-e877de25272a",
+            url: "/api/v1/lessons/723b10b0-394e-4f7f-85db-e877de25272a",
         });
 
+        if (response.statusCode !== 200) {
+            console.error("GET DETAIL ERROR PAYLOAD:", response.payload);
+        }
         assert.strictEqual(response.statusCode, 200);
         const body = JSON.parse(response.payload);
         assert.strictEqual(body.success, true);
         assert.strictEqual(body.data.title, "Greetings");
-        assert.deepStrictEqual(body.data.grammar_points, []);
     });
 
-    await t.test("GET /api/v1/topics/:id - returns 400 if ID is not a valid loose UUID", async () => {
+    await t.test("GET /api/v1/lessons/{id} - returns 400 if ID is not a valid UUID", async () => {
         const response = await app.inject({
             method: "GET",
-            url: "/api/v1/topics/invalid-uuid",
+            url: "/api/v1/lessons/invalid-uuid",
         });
 
         assert.strictEqual(response.statusCode, 400);
@@ -67,33 +66,33 @@ test("Topics Routes - System Tests", async (t) => {
         assert.strictEqual(body.error.code, "VALIDATION_ERROR");
     });
 
-    await t.test("POST /api/v1/admin/topics - returns 401 if unauthenticated", async () => {
+    await t.test("POST /api/v1/admin/lessons - returns 401 if unauthenticated", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/api/v1/admin/topics",
+            url: "/api/v1/admin/lessons",
             headers: { "content-type": "application/json" },
-            payload: JSON.stringify({ lesson_id: "10000000-0000-4000-8000-000000000001", title: "New Topic" })
+            payload: JSON.stringify({ course_id: "10000000-0000-4000-8000-000000000001", title: "New Lesson" })
         });
 
         assert.strictEqual(response.statusCode, 401);
     });
 
-    await t.test("POST /api/v1/admin/topics - returns 403 if role is not admin", async () => {
+    await t.test("POST /api/v1/admin/lessons - returns 403 if role is not admin", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/api/v1/admin/topics",
+            url: "/api/v1/admin/lessons",
             headers: { authorization: `Bearer ${userToken}`, "content-type": "application/json" },
-            payload: JSON.stringify({ lesson_id: "10000000-0000-4000-8000-000000000001", title: "New Topic" })
+            payload: JSON.stringify({ course_id: "10000000-0000-4000-8000-000000000001", title: "New Lesson" })
         });
 
         assert.strictEqual(response.statusCode, 403);
     });
 
-    await t.test("POST /api/v1/admin/topics - returns 201 on success (Admin)", async () => {
-        mock.method(topicsRepository, "checkLessonExists", async () => true);
-        mock.method(topicsRepository, "createTopic", async () => ({
+    await t.test("POST /api/v1/admin/lessons - returns 201 on success (Admin)", async () => {
+        mock.method(lessonsRepository, "checkCourseExists", async () => true);
+        mock.method(lessonsRepository, "insertLesson", async () => ({
             id: "20000000-0000-4000-8000-000000000002",
-            lesson_id: "10000000-0000-4000-8000-000000000001",
+            course_id: "10000000-0000-4000-8000-000000000001",
             title: "Greetings",
             order_no: 1
         }));
@@ -101,21 +100,24 @@ test("Topics Routes - System Tests", async (t) => {
 
         const response = await app.inject({
             method: "POST",
-            url: "/api/v1/admin/topics",
+            url: "/api/v1/admin/lessons",
             headers: { authorization: `Bearer ${adminToken}`, "content-type": "application/json" },
-            payload: JSON.stringify({ lesson_id: "10000000-0000-4000-8000-000000000001", title: "Greetings", order_no: 1 })
+            payload: JSON.stringify({ course_id: "10000000-0000-4000-8000-000000000001", title: "Greetings", order_no: 1 })
         });
 
+        if (response.statusCode !== 201) {
+            console.error("CREATE LESSON ERROR PAYLOAD:", response.payload);
+        }
         assert.strictEqual(response.statusCode, 201);
         const body = JSON.parse(response.payload);
         assert.strictEqual(body.success, true);
         assert.strictEqual(body.data.title, "Greetings");
     });
 
-    await t.test("PUT /api/v1/admin/topics/:id - returns 400 on empty update", async () => {
+    await t.test("PUT /api/v1/admin/lessons/{id} - returns 400 on empty update", async () => {
         const response = await app.inject({
             method: "PUT",
-            url: "/api/v1/admin/topics/723b10b0-394e-4f7f-85db-e877de25272a",
+            url: "/api/v1/admin/lessons/723b10b0-394e-4f7f-85db-e877de25272a",
             headers: { authorization: `Bearer ${adminToken}`, "content-type": "application/json" },
             payload: JSON.stringify({})
         });
@@ -125,35 +127,18 @@ test("Topics Routes - System Tests", async (t) => {
         assert.strictEqual(body.error.code, "EMPTY_UPDATE");
     });
 
-    await t.test("POST /api/v1/admin/topics/:id/vocabularies - returns 201 on success (Admin)", async () => {
-        mock.method(topicsRepository, "findById", async () => ({ id: "723b10b0-394e-4f7f-85db-e877de25272a" }));
-        mock.method(topicsRepository, "checkVocabularyExists", async () => true);
-        mock.method(topicsRepository, "checkTopicVocabularyExists", async () => false);
-        mock.method(topicsRepository, "insertTopicVocabulary", async () => ({}));
-
-        const response = await app.inject({
-            method: "POST",
-            url: "/api/v1/admin/topics/723b10b0-394e-4f7f-85db-e877de25272a/vocabularies",
-            headers: { authorization: `Bearer ${adminToken}`, "content-type": "application/json" },
-            payload: JSON.stringify({ vocabulary_id: "20000000-0000-4000-8000-000000000002" })
-        });
-
-        assert.strictEqual(response.statusCode, 201);
-        const body = JSON.parse(response.payload);
-        assert.strictEqual(body.success, true);
-    });
-
-    await t.test("DELETE /api/v1/admin/topics/:id/vocabularies/:vocabularyId - returns 200 (Admin)", async () => {
-        mock.method(topicsRepository, "deleteTopicVocabulary", async () => ({}));
+    await t.test("DELETE /api/v1/admin/lessons/{id} - returns 409 Conflict if lesson not empty", async () => {
+        mock.method(lessonsRepository, "findById", async () => ({ id: "723b10b0-394e-4f7f-85db-e877de25272a", course_id: "course-1" }));
+        mock.method(lessonsRepository, "countTopicsByLessonId", async () => 5);
 
         const response = await app.inject({
             method: "DELETE",
-            url: "/api/v1/admin/topics/723b10b0-394e-4f7f-85db-e877de25272a/vocabularies/20000000-0000-4000-8000-000000000002",
+            url: "/api/v1/admin/lessons/723b10b0-394e-4f7f-85db-e877de25272a",
             headers: { authorization: `Bearer ${adminToken}` }
         });
 
-        assert.strictEqual(response.statusCode, 200);
+        assert.strictEqual(response.statusCode, 409);
         const body = JSON.parse(response.payload);
-        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.error.code, "LESSON_NOT_EMPTY");
     });
 });

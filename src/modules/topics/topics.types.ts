@@ -10,6 +10,16 @@ export interface VocabularySummaryDTO {
     learning_status: string;
 }
 
+export interface TopicGrammarPointDTO {
+    id: string;
+    title_jp: string;
+    structure: string | null;
+    meaning_vi: string;
+    explanation: string | null;
+    usage: string | null;
+    jlpt_level: string;
+}
+
 export interface TopicDetailDTO {
     id: string;
     lesson_id: string | null;
@@ -17,6 +27,7 @@ export interface TopicDetailDTO {
     description: string | null;
     image: string | null;
     vocabularies: VocabularySummaryDTO[];
+    grammar_points: TopicGrammarPointDTO[];
 }
 
 export interface CreateTopicBody {

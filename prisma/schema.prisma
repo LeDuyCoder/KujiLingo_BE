@@ -241,8 +241,10 @@ model payment_transactions {
   bonus_gem               Int?
   total_gem               Int?
   transaction_code        String?            @unique @db.VarChar
+  order_code              BigInt?            @unique
   provider_transaction_id String?            @db.VarChar
   payment_url             String?
+  qr_code                 String?
   provider_response       String?
   expired_at              DateTime?          @db.Timestamp(6)
   paid_at                 DateTime?          @db.Timestamp(6)
@@ -254,6 +256,7 @@ model payment_transactions {
   wallet_histories        wallet_histories[]
 
   @@index([created_at])
+  @@index([order_code])
   @@index([package_id])
   @@index([payment_status])
   @@index([provider_transaction_id])
@@ -756,7 +759,7 @@ enum PVPMatchResult {
 
 enum PaymentMethod {
   MOMO
-  VNPAY
+  PAYOS
 }
 
 enum PaymentStatus {

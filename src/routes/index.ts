@@ -10,6 +10,8 @@ import { folderRoutes } from "../modules/folder/folder.routes.js";
 import { kanjiRoutes } from "../modules/kanji/kanji.routes.js";
 import { leaderboardRoutes } from "../modules/leaderboard/index.js";
 import { learningProgressRoutes } from "../modules/learning-progress/index.js";
+import { gemsRoutes } from "../modules/gems/index.js";
+import { lessonsRoutes } from "../modules/lessons/index.js";
 import { topicsRoutes } from "../modules/topics/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
@@ -24,6 +26,7 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(kanjiRoutes);
     await app.register(leaderboardRoutes);
     await app.register(learningProgressRoutes);
+    await app.register(gemsRoutes);
+    await app.register(lessonsRoutes);
     await app.register(topicsRoutes);
 }
-

@@ -29,16 +29,21 @@ test("Topics Service - Unit Tests", async (t) => {
         const mockMeanings = [
             { id: "m1", vocabulary_id: "vocab-1", language: "vi", meaning: "ngày", display_order: 1 }
         ];
+        const mockGrammar = [
+            { id: "grammar-1", title_jp: "～てください", structure: "V-てください", meaning_vi: "hãy...", explanation: null, usage: null, jlpt_level: "N5" }
+        ];
 
         const findTopicMock = mock.method(topicsRepository, "findById", async () => mockTopic);
         const findVocabMock = mock.method(topicsRepository, "findVocabulariesByTopicId", async () => mockVocabularies);
         const findMeaningsMock = mock.method(topicsRepository, "findMeaningsByVocabulariesAndLanguages", async () => mockMeanings);
+        const findGrammarMock = mock.method(topicsRepository, "findGrammarPointsByTopicId", async () => mockGrammar);
 
         // 1st request (cache miss)
         const result1 = await topicsService.getTopicDetail("topic-1", null, "vi");
         assert.strictEqual(result1.success, true);
         assert.strictEqual(result1.data.id, "topic-1");
         assert.strictEqual(result1.data.vocabularies[0].meaning, "ngày");
+        assert.strictEqual(result1.data.grammar_points[0].title_jp, "～てください");
         assert.strictEqual(findTopicMock.mock.callCount(), 1);
 
         // 2nd request (cache hit)
@@ -59,6 +64,7 @@ test("Topics Service - Unit Tests", async (t) => {
         mock.method(topicsRepository, "findById", async () => mockTopic);
         mock.method(topicsRepository, "findVocabulariesByTopicId", async () => mockVocabularies);
         mock.method(topicsRepository, "findMeaningsByVocabulariesAndLanguages", async () => mockMeanings);
+        mock.method(topicsRepository, "findGrammarPointsByTopicId", async () => []);
 
         const favoritesMock = mock.method(topicsRepository, "findFavorites", async () => new Set(["vocab-1"]));
         const progressMock = mock.method(topicsRepository, "findLearningProgress", async () => [
@@ -83,6 +89,7 @@ test("Topics Service - Unit Tests", async (t) => {
         mock.method(topicsRepository, "findById", async () => mockTopic);
         mock.method(topicsRepository, "findVocabulariesByTopicId", async () => mockVocabularies);
         mock.method(topicsRepository, "findMeaningsByVocabulariesAndLanguages", async () => mockMeanings);
+        mock.method(topicsRepository, "findGrammarPointsByTopicId", async () => []);
 
         const result = await topicsService.getTopicDetail("topic-1", null, "en"); // requested English but only Vietnamese exists
         assert.strictEqual(result.success, true);

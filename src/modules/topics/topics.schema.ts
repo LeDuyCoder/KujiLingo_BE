@@ -27,6 +27,15 @@ export const getTopicDetailResponseSchema = z.object({
             is_favorited: z.boolean(),
             learning_status: z.string(),
         })),
+        grammar_points: z.array(z.object({
+            id: looseUuid,
+            title_jp: z.string(),
+            structure: z.string().nullable(),
+            meaning_vi: z.string(),
+            explanation: z.string().nullable(),
+            usage: z.string().nullable(),
+            jlpt_level: z.string(),
+        })),
     }),
 });
 
