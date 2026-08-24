@@ -11,8 +11,8 @@ async function clearDatabase() {
     // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
     await prisma.favorite_vocabularies.deleteMany({});
     await prisma.grammar_points.deleteMany({});
-    await prisma.wallet_histories.deleteMany({});
     await prisma.payment_transactions.deleteMany({});
+    await prisma.wallet_histories.deleteMany({});
     await prisma.user_wallets.deleteMany({});
     await prisma.user_achievements.deleteMany({});
     await prisma.learning_progress.deleteMany({});
