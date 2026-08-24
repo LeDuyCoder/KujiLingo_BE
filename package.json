@@ -27,6 +27,7 @@
     "test:topics": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/topics.service.test.ts tests/system/topics.routes.test.ts",
     "test:learning-progress": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/learning-progress.service.test.ts tests/system/learning-progress.routes.test.ts",
     "test:shop": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/shop.service.test.ts tests/system/shop.routes.test.ts",
+    "test:srs": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/srs.service.test.ts tests/system/srs.routes.test.ts",
     "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
     "test:gems": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/gems.service.test.ts tests/system/gems.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
