@@ -26,6 +26,7 @@
     "test:learning-progress": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/learning-progress.service.test.ts tests/system/learning-progress.routes.test.ts",
     "test:lessons": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/lessons.service.test.ts tests/system/lessons.routes.test.ts",
     "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
+    "test:gems": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/gems.service.test.ts tests/system/gems.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
     "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts"
   },
@@ -36,6 +37,7 @@
   "dependencies": {
     "@fastify/swagger": "^9.8.1",
     "@fastify/swagger-ui": "^6.1.1",
+    "@payos/node": "^2.0.5",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "bcrypt": "^6.0.0",
