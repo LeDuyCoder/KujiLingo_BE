@@ -141,16 +141,16 @@ model grammar_examples {
 model grammar_points {
   id                String             @id @db.Uuid
   lesson_id         String?            @db.Uuid
-  topic_id          String?            @db.Uuid
-  title_jp          String?            @db.VarChar
   title             String?            @db.VarChar
   structure         String?
-  meaning_vi        String?
   meaning           String?
-  explanation       String?
   usage             String?
-  jlpt_level        JLPTLevel?
   jlpt              JLPTLevel?
+  topic_id          String?            @db.Uuid
+  title_jp          String?            @db.VarChar
+  meaning_vi        String?
+  explanation       String?
+  jlpt_level        JLPTLevel?
   example_sentences Json?
   audio_url         String?            @db.VarChar
   created_by        String?            @db.Uuid
@@ -186,12 +186,13 @@ model kanjis {
   kunyomi                String?              @db.VarChar
   stroke_count           Int?
   jlpt                   JLPTLevel?
+  deleted_at             DateTime?            @db.Timestamp(6)
+  examples               Json?
   radical                String?              @db.VarChar
   stroke_order_image_url String?              @db.VarChar
-  examples               Json?                // Lưu mảng ví dụ: [{word_jp, reading, meaning_vi}]
   created_at             DateTime             @default(now()) @db.Timestamp(6)
-  deleted_at             DateTime?            @db.Timestamp(6)
   kanji_vocabularies     kanji_vocabularies[]
+
   @@index([jlpt])
   @@index([kanji])
 }
@@ -241,15 +242,15 @@ model payment_transactions {
   bonus_gem               Int?
   total_gem               Int?
   transaction_code        String?            @unique @db.VarChar
-  order_code              BigInt?            @unique
   provider_transaction_id String?            @db.VarChar
   payment_url             String?
-  qr_code                 String?
   provider_response       String?
   expired_at              DateTime?          @db.Timestamp(6)
   paid_at                 DateTime?          @db.Timestamp(6)
   created_at              DateTime?          @db.Timestamp(6)
   updated_at              DateTime?          @db.Timestamp(6)
+  order_code              BigInt?            @unique
+  qr_code                 String?
   gem_packages            gem_packages?      @relation(fields: [package_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   gem_promotions          gem_promotions?    @relation(fields: [promotion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users                   users?             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -411,9 +412,9 @@ model topics {
   description        String?
   image              String?              @db.VarChar
   order_no           Int?
+  grammar_points     grammar_points[]
   quizzes            quizzes[]
   topic_vocabularies topic_vocabularies[]
-  grammar_points     grammar_points[]
   lessons            lessons?             @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([lesson_id, order_no])
@@ -510,11 +511,8 @@ model users {
   level                                                     Int?
   exp                                                       Int?
   streak                                                    Int?
-  longest_streak                                            Int?                        @default(0)
-  learning_goal_minutes                                     Int?                        @default(15)
   accepted_terms                                            Boolean?                    @default(false)
   jlpt_target_level                                         JLPTLevel?
-  role                                                      String                      @default("user") @db.VarChar
   status                                                    String?                     @default("pending_verification") @db.VarChar
   email_verified                                            Boolean?                    @default(false)
   email_verified_at                                         DateTime?                   @db.Timestamp(6)
@@ -522,30 +520,33 @@ model users {
   created_at                                                DateTime?                   @default(now()) @db.Timestamp(6)
   updated_at                                                DateTime?                   @db.Timestamp(6)
   deleted_at                                                DateTime?                   @db.Timestamp(6)
+  role                                                      String                      @default("user") @db.VarChar
+  learning_goal_minutes                                     Int?                        @default(15)
+  longest_streak                                            Int?                        @default(0)
+  admin_audit_logs                                          admin_audit_logs[]
   email_verification_tokens                                 email_verification_tokens[]
   favorite_vocabularies                                     favorite_vocabularies[]
   folders                                                   folders[]
+  leaderboard_snapshots                                     leaderboard_snapshots[]
   learning_progress                                         learning_progress[]
+  password_reset_tokens                                     password_reset_tokens[]
   payment_transactions                                      payment_transactions[]
   purchase_histories                                        purchase_histories[]
   pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player1_idTousers")
   pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player2_idTousers")
   pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]       @relation("pvp_match_histories_winner_idTousers")
+  refresh_tokens                                            refresh_tokens[]
   review_histories                                          review_histories[]
+  srs_cards                                                 srs_cards[]
+  srs_review_histories                                      srs_review_histories[]
   user_achievements                                         user_achievements[]
   user_equipped_items                                       user_equipped_items[]
   user_pvp_statistics                                       user_pvp_statistics?
   user_shop_items                                           user_shop_items[]
+  user_statistics_daily                                     user_statistics_daily[]
   user_vocabularies                                         user_vocabularies[]
   user_wallets                                              user_wallets?
   wallet_histories                                          wallet_histories[]
-  refresh_tokens                                            refresh_tokens[]
-  password_reset_tokens                                     password_reset_tokens[]
-  admin_audit_logs                                          admin_audit_logs[]
-  user_statistics_daily                                     user_statistics_daily[]
-  leaderboard_snapshots                                     leaderboard_snapshots[]
-  srs_cards                                                 srs_cards[]
-  srs_review_histories                                      srs_review_histories[]
 }
 
 model user_statistics_daily {
@@ -638,6 +639,7 @@ model vocabularies {
   audio                      String?                      @db.VarChar
   image                      String?                      @db.VarChar
   created_at                 DateTime?                    @db.Timestamp(6)
+  deleted_at                 DateTime?                    @db.Timestamp(6)
   example_sentences          example_sentences[]
   favorite_vocabularies      favorite_vocabularies[]
   folder_system_vocabularies folder_system_vocabularies[]
@@ -651,6 +653,7 @@ model vocabularies {
   @@index([jlpt, frequency])
   @@index([jlpt])
   @@index([kanji])
+  @@index([deleted_at])
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -685,13 +688,6 @@ model wallet_histories {
   @@index([user_id])
 }
 
-enum LeaderboardPeriodType {
-  daily
-  weekly
-  monthly
-  all_time
-}
-
 model leaderboard_snapshots {
   id           String                @id @default(uuid()) @db.Uuid
   period_type  LeaderboardPeriodType
@@ -708,6 +704,48 @@ model leaderboard_snapshots {
   @@index([period_type, period_key, rank])
 }
 
+model srs_cards {
+  id                   String                 @id @db.Uuid
+  user_id              String                 @db.Uuid
+  item_type            SRSItemType
+  item_id              String                 @db.Uuid
+  ease_factor          Decimal                @default(2.5) @db.Decimal(4, 2)
+  interval_days        Int                    @default(0)
+  repetitions          Int                    @default(0)
+  due_at               DateTime               @db.Timestamp(6)
+  state                SRSState               @default(new)
+  created_at           DateTime               @default(now()) @db.Timestamp(6)
+  updated_at           DateTime               @updatedAt @db.Timestamp(6)
+  users                users                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  srs_review_histories srs_review_histories[]
+
+  @@unique([user_id, item_type, item_id])
+  @@index([user_id, due_at])
+}
+
+model srs_review_histories {
+  id                   String    @id @db.Uuid
+  srs_card_id          String    @db.Uuid
+  user_id              String    @db.Uuid
+  rating               SRSRating
+  interval_before_days Int
+  interval_after_days  Int
+  ease_factor_before   Decimal   @db.Decimal(4, 2)
+  ease_factor_after    Decimal   @db.Decimal(4, 2)
+  reviewed_at          DateTime  @db.Timestamp(6)
+  srs_cards            srs_cards @relation(fields: [srs_card_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([srs_card_id])
+}
+
+enum LeaderboardPeriodType {
+  daily
+  weekly
+  monthly
+  all_time
+}
 
 enum AchievementType {
   STREAK
@@ -792,42 +830,6 @@ enum WordType {
   PARTICLE
   CONJUNCTION
   EXPRESSION
-}
-
-model srs_cards {
-  id                   String                 @id @db.Uuid
-  user_id              String                 @db.Uuid
-  item_type            SRSItemType
-  item_id              String                 @db.Uuid
-  ease_factor          Decimal                @default(2.5) @db.Decimal(4, 2)
-  interval_days        Int                    @default(0)
-  repetitions          Int                    @default(0)
-  due_at               DateTime               @db.Timestamp(6)
-  state                SRSState               @default(new)
-  created_at           DateTime               @default(now()) @db.Timestamp(6)
-  updated_at           DateTime               @updatedAt @db.Timestamp(6)
-  users                users                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  srs_review_histories srs_review_histories[]
-
-  @@unique([user_id, item_type, item_id])
-  @@index([user_id, due_at])
-}
-
-model srs_review_histories {
-  id                   String      @id @db.Uuid
-  srs_card_id          String      @db.Uuid
-  user_id              String      @db.Uuid
-  rating               SRSRating
-  interval_before_days Int
-  interval_after_days  Int
-  ease_factor_before   Decimal     @db.Decimal(4, 2)
-  ease_factor_after    Decimal     @db.Decimal(4, 2)
-  reviewed_at          DateTime    @db.Timestamp(6)
-  srs_cards            srs_cards   @relation(fields: [srs_card_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users                users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([user_id])
-  @@index([srs_card_id])
 }
 
 enum SRSItemType {
