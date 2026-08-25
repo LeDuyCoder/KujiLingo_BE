@@ -17,6 +17,7 @@ import { gemsRoutes } from "../modules/gems/index.js";
 import { srsRoutes } from "../modules/srs/index.js";
 import { statisticsRoutes } from "../modules/statistics/index.js";
 import { userVocabulariesRoutes } from "../modules/user-vocabularies/index.js";
+import { vocabulariesRoutes } from "../modules/vocabularies/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
@@ -37,4 +38,5 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(srsRoutes);
     await app.register(statisticsRoutes);
     await app.register(userVocabulariesRoutes);
+    await app.register(vocabulariesRoutes);
 }
