@@ -30,6 +30,7 @@
     "test:srs": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/srs.service.test.ts tests/system/srs.routes.test.ts",
     "test:watch": "node --import tsx --import ./tests/setup.ts --test tests/**/*.test.ts --watch",
     "test:gems": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/gems.service.test.ts tests/system/gems.routes.test.ts",
+    "test:statistics": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/statistics.service.test.ts tests/system/statistics.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
     "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts"
   },
