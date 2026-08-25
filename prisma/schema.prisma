@@ -295,6 +295,8 @@ model pvp_match_histories {
   jlpt                                        JLPTLevel?
   question_count                              Int?
   played_at                                   DateTime?  @db.Timestamp(6)
+  rating_change_player1                       Int?       @default(0)
+  rating_change_player2                       Int?       @default(0)
   users_pvp_match_histories_player1_idTousers users?     @relation("pvp_match_histories_player1_idTousers", fields: [player1_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_pvp_match_histories_player2_idTousers users?     @relation("pvp_match_histories_player2_idTousers", fields: [player2_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_pvp_match_histories_winner_idTousers  users?     @relation("pvp_match_histories_winner_idTousers", fields: [winner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -451,6 +453,8 @@ model user_pvp_statistics {
   win_count          Int?      @default(0)
   lose_count         Int?      @default(0)
   draw_count         Int?      @default(0)
+  rating             Int?      @default(1200)
+  highest_rating     Int?      @default(1200)
   total_score        Int?      @default(0)
   average_score      Float?    @default(0)
   longest_win_streak Int?      @default(0)

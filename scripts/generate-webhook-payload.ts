@@ -45,7 +45,7 @@ console.log(JSON.stringify(webhookPayload, null, 2));
 // Test verification with PayOS SDK
 try {
     const payos = new PayOS({ clientId, apiKey, checksumKey });
-    const verified = payos.webhooks.verify(webhookPayload);
+    const verified = await payos.webhooks.verify(webhookPayload as any);
     console.log("\n✅ PayOS SDK Signature Verification Success:", verified);
 } catch (e: any) {
     console.error("\n❌ PayOS SDK Verification Failed:", e.message);
