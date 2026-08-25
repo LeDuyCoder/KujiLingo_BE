@@ -8,7 +8,7 @@ export async function statisticsRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
 
     router.get(
-        "/statistics/me",
+        "/api/v1/statistics/me",
         {
             onRequest: [authGuard],
             schema: {

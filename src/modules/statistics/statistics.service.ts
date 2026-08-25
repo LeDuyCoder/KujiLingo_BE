@@ -1,36 +1,22 @@
-import { prisma } from "../../config/prisma.js";
+import { statisticsRepository } from "./statistics.repository.js";
 
 export async function getStats(userId: string) {
-    const user = await prisma.users.findUnique({
-        where: { id: userId },
-        select: { level: true, exp: true, streak: true }
-    });
+    const user = await statisticsRepository.getUserBasic(userId);
 
     if (!user) {
         throw new Error("User not found");
     }
 
-    const [reviewCount, srsCount, mastered, dailyStats] = await Promise.all([
-        prisma.review_histories.count({ where: { user_id: userId } }),
-        prisma.srs_review_histories.count({ where: { user_id: userId } }),
-        prisma.learning_progress.count({ where: { user_id: userId, status: 'MASTERED' as any } }),
-        prisma.user_statistics_daily.aggregate({
-            where: { user_id: userId },
-            _sum: { words_reviewed: true }
-        })
+    const [reviewCount, srsCount, mastered, dailyWords, correctCount, correctSrsCount] = await Promise.all([
+        statisticsRepository.getReviewsCount(userId),
+        statisticsRepository.getSrsReviewsCount(userId),
+        statisticsRepository.getMasteredProgressCount(userId),
+        statisticsRepository.getDailyWordsReviewedSum(userId),
+        statisticsRepository.getCorrectReviewsCount(userId),
+        statisticsRepository.getCorrectSrsReviewsCount(userId)
     ]);
 
-    const total_reviews = reviewCount + srsCount + (dailyStats._sum.words_reviewed || 0);
-    
-    // For review_histories, correct=true
-    const correctCount = await prisma.review_histories.count({
-        where: { user_id: userId, correct: true }
-    });
-    // For srs_review_histories, rating > again
-    const correctSrsCount = await prisma.srs_review_histories.count({
-        where: { user_id: userId, rating: { not: 'again' as any } }
-    });
-
+    const total_reviews = reviewCount + srsCount + dailyWords;
     const totalCorrect = correctCount + correctSrsCount;
 
     const accuracy_percent = total_reviews > 0 ? Math.round((totalCorrect / total_reviews) * 100 * 10) / 10 : null;
