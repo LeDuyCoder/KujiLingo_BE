@@ -11,10 +11,9 @@ import {
     logoutHandler,
     forgotPasswordHandler,
     resetPasswordHandler,
-    meHandler,
-    refreshTokenHandler
+    meHandler
 } from "./auth.controller.js";
-import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema, refreshTokenSchema } from "./auth.schema.js";
+import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema } from "./auth.schema.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
@@ -338,49 +337,6 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         meHandler
-    );
-
-    router.post(
-        "/auth/refresh-token",
-        {
-            schema: {
-                tags: ["Auth"],
-                summary: "Refresh Access Token",
-                description: "Reissues a new access token and rotates the refresh token.",
-                body: refreshTokenSchema,
-                response: {
-                    200: z.object({
-                        success: z.boolean(),
-                        data: z.object({
-                            access_token: z.string(),
-                            refresh_token: z.string(),
-                            token_type: z.literal("Bearer"),
-                            expires_in: z.number(),
-                        }),
-                    }),
-                    400: z.object({
-                        success: z.boolean(),
-                        error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() }),
-                    }),
-                    401: z.object({
-                        success: z.boolean(),
-                        error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }),
-                    }),
-                    403: z.object({
-                        success: z.boolean(),
-                        error: z.object({
-                            code: z.enum(["ACCOUNT_SUSPENDED", "ACCOUNT_BANNED"]),
-                            message: z.string(),
-                        }),
-                    }),
-                    500: z.object({
-                        success: z.boolean(),
-                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
-                    }),
-                },
-            },
-        },
-        refreshTokenHandler
     );
 
 
