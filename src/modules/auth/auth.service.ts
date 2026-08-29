@@ -464,7 +464,7 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
  */
 export async function refreshToken(
     data: RefreshTokenInput,
-    reqInfo: { ipAddress: string; userAgent?: string }
+    reqInfo: { ipAddress: string; userAgent?: string | undefined }
 ): Promise<{
     access_token: string;
     refresh_token: string;
