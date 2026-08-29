@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
 import { log } from "../../common/utils/log.js";
 import { verifyToken } from "../../common/utils/jwt.js";
@@ -443,53 +443,6 @@ export async function meHandler(
         return reply.code(401).send({
             success: false,
             error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
-        });
-    }
-}
-
-export async function refreshTokenHandler(
-    request: FastifyRequest<{ Body: RefreshTokenInput }>,
-    reply: FastifyReply
-) {
-    const ipAddress = request.ip ?? "unknown";
-    const userAgent = request.headers["user-agent"];
-
-    try {
-        const result = await authService.refreshToken(request.body, {
-            ipAddress,
-            userAgent,
-        });
-
-        return reply.code(200).send({
-            success: true,
-            data: result,
-        });
-    } catch (error: any) {
-        log.error(error);
-        if (error.message === "ACCOUNT_SUSPENDED") {
-            return reply.code(403).send({
-                success: false,
-                error: {
-                    code: "ACCOUNT_SUSPENDED",
-                    message: "Your account has been temporarily suspended.",
-                },
-            });
-        }
-        if (error.message === "ACCOUNT_BANNED") {
-            return reply.code(403).send({
-                success: false,
-                error: {
-                    code: "ACCOUNT_BANNED",
-                    message: "Your account has been permanently banned.",
-                },
-            });
-        }
-        return reply.code(401).send({
-            success: false,
-            error: {
-                code: "UNAUTHORIZED",
-                message: "Refresh token is invalid, expired, or revoked.",
-            },
         });
     }
 }
