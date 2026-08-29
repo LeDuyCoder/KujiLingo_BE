@@ -4,7 +4,7 @@ import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
-import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput } from "./auth.schema.js";
+import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput } from "./auth.schema.js";
 import type { UserResponse, LoginResponse, CurrentUserResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
@@ -457,4 +457,92 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
         locale: "vi-VN",
         created_at: user.created_at ? user.created_at.toISOString() : new Date().toISOString(),
     };
+}
+
+/**
+ * Làm mới access token bằng refresh token (Refresh Token Rotation - RTR)
+ */
+export async function refreshToken(
+    data: RefreshTokenInput,
+    reqInfo: { ipAddress: string; userAgent?: string }
+): Promise<{
+    access_token: string;
+    refresh_token: string;
+    token_type: "Bearer";
+    expires_in: number;
+}> {
+    const hash = crypto.createHash("sha256").update(data.refresh_token).digest("hex");
+
+    return await db.prisma.$transaction(async (tx) => {
+        // 1. Tìm refresh token record
+        const tokenRecord = await authRepository.findRefreshTokenByHash(tx, hash);
+        if (!tokenRecord) {
+            throw new Error("UNAUTHORIZED");
+        }
+
+        // 2. Kiểm tra nếu đã bị thu hồi (revoked) hoặc hết hạn (expired)
+        if (tokenRecord.is_revoked || new Date(tokenRecord.expires_at) < new Date()) {
+            if (tokenRecord.is_revoked) {
+                await authRepository.revokeAllForUser(tx, tokenRecord.user_id);
+            }
+            throw new Error("UNAUTHORIZED");
+        }
+
+        // 3. Tìm người dùng tương ứng
+        const user = await tx.users.findUnique({
+            where: { id: tokenRecord.user_id },
+        });
+
+        if (!user || user.deleted_at) {
+            throw new Error("UNAUTHORIZED");
+        }
+
+        if (user.status === "suspended") {
+            throw new Error("ACCOUNT_SUSPENDED");
+        }
+        if (user.status === "banned") {
+            throw new Error("ACCOUNT_BANNED");
+        }
+
+        // 4. Thu hồi (revoke) refresh token cũ
+        await tx.refresh_tokens.update({
+            where: { id: tokenRecord.id },
+            data: { is_revoked: true },
+        });
+
+        // 5. Tạo refresh token mới (Rotation)
+        const rawNewRefreshToken = crypto.randomBytes(16).toString("hex");
+        const newRefreshTokenHash = crypto.createHash("sha256").update(rawNewRefreshToken).digest("hex");
+        const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 ngày
+
+        await tx.refresh_tokens.create({
+            data: {
+                id: crypto.randomUUID(),
+                user_id: user.id,
+                token_hash: newRefreshTokenHash,
+                device_id: tokenRecord.device_id,
+                device_name: tokenRecord.device_name,
+                ip_address: reqInfo.ipAddress,
+                user_agent: reqInfo.userAgent ?? null,
+                expires_at: newExpiresAt,
+            },
+        });
+
+        // 6. Tạo access token mới
+        const role = user.role || "user";
+        const isPremium = false;
+
+        const accessToken = signToken({
+            sub: user.id,
+            role,
+            is_premium: isPremium,
+        });
+
+        return {
+            access_token: accessToken,
+            refresh_token: rawNewRefreshToken,
+            token_type: "Bearer" as const,
+            expires_in: 900,
+        };
+    });
 }
