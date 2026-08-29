@@ -1,3 +1,4 @@
+import cors from "@fastify/cors";
 import "dotenv/config";
 import Fastify from "fastify";
 import { validatorCompiler, serializerCompiler } from "fastify-type-provider-zod";
@@ -11,9 +12,18 @@ const app = Fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+await app.register(cors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+});
+
 // Register global error handler before registering routes so it is correctly inherited
 app.setErrorHandler((error: any, request, reply) => {
-    if (error.validation) {
+    const statusCode = error.statusCode || 500;
+    let errorCode = "INTERNAL_ERROR";
+
+    if (error.validation || error.name === "ZodError") {
         return reply.status(400).send({
             success: false,
             error: {
@@ -23,8 +33,19 @@ app.setErrorHandler((error: any, request, reply) => {
         });
     }
 
-    const statusCode = error.statusCode || 500;
-    const errorCode = error.code === "FST_ERR_FAILED_ERROR_SERIALIZATION" ? "INTERNAL_ERROR" : (error.code || "INTERNAL_ERROR");
+    if (error.code && !error.code.startsWith("FST_ERR_")) {
+        errorCode = error.code;
+    } else {
+        if (statusCode === 400) {
+            errorCode = "VALIDATION_ERROR";
+        } else if (statusCode === 401) {
+            errorCode = "UNAUTHORIZED";
+        } else if (statusCode === 403) {
+            errorCode = "FORBIDDEN";
+        } else if (statusCode === 404) {
+            errorCode = "NOT_FOUND";
+        }
+    }
 
     return reply.status(statusCode).send({
         success: false,
