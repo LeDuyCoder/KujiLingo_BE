@@ -33,6 +33,7 @@
     "test:statistics": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/statistics.service.test.ts tests/system/statistics.routes.test.ts",
     "test:user-vocabularies": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/user-vocabularies.service.test.ts tests/system/user-vocabularies.routes.test.ts",
     "test:vocabularies": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/vocabularies.service.test.ts tests/system/vocabularies.routes.test.ts",
+    "test:pvp": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/pvp.service.test.ts tests/system/pvp.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
     "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts"
   },

@@ -10,14 +10,14 @@ function resolveLanguage(acceptLanguageHeader?: string): string {
 }
 
 export async function listFavoritesHandler(
-    request: FastifyRequest<{ Querystring: ListFavoritesQuery }>,
+    request: FastifyRequest,
     reply: FastifyReply
 ) {
     try {
         const userId = request.user!.id;
         const acceptLanguageHeader = request.headers["accept-language"] as string | undefined;
         const language = resolveLanguage(acceptLanguageHeader);
-        const { page = 1, limit = 30 } = request.query;
+        const { page = 1, limit = 30 } = (request.query as ListFavoritesQuery) || {};
 
         const result = await favoriteVocabulariesService.listFavorites(
             userId,
@@ -40,12 +40,12 @@ export async function listFavoritesHandler(
 }
 
 export async function addFavoriteHandler(
-    request: FastifyRequest<{ Body: AddFavoriteBody }>,
+    request: FastifyRequest,
     reply: FastifyReply
 ) {
     try {
         const userId = request.user!.id;
-        const { vocabulary_id } = request.body;
+        const { vocabulary_id } = request.body as AddFavoriteBody;
 
         const result = await favoriteVocabulariesService.addFavorite(userId, vocabulary_id);
 
@@ -84,12 +84,12 @@ export async function addFavoriteHandler(
 }
 
 export async function removeFavoriteHandler(
-    request: FastifyRequest<{ Params: RemoveFavoriteParams }>,
+    request: FastifyRequest,
     reply: FastifyReply
 ) {
     try {
         const userId = request.user!.id;
-        const { vocabularyId } = request.params;
+        const { vocabularyId } = request.params as RemoveFavoriteParams;
 
         const result = await favoriteVocabulariesService.removeFavorite(userId, vocabularyId);
 
