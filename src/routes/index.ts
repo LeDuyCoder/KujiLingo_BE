@@ -19,6 +19,7 @@ import { statisticsRoutes } from "../modules/statistics/index.js";
 import { userVocabulariesRoutes } from "../modules/user-vocabularies/index.js";
 import { vocabulariesRoutes } from "../modules/vocabularies/index.js";
 import { pvpRoutes } from "../modules/pvp/index.js";
+import { achievementsRoutes } from "../modules/achievements/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
@@ -41,4 +42,5 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(userVocabulariesRoutes);
     await app.register(vocabulariesRoutes);
     await app.register(pvpRoutes);
+    await app.register(achievementsRoutes);
 }
