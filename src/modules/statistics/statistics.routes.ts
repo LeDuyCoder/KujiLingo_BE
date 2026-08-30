@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { getStatisticsHandler } from "./statistics.controller.js";
+import { getStatisticsHandler, pingStatisticsHandler } from "./statistics.controller.js";
 import { authGuard } from "../../common/middlewares/auth.guard.js";
 
 export async function statisticsRoutes(app: FastifyInstance) {
@@ -46,5 +46,42 @@ export async function statisticsRoutes(app: FastifyInstance) {
             },
         },
         getStatisticsHandler
+    );
+
+    router.post(
+        "/api/v1/statistics/ping",
+        {
+            onRequest: [authGuard],
+            schema: {
+                tags: ["Statistics"],
+                summary: "Ping online activity status",
+                description: "Increments user studied minutes, updates study streak, and returns progress results.",
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            streak: z.number(),
+                            minutes_studied_today: z.number(),
+                            percent: z.number()
+                        })
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("UNAUTHORIZED"),
+                            message: z.string()
+                        })
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("INTERNAL_ERROR"),
+                            message: z.string()
+                        })
+                    })
+                }
+            }
+        },
+        pingStatisticsHandler
     );
 }

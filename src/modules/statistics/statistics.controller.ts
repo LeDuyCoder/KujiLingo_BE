@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { getStats } from "./statistics.service.js";
+import { getStats, recordActivity } from "./statistics.service.js";
 
 export async function getStatisticsHandler(
     request: FastifyRequest,
@@ -23,6 +23,30 @@ export async function getStatisticsHandler(
                 },
             });
         }
+        return reply.status(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
+            },
+        });
+    }
+}
+
+
+export async function pingStatisticsHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const userId = request.user!.id;
+        const result = await recordActivity(userId);
+        return reply.status(200).send({
+            success: true,
+            data: result
+        });
+    } catch (error: any) {
+        request.log.error(error);
         return reply.status(500).send({
             success: false,
             error: {
