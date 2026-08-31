@@ -4,7 +4,7 @@ import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
-import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput } from "./auth.schema.js";
+import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput } from "./auth.schema.js";
 import type { UserResponse, LoginResponse, CurrentUserResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
@@ -543,6 +543,58 @@ export async function refreshToken(
             refresh_token: rawNewRefreshToken,
             token_type: "Bearer" as const,
             expires_in: 900,
+        };
+    });
+}
+
+/**
+ * Update user password when logged in
+ */
+export async function changePassword(
+    userId: string,
+    data: ChangePasswordInput
+): Promise<{ success: boolean; message: string }> {
+    return db.prisma.$transaction(async (tx) => {
+        // 1. Find user
+        const user = await authRepository.findUserById(userId);
+        if (!user) {
+            throw new Error("UNAUTHORIZED");
+        }
+
+        // 2. Check current password
+        const isPasswordValid = await bcrypt.compare(data.current_password, user.password_hash || "");
+        if (!isPasswordValid) {
+            throw new Error("INVALID_CURRENT_PASSWORD");
+        }
+
+        // 3. Ensure new password is different
+        const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
+        if (isIdentical) {
+            throw new Error("PASSWORD_UNCHANGED");
+        }
+
+        // 4. Hash and update
+        const passwordHash = await bcrypt.hash(data.new_password, 12);
+        await authRepository.updatePasswordHash(tx, user.id, passwordHash);
+
+        // 5. Send notification email (optional)
+        try {
+            const { html, text } = buildPasswordChangedEmail({
+                displayName: user.display_name || "User",
+            });
+            await mailService.sendMail({
+                to: user.email!,
+                subject: "Mật khẩu tài khoản KujiLingo của bạn đã được thay đổi",
+                html,
+                text,
+            });
+        } catch (mailError) {
+            log.error("[Auth] Failed to send password changed confirmation email:", mailError);
+        }
+
+        return {
+            success: true,
+            message: "Password has been changed successfully.",
         };
     });
 }

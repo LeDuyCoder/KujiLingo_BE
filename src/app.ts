@@ -14,7 +14,7 @@ app.setSerializerCompiler(serializerCompiler);
 
 await app.register(cors, {
     origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"]
 });
 

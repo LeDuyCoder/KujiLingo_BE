@@ -8,24 +8,63 @@ import * as jwtUtils from "../../src/common/utils/jwt.js";
 import jwt from "jsonwebtoken";
 
 async function clearDatabase() {
-    // Xóa theo thứ tự để tránh khóa ngoại (foreign key)
-    await prisma.favorite_vocabularies.deleteMany({});
-    await prisma.grammar_points.deleteMany({});
-    await prisma.payment_transactions.deleteMany({});
-    await prisma.wallet_histories.deleteMany({});
-    await prisma.user_wallets.deleteMany({});
-    await prisma.user_achievements.deleteMany({});
-    await prisma.learning_progress.deleteMany({});
-    await prisma.review_histories.deleteMany({});
-    await prisma.user_vocabularies.deleteMany({});
-    await prisma.user_shop_items.deleteMany({});
-    await prisma.user_equipped_items.deleteMany({});
-    await prisma.user_statistics_daily.deleteMany({});
-    await prisma.login_attempts.deleteMany({});
-    await prisma.refresh_tokens.deleteMany({});
-    await prisma.password_reset_tokens.deleteMany({});
-    await prisma.email_verification_tokens.deleteMany({});
-    await prisma.users.deleteMany({});
+    const testEmails = [
+        "duyga544@gmail.com",
+        "duybeo@gmail.com",
+        "existing@example.com",
+        "verifyuser@example.com",
+        "expired@example.com",
+        "alreadyused@example.com",
+        "idempotent@example.com",
+        "wrong@example.com",
+        "usera@example.com",
+        "userb@example.com",
+        "doesnotexist@example.com",
+        "reset_flow@example.com",
+        "login.success@example.com",
+        "pending@example.com",
+        "bruteforce@example.com",
+        "logout@example.com",
+        "forgot_active@example.com",
+        "me.success@example.com",
+        "deleted.user@example.com",
+        "suspended.user@example.com",
+        "banned.user@example.com",
+        "tamper@example.com",
+        "idemp@example.com",
+    ];
+
+    const testUsers = await prisma.users.findMany({
+        where: {
+            OR: [
+                { email: { in: testEmails } },
+                { email: { startsWith: "change_pass_" } },
+                { email: { startsWith: "invalid_pass_" } }
+            ]
+        },
+        select: { id: true }
+    });
+    const testUserIds = testUsers.map(u => u.id);
+
+    await prisma.login_attempts.deleteMany({ where: { email: { in: testEmails } } });
+
+    if (testUserIds.length > 0) {
+        await prisma.favorite_vocabularies.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.wallet_histories.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_wallets.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_achievements.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.learning_progress.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.review_histories.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_vocabularies.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_shop_items.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_equipped_items.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_statistics_daily.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.refresh_tokens.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.password_reset_tokens.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.email_verification_tokens.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.user_achievement_showcase.deleteMany({ where: { user_id: { in: testUserIds } } });
+        await prisma.users.deleteMany({ where: { id: { in: testUserIds } } });
+    }
 }
 
 test("Auth API - Database Integration Tests", async (t) => {
@@ -1100,7 +1139,93 @@ test("Auth API - Database Integration Tests", async (t) => {
             assert.strictEqual(body.data.email, email);
         }
     });
+
+    // =========================================================================
+    // CHANGE PASSWORD TEST SUITE
+    // =========================================================================
+    await t.test("PATCH /api/v1/auth/change-password - success flow", async () => {
+        const email = `change_pass_${Date.now()}_${Math.random()}@example.com`;
+        const oldPassword = "Password123";
+        const newPassword = "NewPassword123!";
+
+        // 1. Register and Login
+        const reg = await app.inject({
+            method: "POST",
+            url: "/api/v1/auth/register",
+            payload: { email, password: oldPassword, password_confirmation: oldPassword, display_name: "ChangePass", accepted_terms: true }
+        });
+        assert.strictEqual(reg.statusCode, 201);
+        
+        // Manual verification for test flow
+        await prisma.users.update({ where: { email }, data: { email_verified_at: new Date(), status: "active" } });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/api/v1/auth/login",
+            payload: { email, password: oldPassword }
+        });
+        const { access_token } = JSON.parse(loginRes.body).data;
+
+        // 2. Change password
+        const res = await app.inject({
+            method: "PATCH",
+            url: "/api/v1/auth/change-password",
+            headers: { authorization: `Bearer ${access_token}` },
+            payload: {
+                current_password: oldPassword,
+                new_password: newPassword,
+                new_password_confirmation: newPassword
+            }
+        });
+
+        assert.strictEqual(res.statusCode, 200);
+        const body = JSON.parse(res.body);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.message, "Password has been changed successfully.");
+
+        // 3. Verify login with new password
+        const loginNewRes = await app.inject({
+            method: "POST",
+            url: "/api/v1/auth/login",
+            payload: { email, password: newPassword }
+        });
+        assert.strictEqual(loginNewRes.statusCode, 200);
+    });
+
+    await t.test("PATCH /api/v1/auth/change-password - 401 invalid current password", async () => {
+        const email = `invalid_pass_${Date.now()}_${Math.random()}@example.com`;
+        const password = "Password123";
+
+        const reg = await app.inject({
+            method: "POST",
+            url: "/api/v1/auth/register",
+            payload: { email, password, password_confirmation: password, display_name: "InvPass", accepted_terms: true }
+        });
+        assert.strictEqual(reg.statusCode, 201);
+        await prisma.users.update({ where: { email }, data: { email_verified_at: new Date(), status: "active" } });
+
+        const loginRes = await app.inject({
+            method: "POST",
+            url: "/api/v1/auth/login",
+            payload: { email, password }
+        });
+        const { access_token } = JSON.parse(loginRes.body).data;
+
+        const res = await app.inject({
+            method: "PATCH",
+            url: "/api/v1/auth/change-password",
+            headers: { authorization: `Bearer ${access_token}` },
+            payload: {
+                current_password: "WrongPassword",
+                new_password: "NewPassword123!",
+                new_password_confirmation: "NewPassword123!"
+            }
+        });
+
+        assert.strictEqual(res.statusCode, 401);
+    });
 });
+
 
 
 
