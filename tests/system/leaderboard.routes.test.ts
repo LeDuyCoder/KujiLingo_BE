@@ -51,7 +51,7 @@ async function createAuthenticatedUser(email: string) {
 
     const loginRes = await app.inject({
         method: "POST",
-        url: "/auth/login",
+        url: "/api/v1/auth/login",
         payload: { email, password },
     });
 

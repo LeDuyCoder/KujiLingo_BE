@@ -52,7 +52,7 @@ async function createAuthenticatedUser(email: string, targetLevel: string = "N5"
 
     const loginRes = await app.inject({
         method: "POST",
-        url: "/auth/login",
+        url: "/api/v1/auth/login",
         payload: { email, password },
     });
 
@@ -75,7 +75,7 @@ test("Dashboard API - Database Integration Tests", async (t) => {
     await t.test("GET /dashboard - unauthorized 401", async () => {
         const res = await app.inject({
             method: "GET",
-            url: "/dashboard",
+            url: "/api/v1/dashboard",
         });
 
         assert.strictEqual(res.statusCode, 401);
@@ -123,7 +123,7 @@ test("Dashboard API - Database Integration Tests", async (t) => {
 
         const res = await app.inject({
             method: "GET",
-            url: "/dashboard",
+            url: "/api/v1/dashboard",
             headers: { Authorization: `Bearer ${user.token}` }
         });
 
@@ -167,7 +167,7 @@ test("Dashboard API - Database Integration Tests", async (t) => {
 
         const res = await app.inject({
             method: "GET",
-            url: "/dashboard",
+            url: "/api/v1/dashboard",
             headers: { Authorization: `Bearer ${user.token}` }
         });
 

@@ -42,7 +42,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/register - success 201", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "duyga544@gmail.com",
                 password: "Password123",
@@ -68,7 +68,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/register - validation error 400", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "duybeo@gmail.com",
                 password: "Password123",
@@ -93,7 +93,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "existing@example.com",
                 password: "Password123",
@@ -112,7 +112,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 1. Đăng ký để lấy token thật
         const registerResponse = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "verifyuser@example.com",
                 password: "Password123",
@@ -126,7 +126,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Gọi api verify
         const response = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: {
                 token: verificationToken,
             },
@@ -148,7 +148,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/verify-email - not found 404", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: {
                 token: "non-existent-token-uuid",
             },
@@ -186,7 +186,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Gọi api
         const response = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: {
                 token: rawToken,
             },
@@ -225,7 +225,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Gọi api
         const response = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: {
                 token: rawToken,
             },
@@ -241,7 +241,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 1. Đăng ký tài khoản
         const registerResponse = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "idempotent@example.com",
                 password: "Password123",
@@ -255,7 +255,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Kích hoạt lần 1 -> 200 OK
         const response1 = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: verificationToken },
         });
         assert.strictEqual(response1.statusCode, 200);
@@ -263,7 +263,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Kích hoạt lần 2 (idempotent) -> Vẫn 200 OK
         const response2 = await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: verificationToken },
         });
         assert.strictEqual(response2.statusCode, 200);
@@ -292,7 +292,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Gọi api login
         const response = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
 
@@ -315,7 +315,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/login - invalid credentials 401", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email: "wrong@example.com", password: "any" },
         });
 
@@ -339,7 +339,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
 
@@ -365,7 +365,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password: "any" },
         });
 
@@ -381,7 +381,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -396,14 +396,14 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Verify email
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token },
         });
 
         // 3. Login
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -413,7 +413,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 4. Logout
         const logoutRes = await app.inject({
             method: "POST",
-            url: "/auth/logout",
+            url: "/api/v1/auth/logout",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -437,7 +437,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/logout - unauthorized 401", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/logout",
+            url: "/api/v1/auth/logout",
             payload: {
                 refresh_token: "any-token",
             },
@@ -451,7 +451,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 1. Register and login User A
         const regResA = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "usera@example.com",
                 password: "Password123",
@@ -463,12 +463,12 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBodyA = JSON.parse(regResA.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBodyA.verificationToken },
         });
         const loginResA = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email: "usera@example.com", password: "Password123" },
         });
         const loginBodyA = JSON.parse(loginResA.body);
@@ -477,7 +477,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Register and login User B
         const regResB = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email: "userb@example.com",
                 password: "Password123",
@@ -489,12 +489,12 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBodyB = JSON.parse(regResB.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBodyB.verificationToken },
         });
         const loginResB = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email: "userb@example.com", password: "Password123" },
         });
         const loginBodyB = JSON.parse(loginResB.body);
@@ -503,7 +503,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. User A tries to log out User B's refresh token
         const response = await app.inject({
             method: "POST",
-            url: "/auth/logout",
+            url: "/api/v1/auth/logout",
             headers: {
                 Authorization: `Bearer ${accessTokenA}`,
             },
@@ -522,7 +522,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const email = "forgot_active@example.com";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password: "Password123",
@@ -534,14 +534,14 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         // 2. Request forgot-password
         const response = await app.inject({
             method: "POST",
-            url: "/auth/forgot-password",
+            url: "/api/v1/auth/forgot-password",
             payload: { email },
         });
 
@@ -564,7 +564,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/forgot-password - success 200 (non-existent email)", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/forgot-password",
+            url: "/api/v1/auth/forgot-password",
             payload: { email: "doesnotexist@example.com" },
         });
 
@@ -577,7 +577,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("POST /auth/forgot-password - validation error 400 (malformed email)", async () => {
         const response = await app.inject({
             method: "POST",
-            url: "/auth/forgot-password",
+            url: "/api/v1/auth/forgot-password",
             payload: { email: "invalid-email" },
         });
 
@@ -595,7 +595,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 1. Register and verify user
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password: oldPassword,
@@ -607,14 +607,14 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         // 2. Login to establish a session (so we can verify session revocation on reset)
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password: oldPassword },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -640,7 +640,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 4. Reset password using the valid token
         const resetRes = await app.inject({
             method: "POST",
-            url: "/auth/reset-password",
+            url: "/api/v1/auth/reset-password",
             payload: {
                 token: rawToken,
                 new_password: newPassword,
@@ -668,7 +668,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 7. Verify login with old password fails
         const oldLoginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password: oldPassword },
         });
         assert.strictEqual(oldLoginRes.statusCode, 401);
@@ -676,7 +676,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 8. Verify login with new password succeeds
         const newLoginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password: newPassword },
         });
         assert.strictEqual(newLoginRes.statusCode, 200);
@@ -684,7 +684,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 9. Try resetting again with the same token -> should fail 409
         const rerunRes = await app.inject({
             method: "POST",
-            url: "/auth/reset-password",
+            url: "/api/v1/auth/reset-password",
             payload: {
                 token: rawToken,
                 new_password: newPassword,
@@ -710,7 +710,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const samePasswordRes = await app.inject({
             method: "POST",
-            url: "/auth/reset-password",
+            url: "/api/v1/auth/reset-password",
             payload: {
                 token: rawToken2,
                 new_password: newPassword,
@@ -735,7 +735,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const expiredRes = await app.inject({
             method: "POST",
-            url: "/auth/reset-password",
+            url: "/api/v1/auth/reset-password",
             payload: {
                 token: rawTokenExpired,
                 new_password: "AnotherNewPassword123",
@@ -753,7 +753,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -766,13 +766,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -781,7 +781,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 2. Call GET /auth/me
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -805,7 +805,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("GET /auth/me - unauthorized 401 (missing header)", async () => {
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
         });
 
         assert.strictEqual(response.statusCode, 401);
@@ -822,7 +822,7 @@ test("Auth API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: "Bearer expired-token",
             },
@@ -840,7 +840,7 @@ test("Auth API - Database Integration Tests", async (t) => {
     await t.test("GET /auth/me - unauthorized 401 (malformed token)", async () => {
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: "Bearer malformed-token",
             },
@@ -858,7 +858,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -870,13 +870,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -891,7 +891,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Call GET /auth/me
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -909,7 +909,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -921,13 +921,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -942,7 +942,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Call GET /auth/me
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -960,7 +960,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -972,13 +972,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -993,7 +993,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Call GET /auth/me
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -1011,7 +1011,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -1023,13 +1023,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -1043,7 +1043,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         // 3. Call GET /auth/me
         const response = await app.inject({
             method: "GET",
-            url: "/auth/me",
+            url: "/api/v1/auth/me",
             headers: {
                 Authorization: `Bearer ${tamperedToken}`,
             },
@@ -1061,7 +1061,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         const password = "Password123";
         const regRes = await app.inject({
             method: "POST",
-            url: "/auth/register",
+            url: "/api/v1/auth/register",
             payload: {
                 email,
                 password,
@@ -1073,13 +1073,13 @@ test("Auth API - Database Integration Tests", async (t) => {
         const regBody = JSON.parse(regRes.body);
         await app.inject({
             method: "POST",
-            url: "/auth/verify-email",
+            url: "/api/v1/auth/verify-email",
             payload: { token: regBody.verificationToken },
         });
 
         const loginRes = await app.inject({
             method: "POST",
-            url: "/auth/login",
+            url: "/api/v1/auth/login",
             payload: { email, password },
         });
         const loginBody = JSON.parse(loginRes.body);
@@ -1089,7 +1089,7 @@ test("Auth API - Database Integration Tests", async (t) => {
         for (let i = 0; i < 3; i++) {
             const response = await app.inject({
                 method: "GET",
-                url: "/auth/me",
+                url: "/api/v1/auth/me",
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },

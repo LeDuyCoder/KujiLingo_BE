@@ -10,6 +10,9 @@ import {
     achievementIdParamSchema,
     createAchievementBodySchema,
     updateAchievementBodySchema,
+    getMyShowcaseQuerySchema,
+    userShowcaseParamSchema,
+    updateShowcaseBodySchema,
 } from "./achievements.schema.js";
 
 export async function achievementsRoutes(app: FastifyInstance) {
@@ -245,5 +248,135 @@ export async function achievementsRoutes(app: FastifyInstance) {
             },
         },
         achievementsController.update
+    );
+
+    // 6. Get My Achievement Showcase
+    router.get(
+        "/api/v1/achievements/showcase/me",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Achievements"],
+                summary: "Get My Achievement Showcase",
+                description: "Returns the achievements selected by the authenticated user to display on their profile as a showcase.",
+                querystring: getMyShowcaseQuerySchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            items: z.array(
+                                z.object({
+                                    id: z.string(),
+                                    title: z.string(),
+                                    description: z.string(),
+                                    icon: z.string(),
+                                    type: z.string(),
+                                    reward_exp: z.number(),
+                                    unlocked_at: z.string().nullable(),
+                                    slot: z.number(),
+                                })
+                            ),
+                            count: z.number(),
+                        }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        achievementsController.getMyShowcase
+    );
+
+    // 7. Get User Achievement Showcase (Public View)
+    router.get(
+        "/api/v1/users/:userId/achievements/showcase",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Achievements"],
+                summary: "Get User Achievement Showcase",
+                description: "Returns the public achievement showcase of another user.",
+                params: userShowcaseParamSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            user_id: z.string(),
+                            display_name: z.string(),
+                            items: z.array(
+                                z.object({
+                                    id: z.string(),
+                                    title: z.string(),
+                                    description: z.string(),
+                                    icon: z.string(),
+                                    type: z.string(),
+                                    unlocked_at: z.string().nullable(),
+                                })
+                            ),
+                            count: z.number(),
+                        }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }),
+                    }),
+                    404: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("USER_NOT_FOUND"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        achievementsController.getUserShowcase
+    );
+
+    // 8. Update My Achievement Showcase
+    router.patch(
+        "/api/v1/users/me/profile/showcase-achievement",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Achievements"],
+                summary: "Update My Achievement Showcase",
+                description: "Allows the authenticated user to select achievements for their public showcase.",
+                body: updateShowcaseBodySchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            updated: z.boolean(),
+                            achievement_ids: z.array(z.string()),
+                        }),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INVALID_SHOWCASE_SELECTION"), message: z.string() }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }),
+                    }),
+                    404: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("ACHIEVEMENT_NOT_FOUND"), message: z.string() }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }),
+                    }),
+                },
+            },
+        },
+        achievementsController.updateMyShowcase
     );
 }

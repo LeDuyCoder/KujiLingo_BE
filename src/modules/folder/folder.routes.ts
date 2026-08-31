@@ -23,7 +23,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 1. List Folders
     router.get(
-        "/folders",
+        "/api/v1/folders",
         {
             onRequest: [authGuard],
             schema: {
@@ -36,7 +36,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 2. Create Folder
     router.post(
-        "/folders",
+        "/api/v1/folders",
         {
             onRequest: [authGuard],
             schema: {
@@ -50,7 +50,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 3. Update Folder
     router.put(
-        "/folders/:id",
+        "/api/v1/folders/:id",
         {
             onRequest: [authGuard],
             schema: {
@@ -65,7 +65,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 4. Delete Folder
     router.delete(
-        "/folders/:id",
+        "/api/v1/folders/:id",
         {
             onRequest: [authGuard],
             schema: {
@@ -79,7 +79,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 5. Get Folder Contents
     router.get(
-        "/folders/:id/contents",
+        "/api/v1/folders/:id/contents",
         {
             onRequest: [authGuard],
             schema: {
@@ -93,7 +93,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 6. Add System Vocabulary to Folder
     router.post(
-        "/folders/:id/system-vocabularies",
+        "/api/v1/folders/:id/system-vocabularies",
         {
             onRequest: [authGuard],
             schema: {
@@ -108,7 +108,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 7. Remove System Vocabulary from Folder
     router.delete(
-        "/folders/:id/system-vocabularies/:vocabularyId",
+        "/api/v1/folders/:id/system-vocabularies/:vocabularyId",
         {
             onRequest: [authGuard],
             schema: {
@@ -122,7 +122,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 8. Add User Vocabulary to Folder
     router.post(
-        "/folders/:id/user-vocabularies",
+        "/api/v1/folders/:id/user-vocabularies",
         {
             onRequest: [authGuard],
             schema: {
@@ -137,7 +137,7 @@ export async function folderRoutes(app: FastifyInstance) {
 
     // 9. Remove User Vocabulary from Folder
     router.delete(
-        "/folders/:id/user-vocabularies/:userVocabularyId",
+        "/api/v1/folders/:id/user-vocabularies/:userVocabularyId",
         {
             onRequest: [authGuard],
             schema: {

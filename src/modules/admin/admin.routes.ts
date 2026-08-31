@@ -25,7 +25,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
     // 1. List Users
     router.get(
-        "/admin/users",
+        "/api/v1/admin/users",
         {
             schema: {
                 tags: ["Admin"],
@@ -80,7 +80,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
     // 2. Get User Detail
     router.get(
-        "/admin/users/:id",
+        "/api/v1/admin/users/:id",
         {
             schema: {
                 tags: ["Admin"],
@@ -134,7 +134,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
     // 3. Update User Status
     router.put(
-        "/admin/users/:id/status",
+        "/api/v1/admin/users/:id/status",
         {
             schema: {
                 tags: ["Admin"],
@@ -183,7 +183,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
     // 4. Promote / Demote User Role
     router.put(
-        "/admin/users/:id/role",
+        "/api/v1/admin/users/:id/role",
         {
             schema: {
                 tags: ["Admin"],
@@ -232,7 +232,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
     // 5. Get Audit Logs
     router.get(
-        "/admin/audit-logs",
+        "/api/v1/admin/audit-logs",
         {
             schema: {
                 tags: ["Admin"],

@@ -45,7 +45,7 @@ test("Dictionary API - Database Integration Tests", async (t) => {
         // 2. Gọi API Search
         const res = await app.inject({
             method: "GET",
-            url: "/dictionary/search?q=少ない&limit=20"
+            url: "/api/v1/dictionary/search?q=少ない&limit=20"
         });
 
         assert.strictEqual(res.statusCode, 200);
@@ -100,7 +100,7 @@ test("Dictionary API - Database Integration Tests", async (t) => {
         // 2. Gọi API Details
         const res = await app.inject({
             method: "GET",
-            url: `/dictionary/${vocabId}`
+            url: `/api/v1/dictionary/${vocabId}`
         });
 
         assert.strictEqual(res.statusCode, 200);
@@ -117,7 +117,7 @@ test("Dictionary API - Database Integration Tests", async (t) => {
         // Gọi API tìm kiếm với từ khóa "食べる" không có trong DB trống
         const res = await app.inject({
             method: "GET",
-            url: "/dictionary/search?q=食べる&limit=5"
+            url: "/api/v1/dictionary/search?q=食べる&limit=5"
         });
 
         assert.strictEqual(res.statusCode, 200);
