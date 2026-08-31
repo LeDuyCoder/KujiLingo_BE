@@ -20,7 +20,7 @@ export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
 
     router.post(
-        "/auth/register",
+        "/api/v1/auth/register",
         {
             schema: {
                 tags: ["Auth"],
@@ -54,7 +54,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/resend-verification",
+        "/api/v1/auth/resend-verification",
         {
             schema: {
                 tags: ["Auth"],
@@ -86,7 +86,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/verify-email",
+        "/api/v1/auth/verify-email",
         {
             schema: {
                 tags: ["Auth"],
@@ -126,7 +126,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/login",
+        "/api/v1/auth/login",
         {
             schema: {
                 tags: ["Auth"],
@@ -181,7 +181,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/logout",
+        "/api/v1/auth/logout",
         {
             schema: {
                 tags: ["Auth"],
@@ -216,7 +216,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/forgot-password",
+        "/api/v1/auth/forgot-password",
         {
             schema: {
                 tags: ["Auth"],
@@ -243,7 +243,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/reset-password",
+        "/api/v1/auth/reset-password",
         {
             schema: {
                 tags: ["Auth"],
@@ -287,7 +287,7 @@ export async function authRoutes(app: FastifyInstance) {
 
 
     router.get(
-        "/auth/me",
+        "/api/v1/auth/me",
         {
             schema: {
                 tags: ["Auth"],
@@ -341,7 +341,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.post(
-        "/auth/refresh-token",
+        "/api/v1/auth/refresh-token",
         {
             schema: {
                 tags: ["Auth"],
@@ -388,7 +388,7 @@ export async function authRoutes(app: FastifyInstance) {
     // [DEVELOPMENT ONLY] Google OAuth Setup endpoints
     // ========================================================
     router.get(
-        "/auth/google",
+        "/api/v1/auth/google",
         {
             schema: {
                 tags: ["Auth"],
@@ -400,7 +400,7 @@ export async function authRoutes(app: FastifyInstance) {
     );
 
     router.get(
-        "/auth/google/callback",
+        "/api/v1/auth/google/callback",
         {
             schema: {
                 tags: ["Auth"],

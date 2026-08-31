@@ -25,6 +25,13 @@ async function clearDatabase() {
     await prisma.refresh_tokens.deleteMany({});
     await prisma.password_reset_tokens.deleteMany({});
     await prisma.email_verification_tokens.deleteMany({});
+    await prisma.folder_user_vocabularies.deleteMany({});
+    await prisma.folder_system_vocabularies.deleteMany({});
+    await prisma.folders.deleteMany({});
+    await prisma.pvp_match_histories.deleteMany({});
+    await prisma.user_pvp_statistics.deleteMany({});
+    await prisma.topic_vocabularies.deleteMany({});
+    await prisma.topics.deleteMany({});
     await prisma.lessons.deleteMany({});
     await prisma.courses.deleteMany({});
     await prisma.users.deleteMany({});
@@ -77,7 +84,7 @@ test("Courses API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/courses",
+            url: "/api/v1/courses",
         });
 
         assert.strictEqual(response.statusCode, 200);
@@ -110,7 +117,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // 1. Existing Course
         const resSuccess = await app.inject({
             method: "GET",
-            url: `/courses/${courseId}`,
+            url: `/api/v1/courses/${courseId}`,
         });
         assert.strictEqual(resSuccess.statusCode, 200);
         const bodySuccess = JSON.parse(resSuccess.body);
@@ -121,7 +128,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // 2. Non-existing Course -> 404
         const resNotFound = await app.inject({
             method: "GET",
-            url: `/courses/${crypto.randomUUID()}`,
+            url: `/api/v1/courses/${crypto.randomUUID()}`,
         });
         assert.strictEqual(resNotFound.statusCode, 404);
         const bodyNotFound = JSON.parse(resNotFound.body);
@@ -137,7 +144,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // 1. Regular user creates course -> 403 Forbidden
         const resForbidden = await app.inject({
             method: "POST",
-            url: "/admin/courses",
+            url: "/api/v1/admin/courses",
             headers: { Authorization: `Bearer ${regularUser.token}` },
             payload: {
                 title: "Unauthorized Course",
@@ -149,7 +156,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // 2. Admin creates course -> 201 Created
         const resSuccess = await app.inject({
             method: "POST",
-            url: "/admin/courses",
+            url: "/api/v1/admin/courses",
             headers: { Authorization: `Bearer ${admin.token}` },
             payload: {
                 title: "New Admin Course",
@@ -186,7 +193,7 @@ test("Courses API - Database Integration Tests", async (t) => {
 
         const resUpdate = await app.inject({
             method: "PUT",
-            url: `/admin/courses/${cId}`,
+            url: `/api/v1/admin/courses/${cId}`,
             headers: { Authorization: `Bearer ${admin.token}` },
             payload: {
                 title: "Updated Name",
@@ -219,7 +226,7 @@ test("Courses API - Database Integration Tests", async (t) => {
 
         const resConflict = await app.inject({
             method: "DELETE",
-            url: `/admin/courses/${cId}`,
+            url: `/api/v1/admin/courses/${cId}`,
             headers: { Authorization: `Bearer ${admin.token}` },
         });
         assert.strictEqual(resConflict.statusCode, 409);
@@ -231,7 +238,7 @@ test("Courses API - Database Integration Tests", async (t) => {
 
         const resDelete = await app.inject({
             method: "DELETE",
-            url: `/admin/courses/${cId}`,
+            url: `/api/v1/admin/courses/${cId}`,
             headers: { Authorization: `Bearer ${admin.token}` },
         });
         assert.strictEqual(resDelete.statusCode, 200);
@@ -244,7 +251,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // Public lists should hide this course
         const resPublicList = await app.inject({
             method: "GET",
-            url: "/courses",
+            url: "/api/v1/courses",
         });
         const bodyPublicList = JSON.parse(resPublicList.body);
         assert.strictEqual(bodyPublicList.data.length, 0);
@@ -252,7 +259,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // 3. Restore course -> 200 OK
         const resRestore = await app.inject({
             method: "POST",
-            url: `/admin/courses/${cId}/restore`,
+            url: `/api/v1/admin/courses/${cId}/restore`,
             headers: { Authorization: `Bearer ${admin.token}` },
         });
         assert.strictEqual(resRestore.statusCode, 200);
@@ -265,7 +272,7 @@ test("Courses API - Database Integration Tests", async (t) => {
         // Public lists should show the course again
         const resPublicListAgain = await app.inject({
             method: "GET",
-            url: "/courses",
+            url: "/api/v1/courses",
         });
         const bodyPublicListAgain = JSON.parse(resPublicListAgain.body);
         assert.strictEqual(bodyPublicListAgain.data.length, 1);

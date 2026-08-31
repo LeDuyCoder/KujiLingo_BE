@@ -28,7 +28,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
     // 1. List Courses
     router.get(
-        "/courses",
+        "/api/v1/courses",
         {
             schema: {
                 tags: ["Courses"],
@@ -71,7 +71,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
     // 2. Get Course Detail
     router.get(
-        "/courses/:id",
+        "/api/v1/courses/:id",
         {
             schema: {
                 tags: ["Courses"],
@@ -123,7 +123,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
         // 3. Create Course
         adminRouter.post(
-            "/admin/courses",
+            "/api/v1/admin/courses",
             {
                 schema: {
                     tags: ["Admin Courses"],
@@ -164,7 +164,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
         // 4. Update Course
         adminRouter.put(
-            "/admin/courses/:id",
+            "/api/v1/admin/courses/:id",
             {
                 schema: {
                     tags: ["Admin Courses"],
@@ -209,7 +209,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
         // 5. Delete Course (Soft Delete)
         adminRouter.delete(
-            "/admin/courses/:id",
+            "/api/v1/admin/courses/:id",
             {
                 schema: {
                     tags: ["Admin Courses"],
@@ -253,7 +253,7 @@ export async function coursesRoutes(app: FastifyInstance) {
 
         // 6. Restore Course
         adminRouter.post(
-            "/admin/courses/:id/restore",
+            "/api/v1/admin/courses/:id/restore",
             {
                 schema: {
                     tags: ["Admin Courses"],

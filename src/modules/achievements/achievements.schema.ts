@@ -30,3 +30,17 @@ export const updateAchievementBodySchema = z.object({
     icon: z.string().min(1).optional(),
     reward_exp: z.number().int().nonnegative().optional(),
 });
+
+export const getMyShowcaseQuerySchema = z.object({
+    limit: z.coerce.number().min(1).max(6).default(3).optional(),
+});
+
+export const userShowcaseParamSchema = z.object({
+    userId: z.string(),
+});
+
+export const updateShowcaseBodySchema = z.object({
+    achievement_id: z.string().optional(),
+    slot: z.number().int().min(1).max(3).optional(),
+    achievement_ids: z.array(z.string()).max(3).optional(),
+});

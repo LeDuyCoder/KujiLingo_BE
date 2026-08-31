@@ -34,7 +34,7 @@ async function createAuthenticatedUser(email: string) {
 
     const loginRes = await app.inject({
         method: "POST",
-        url: "/auth/login",
+        url: "/api/v1/auth/login",
         payload: { email, password },
     });
 
@@ -57,7 +57,7 @@ test("Folder API - Database Integration Tests", async (t) => {
     await t.test("GET /folders - unauthorized 401", async () => {
         const res = await app.inject({
             method: "GET",
-            url: "/folders"
+            url: "/api/v1/folders"
         });
         assert.strictEqual(res.statusCode, 401);
     });
@@ -68,7 +68,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 1. Tạo thư mục thứ nhất
         const res1 = await app.inject({
             method: "POST",
-            url: "/folders",
+            url: "/api/v1/folders",
             headers: { Authorization: `Bearer ${user.token}` },
             payload: { name: "Weak Words", color: "#FF6B6B", icon: "star" }
         });
@@ -80,7 +80,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 2. Tạo thư mục thứ hai (để kiểm tra sắp xếp alphabetic)
         const res2 = await app.inject({
             method: "POST",
-            url: "/folders",
+            url: "/api/v1/folders",
             headers: { Authorization: `Bearer ${user.token}` },
             payload: { name: "Grammar Set", color: "#4ECDC4" }
         });
@@ -89,7 +89,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 3. Lấy danh sách folders
         const listRes = await app.inject({
             method: "GET",
-            url: "/folders",
+            url: "/api/v1/folders",
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(listRes.statusCode, 200);
@@ -117,7 +117,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // Update
         const updateRes = await app.inject({
             method: "PUT",
-            url: `/folders/${folder.id}`,
+            url: `/api/v1/folders/${folder.id}`,
             headers: { Authorization: `Bearer ${user.token}` },
             payload: { name: "Updated Folder" }
         });
@@ -128,7 +128,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // Delete
         const deleteRes = await app.inject({
             method: "DELETE",
-            url: `/folders/${folder.id}`,
+            url: `/api/v1/folders/${folder.id}`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(deleteRes.statusCode, 200);
@@ -163,7 +163,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 3. Thêm từ vựng hệ thống vào folder
         const addRes = await app.inject({
             method: "POST",
-            url: `/folders/${folder.id}/system-vocabularies`,
+            url: `/api/v1/folders/${folder.id}/system-vocabularies`,
             headers: { Authorization: `Bearer ${user.token}` },
             payload: { vocabulary_id: vocabId }
         });
@@ -172,7 +172,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 4. Lấy nội dung folder
         const contentsRes = await app.inject({
             method: "GET",
-            url: `/folders/${folder.id}/contents`,
+            url: `/api/v1/folders/${folder.id}/contents`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(contentsRes.statusCode, 200);
@@ -185,7 +185,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 5. Xóa từ vựng hệ thống khỏi folder
         const removeRes = await app.inject({
             method: "DELETE",
-            url: `/folders/${folder.id}/system-vocabularies/${vocabId}`,
+            url: `/api/v1/folders/${folder.id}/system-vocabularies/${vocabId}`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(removeRes.statusCode, 200);
@@ -193,7 +193,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // 6. Lấy lại nội dung folder để xác nhận đã trống
         const contentsRes2 = await app.inject({
             method: "GET",
-            url: `/folders/${folder.id}/contents`,
+            url: `/api/v1/folders/${folder.id}/contents`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         const contentsBody2 = JSON.parse(contentsRes2.body);
@@ -223,7 +223,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // Thêm vào folder
         const addRes = await app.inject({
             method: "POST",
-            url: `/folders/${folder.id}/user-vocabularies`,
+            url: `/api/v1/folders/${folder.id}/user-vocabularies`,
             headers: { Authorization: `Bearer ${user.token}` },
             payload: { user_vocabulary_id: userVocabId }
         });
@@ -232,7 +232,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // Lấy nội dung
         const contentsRes = await app.inject({
             method: "GET",
-            url: `/folders/${folder.id}/contents`,
+            url: `/api/v1/folders/${folder.id}/contents`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(contentsRes.statusCode, 200);
@@ -244,7 +244,7 @@ test("Folder API - Database Integration Tests", async (t) => {
         // Xóa khỏi folder
         const removeRes = await app.inject({
             method: "DELETE",
-            url: `/folders/${folder.id}/user-vocabularies/${userVocabId}`,
+            url: `/api/v1/folders/${folder.id}/user-vocabularies/${userVocabId}`,
             headers: { Authorization: `Bearer ${user.token}` }
         });
         assert.strictEqual(removeRes.statusCode, 200);

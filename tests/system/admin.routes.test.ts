@@ -74,7 +74,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/admin/users",
+            url: "/api/v1/admin/users",
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -93,7 +93,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/admin/users",
+            url: "/api/v1/admin/users",
             headers: {
                 Authorization: `Bearer ${user.token}`,
             },
@@ -112,7 +112,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/admin/users?status=suspended",
+            url: "/api/v1/admin/users?status=suspended",
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -131,7 +131,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: `/admin/users/${target.id}`,
+            url: `/api/v1/admin/users/${target.id}`,
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -153,7 +153,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "PUT",
-            url: `/admin/users/${target.id}/status`,
+            url: `/api/v1/admin/users/${target.id}/status`,
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -193,7 +193,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "PUT",
-            url: `/admin/users/${admin.id}/status`,
+            url: `/api/v1/admin/users/${admin.id}/status`,
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -214,7 +214,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "PUT",
-            url: `/admin/users/${target.id}/role`,
+            url: `/api/v1/admin/users/${target.id}/role`,
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -239,7 +239,7 @@ test("Admin API - Database Integration Tests", async (t) => {
         // Trigger action that writes audit logs
         await app.inject({
             method: "PUT",
-            url: `/admin/users/${target.id}/status`,
+            url: `/api/v1/admin/users/${target.id}/status`,
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },
@@ -251,7 +251,7 @@ test("Admin API - Database Integration Tests", async (t) => {
 
         const response = await app.inject({
             method: "GET",
-            url: "/admin/audit-logs",
+            url: "/api/v1/admin/audit-logs",
             headers: {
                 Authorization: `Bearer ${admin.token}`,
             },

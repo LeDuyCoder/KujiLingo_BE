@@ -5,7 +5,8 @@ import type {
     GetCatalogQuery,
     GetMyAchievementsQuery,
     CreateAchievementBody,
-    UpdateAchievementBody
+    UpdateAchievementBody,
+    UpdateShowcaseBody
 } from "./achievements.types.js";
 
 export async function evaluateProgressAndUnlock(userId: string) {
@@ -399,5 +400,238 @@ export const achievementsService = {
                 updated_at: new Date().toISOString()
             }
         };
+    },
+
+    async getMyShowcase(userId: string, limit: number = 3) {
+        const showcase = await prisma.user_achievement_showcase.findMany({
+            where: { user_id: userId },
+            take: limit,
+            orderBy: { slot: "asc" },
+            include: {
+                achievements: true
+            }
+        });
+        const achievementIds = showcase.map(s => s.achievement_id);
+        const unlocked = await prisma.user_achievements.findMany({
+            where: {
+                user_id: userId,
+                achievement_id: { in: achievementIds }
+            }
+        });
+        const unlockedMap = new Map(unlocked.map(ua => [ua.achievement_id, ua.unlocked_at]));
+
+        const items = showcase.map(s => {
+            const ach = s.achievements;
+            const unlockedAt = unlockedMap.get(s.achievement_id) || null;
+            return {
+                id: ach.id,
+                title: ach.title,
+                description: ach.description,
+                icon: ach.icon,
+                type: ach.type,
+                reward_exp: ach.reward_exp ?? 0,
+                unlocked_at: unlockedAt ? unlockedAt.toISOString() : null,
+                slot: s.slot
+            };
+        });
+
+        return {
+            success: true as const,
+            data: {
+                items,
+                count: items.length
+            }
+        };
+    },
+
+    async getUserShowcase(userId: string) {
+        const targetUser = await prisma.users.findUnique({
+            where: { id: userId },
+            select: { display_name: true }
+        });
+        if (!targetUser) {
+            throw new Error("USER_NOT_FOUND");
+        }
+
+        let showcase = await prisma.user_achievement_showcase.findMany({
+            where: { user_id: userId, is_public: true },
+            orderBy: { slot: "asc" },
+            include: {
+                achievements: true
+            }
+        });
+
+        let items: any[] = [];
+        if (showcase.length > 0) {
+            const achievementIds = showcase.map(s => s.achievement_id);
+            const unlocked = await prisma.user_achievements.findMany({
+                where: {
+                    user_id: userId,
+                    achievement_id: { in: achievementIds }
+                }
+            });
+            const unlockedMap = new Map(unlocked.map(ua => [ua.achievement_id, ua.unlocked_at]));
+
+            items = showcase.map(s => {
+                const ach = s.achievements;
+                const unlockedAt = unlockedMap.get(s.achievement_id) || null;
+                return {
+                    id: ach.id,
+                    title: ach.title,
+                    description: ach.description,
+                    icon: ach.icon,
+                    type: ach.type,
+                    unlocked_at: unlockedAt ? unlockedAt.toISOString() : null
+                };
+            });
+        } else {
+            // Fallback: If no custom showcase is set, auto-populate with up to 6 unlocked achievements
+            const unlocked = await prisma.user_achievements.findMany({
+                where: { user_id: userId },
+                orderBy: { unlocked_at: "desc" },
+                take: 6,
+                include: {
+                    achievements: true
+                }
+            });
+            items = unlocked.map(ua => {
+                const ach = ua.achievements;
+                return {
+                    id: ach.id,
+                    title: ach.title,
+                    description: ach.description,
+                    icon: ach.icon,
+                    type: ach.type,
+                    unlocked_at: ua.unlocked_at ? ua.unlocked_at.toISOString() : null
+                };
+            });
+        }
+
+        return {
+            success: true as const,
+            data: {
+                user_id: userId,
+                display_name: targetUser.display_name || "User",
+                items,
+                count: items.length
+            }
+        };
+    },
+
+    async updateMyShowcase(userId: string, body: UpdateShowcaseBody) {
+        if (body.achievement_ids !== undefined) {
+            // Bulk update
+            if (body.achievement_ids.length > 3) {
+                throw new Error("INVALID_SHOWCASE_SELECTION");
+            }
+            const unlocked = await prisma.user_achievements.findMany({
+                where: {
+                    user_id: userId,
+                    achievement_id: { in: body.achievement_ids }
+                }
+            });
+            if (unlocked.length !== body.achievement_ids.length) {
+                throw new Error("INVALID_SHOWCASE_SELECTION");
+            }
+
+            await prisma.$transaction(async (tx) => {
+                await tx.user_achievement_showcase.deleteMany({
+                    where: { user_id: userId }
+                });
+                if (body.achievement_ids!.length > 0) {
+                    const createData = body.achievement_ids!.map((id: string, index: number) => ({
+                        id: crypto.randomUUID(),
+                        user_id: userId,
+                        achievement_id: id,
+                        slot: index + 1,
+                        is_public: true
+                    }));
+                    await tx.user_achievement_showcase.createMany({
+                        data: createData
+                    });
+                }
+            });
+
+            return {
+                success: true as const,
+                data: {
+                    updated: true,
+                    achievement_ids: body.achievement_ids
+                }
+            };
+        } else if (body.achievement_id !== undefined && body.slot !== undefined) {
+            // Single slot update
+            const targetAchievementId = body.achievement_id;
+            const targetSlot = body.slot;
+
+            if (targetSlot < 1 || targetSlot > 3) {
+                throw new Error("INVALID_SHOWCASE_SELECTION");
+            }
+            const achievementExists = await prisma.achievements.findUnique({
+                where: { id: targetAchievementId }
+            });
+            if (!achievementExists) {
+                throw new Error("ACHIEVEMENT_NOT_FOUND");
+            }
+
+            const isUnlocked = await prisma.user_achievements.findUnique({
+                where: {
+                    user_id_achievement_id: {
+                        user_id: userId,
+                        achievement_id: targetAchievementId
+                    }
+                }
+            });
+            if (!isUnlocked) {
+                throw new Error("INVALID_SHOWCASE_SELECTION");
+            }
+
+            let currentIds: string[] = [];
+            await prisma.$transaction(async (tx) => {
+                // Clear slot and check duplicates in other slots
+                await tx.user_achievement_showcase.deleteMany({
+                    where: { user_id: userId, slot: targetSlot }
+                });
+                await tx.user_achievement_showcase.deleteMany({
+                    where: { user_id: userId, achievement_id: targetAchievementId }
+                });
+
+                await tx.user_achievement_showcase.create({
+                    data: {
+                        id: crypto.randomUUID(),
+                        user_id: userId,
+                        achievement_id: targetAchievementId,
+                        slot: targetSlot,
+                        is_public: true
+                    }
+                });
+
+                const currentShowcase = await tx.user_achievement_showcase.findMany({
+                    where: { user_id: userId },
+                    orderBy: { slot: "asc" }
+                });
+                currentIds = currentShowcase.map(s => s.achievement_id);
+            });
+
+            return {
+                success: true as const,
+                data: {
+                    updated: true,
+                    achievement_ids: currentIds
+                }
+            };
+        } else {
+            // Clear all
+            await prisma.user_achievement_showcase.deleteMany({
+                where: { user_id: userId }
+            });
+            return {
+                success: true as const,
+                data: {
+                    updated: true,
+                    achievement_ids: []
+                }
+            };
+        }
     }
 };

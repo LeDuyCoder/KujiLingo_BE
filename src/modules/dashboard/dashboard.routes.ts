@@ -8,7 +8,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
 
     router.get(
-        "/dashboard",
+        "/api/v1/dashboard",
         {
             onRequest: [authGuard],
             schema: {
