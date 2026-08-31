@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { 
+import {
     registerHandler,
     verifyEmailHandler,
     googleAuthHandler,
@@ -12,9 +12,21 @@ import {
     forgotPasswordHandler,
     resetPasswordHandler,
     meHandler,
-    refreshTokenHandler
+    refreshTokenHandler,
+    changePasswordHandler
 } from "./auth.controller.js";
-import { registerSchema, verifyEmailSchema, loginSchema, resendVerificationSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema, refreshTokenSchema } from "./auth.schema.js";
+import {
+    registerSchema,
+    verifyEmailSchema,
+    loginSchema,
+    resendVerificationSchema,
+    logoutSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema,
+    refreshTokenSchema,
+    changePasswordSchema
+} from "./auth.schema.js";
+import { authGuard } from "../../common/middlewares/auth.guard.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
@@ -381,6 +393,54 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         refreshTokenHandler
+    );
+
+    router.patch(
+        "/api/v1/auth/change-password",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Auth"],
+                summary: "Change Password",
+                description: "Allows an authenticated user to change their password.",
+                body: changePasswordSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        message: z.string(),
+                    }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("VALIDATION_ERROR"),
+                            message: z.string(),
+                        }),
+                    }),
+                    401: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.enum(["UNAUTHORIZED", "INVALID_CURRENT_PASSWORD"]),
+                            message: z.string(),
+                        }),
+                    }),
+                    422: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("PASSWORD_UNCHANGED"),
+                            message: z.string(),
+                        }),
+                    }),
+                    500: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("INTERNAL_ERROR"),
+                            message: z.string(),
+                        }),
+                    }),
+                },
+            },
+        },
+        changePasswordHandler as any
     );
 
 

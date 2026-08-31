@@ -142,4 +142,28 @@ export const refreshTokenSchema = z.object({
     refresh_token: z.string().trim().min(1, "Refresh token is required."),
 });
 
-export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;
+export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>;
+
+export const changePasswordSchema = z.object({
+    current_password: z
+        .string()
+        .min(1, "Current password is required."),
+    new_password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .max(72)
+        .regex(/[A-Za-z]/, "Password must contain at least one letter")
+        .regex(/\d/, "Password must contain at least one digit"),
+    new_password_confirmation: z
+        .string(),
+}).superRefine((data, ctx) => {
+    if (data.new_password !== data.new_password_confirmation) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["new_password_confirmation"],
+            message: "Passwords do not match.",
+        });
+    }
+});
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
 import { log } from "../../common/utils/log.js";
 import { verifyToken } from "../../common/utils/jwt.js";
@@ -489,6 +489,42 @@ export async function refreshTokenHandler(
             error: {
                 code: "UNAUTHORIZED",
                 message: "Refresh token is invalid, expired, or revoked.",
+            },
+        });
+    }
+}
+
+export async function changePasswordHandler(
+    request: FastifyRequest<{ Body: any }>,
+    reply: FastifyReply
+) {
+    try {
+        const userId = request.user!.id;
+        const body = request.body as ChangePasswordInput;
+        const result = await authService.changePassword(userId, body);
+        return reply.code(200).send(result);
+    } catch (error: any) {
+        log.error(error);
+        if (error.message === "INVALID_CURRENT_PASSWORD") {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "INVALID_CURRENT_PASSWORD", message: "Invalid current password." },
+            });
+        }
+        if (error.message === "PASSWORD_UNCHANGED") {
+            return reply.code(422).send({
+                success: false,
+                error: {
+                    code: "PASSWORD_UNCHANGED",
+                    message: "New password must be different from your current password.",
+                },
+            });
+        }
+        return reply.code(500).send({
+            success: false,
+            error: {
+                code: "INTERNAL_ERROR",
+                message: "An unexpected error occurred. Please try again later.",
             },
         });
     }
