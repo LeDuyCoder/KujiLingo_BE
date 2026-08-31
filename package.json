@@ -34,6 +34,7 @@
     "test:user-vocabularies": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/user-vocabularies.service.test.ts tests/system/user-vocabularies.routes.test.ts",
     "test:vocabularies": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/vocabularies.service.test.ts tests/system/vocabularies.routes.test.ts",
     "test:pvp": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/pvp.service.test.ts tests/system/pvp.routes.test.ts",
+    "test:pvp-ws": "node --import tsx scripts/pvp-ws-test-client.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
     "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts"
   },
@@ -45,6 +46,7 @@
     "@fastify/cors": "^11.3.0",
     "@fastify/swagger": "^9.8.1",
     "@fastify/swagger-ui": "^6.1.1",
+    "@fastify/websocket": "^11.3.0",
     "@payos/node": "^2.0.5",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
@@ -59,6 +61,7 @@
     "pino": "^10.3.1",
     "prisma": "^7.9.1",
     "uuid": "^14.0.1",
+    "ws": "^8.21.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -66,6 +69,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.2",
     "@types/pg": "^8.21.0",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.23.10",
     "typescript": "^7.0.2"
   }
