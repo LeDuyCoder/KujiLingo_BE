@@ -81,6 +81,8 @@ test("Achievements API System Tests", async (t) => {
 
     after(async () => {
         await cleanupTestData();
+        await app.close();
+        await prisma.$disconnect();
     });
 
     // =========================================================================

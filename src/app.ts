@@ -1,9 +1,11 @@
 import cors from "@fastify/cors";
+import websocket from "@fastify/websocket";
 import "dotenv/config";
 import Fastify from "fastify";
 import { validatorCompiler, serializerCompiler } from "fastify-type-provider-zod";
 import { registerSwagger } from "./config/swagger.js";
 import { registerRoutes } from "./routes/index.js";
+import { registerWebSocketRoutes } from "./websocket/socket.js";
 
 const app = Fastify({
     logger: process.env.NODE_ENV !== "test",
@@ -17,6 +19,8 @@ await app.register(cors, {
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"]
 });
+
+await app.register(websocket);
 
 // Register global error handler before registering routes so it is correctly inherited
 app.setErrorHandler((error: any, request, reply) => {
@@ -58,5 +62,6 @@ app.setErrorHandler((error: any, request, reply) => {
 
 await registerSwagger(app);
 await registerRoutes(app);
+await registerWebSocketRoutes(app);
 
 export default app;
