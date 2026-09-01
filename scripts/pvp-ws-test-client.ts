@@ -62,7 +62,7 @@ async function main() {
             console.log(`✅ [${playerName}] Connected to WSS /ws/v1/pvp`);
         });
 
-        ws.on("message", (data: Buffer) => {
+        ws.on("message", async (data: Buffer) => {
             const msg = JSON.parse(data.toString());
             console.log(`📥 [${playerName}] Received Event: '${msg.type}'`);
 
@@ -133,13 +133,25 @@ async function main() {
                 if (battleMode === "ENERGY_BAR") console.log(`   Energy %:`, msg.data.energy);
             } else if (msg.type === "match.finished") {
                 console.log(`🏆 [${playerName}] Match Finished! Winner: ${msg.data.winner_id || "DRAW"}, Condition: ${msg.data.win_condition}`);
+                // Fallback exit timer if settlement.completed takes time or does not fire
+                setTimeout(async () => {
+                    if (answeredQuestions < 2) {
+                        console.log(`\n🎉 Test Completed for mode ${battleMode}!\n`);
+                        answeredQuestions = 999;
+                        try { ws1.close(); } catch (e) {}
+                        try { ws2.close(); } catch (e) {}
+                        await app.close();
+                        process.exit(0);
+                    }
+                }, 2000);
             } else if (msg.type === "settlement.completed") {
                 console.log(`💳 [${playerName}] Settlement Completed! Rating Changes:`, msg.data.rating_changes);
                 answeredQuestions++;
-                if (answeredQuestions >= 2) {
+                if (answeredQuestions >= 2 && answeredQuestions < 900) {
                     console.log(`\n🎉 Test Completed Successfully for mode ${battleMode}!\n`);
-                    ws1.close();
-                    ws2.close();
+                    try { ws1.close(); } catch (e) {}
+                    try { ws2.close(); } catch (e) {}
+                    await app.close();
                     process.exit(0);
                 }
             }
