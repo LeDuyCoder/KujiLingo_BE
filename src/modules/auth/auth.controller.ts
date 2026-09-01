@@ -67,7 +67,12 @@ export async function logoutHandler(
         throw new UnauthorizedException("Access token is missing, invalid, or expired.")
     }
 
-    const decoded = verifyToken(token) as { sub: string };
+    let decoded: { sub: string };
+    try {
+        decoded = verifyToken(token) as { sub: string };
+    } catch {
+        throw new UnauthorizedException("Access token is missing, invalid, or expired.");
+    }
     await authService.logout(decoded.sub, request.body);
 
     return reply.send({ success: true, message: "Logged out successfully." });
@@ -202,7 +207,12 @@ export async function meHandler(
         throw new UnauthorizedException("Access token is missing, invalid, or expired.")
     }
 
-    const decoded = verifyToken(token) as { sub: string };
+    let decoded: { sub: string };
+    try {
+        decoded = verifyToken(token) as { sub: string };
+    } catch {
+        throw new UnauthorizedException("Access token is missing, invalid, or expired.");
+    }
     const user = await authService.getCurrentUser(decoded.sub);
 
     return reply.send({

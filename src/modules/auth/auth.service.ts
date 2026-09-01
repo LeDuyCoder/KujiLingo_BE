@@ -14,7 +14,16 @@ import { log } from "../../common/utils/log.js";
 import { signToken } from "../../common/utils/jwt.js";
 import { env } from "../../config/env.js";
 import { rateLimiter } from "../../common/utils/rate-limiter.js";
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException, UnauthorizedException } from "../../common/errors/http.exception.js";
+import {
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    GoneException,
+    NotFoundException,
+    TooManyRequestException,
+    UnauthorizedException,
+    UnprocessableEntityException,
+} from "../../common/errors/http.exception.js";
 
 /**
  * Register new user
@@ -105,11 +114,11 @@ export async function verifyEmail(token: string): Promise<{
                     email_verified_at: user.email_verified_at!,
                 };
             }
-            throw new ForbiddenException("This verification link has already been used.", "TOKEN_ALREADY_USED");
+            throw new ConflictException("This verification link has already been used.", "TOKEN_ALREADY_USED");
         }
 
         if (new Date(tokenRecord.expires_at) < new Date()) {
-            throw new UnauthorizedException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
+            throw new GoneException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
         }
 
         const now = new Date();
@@ -139,7 +148,7 @@ export async function login(
 
     const failedAttempts = await authRepository.countRecentFailedAttempts(email, 15);
     if (failedAttempts >= 10) {
-        throw new ForbiddenException("Too many failed login attempts. Please try again in 15 minutes.", "ACCOUNT_TEMPORARILY_LOCKED");
+        throw new TooManyRequestException("Too many failed login attempts. Please try again in 15 minutes.", "ACCOUNT_TEMPORARILY_LOCKED");
     }
 
     const user = await authRepository.findUserByEmail(email);
@@ -278,7 +287,7 @@ export async function logout(userId: string, data: LogoutInput): Promise<{ succe
 
         if (tokenRecord) {
             if (tokenRecord.user_id !== userId) {
-                throw new UnauthorizedException("This refresh token does not belong to the authenticated user.", "TOKEN_OWNERSHIP_MISMATCH");
+                throw new ForbiddenException("This refresh token does not belong to the authenticated user.", "TOKEN_OWNERSHIP_MISMATCH");
             }
             await authRepository.revokeToken(tokenRecord.id);
         }
@@ -366,17 +375,17 @@ export async function resetPassword(data: ResetPasswordInput): Promise<{ success
         // 1. Tìm kiếm reset token FOR UPDATE
         const tokenRecord = await authRepository.findPasswordResetTokenByHash(tx, tokenHash);
         if (!tokenRecord) {
-            throw new ForbiddenException("This verification link is invalid.", "TOKEN_NOT_FOUND");
+            throw new NotFoundException("This verification link is invalid.", "TOKEN_NOT_FOUND");
         }
 
         // 2. Kiểm tra xem token đã được sử dụng chưa
         if (tokenRecord.consumed_at) {
-            throw new ForbiddenException("This verification link has already been used.", "TOKEN_ALREADY_USED");
+            throw new ConflictException("This verification link has already been used.", "TOKEN_ALREADY_USED");
         }
 
         // 3. Kiểm tra xem token đã hết hạn chưa
         if (new Date(tokenRecord.expires_at) < new Date()) {
-            throw new UnauthorizedException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
+            throw new GoneException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
         }
 
         // 4. Tìm kiếm người dùng tương ứng
@@ -391,7 +400,7 @@ export async function resetPassword(data: ResetPasswordInput): Promise<{ success
         // 5. Kiểm tra mật khẩu mới có giống mật khẩu cũ không
         const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
         if (isIdentical) {
-            throw new BadRequestException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
+            throw new UnprocessableEntityException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
         }
 
         // 6. Thực hiện đổi mật khẩu, tiêu thụ token, và hủy toàn bộ refresh tokens
@@ -571,7 +580,7 @@ export async function changePassword(
         // 3. Ensure new password is different
         const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
         if (isIdentical) {
-            throw new BadRequestException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
+            throw new UnprocessableEntityException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
         }
 
         // 4. Hash and update

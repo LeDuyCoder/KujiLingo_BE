@@ -47,7 +47,19 @@ export class ConflictException extends HttpException {
   }
 }
 
-export class ToManyRequestException extends HttpException {
+export class GoneException extends HttpException {
+  constructor(message = "Gone", code = "GONE") {
+    super(410, message, code);
+  }
+}
+
+export class UnprocessableEntityException extends HttpException {
+  constructor(message = "Unprocessable Entity", code = "UNPROCESSABLE_ENTITY") {
+    super(422, message, code);
+  }
+}
+
+export class TooManyRequestException extends HttpException {
   constructor(message = "Too Many Requests", code = "TOO_MANY_REQUESTS") {
     super(429, message, code);
   }

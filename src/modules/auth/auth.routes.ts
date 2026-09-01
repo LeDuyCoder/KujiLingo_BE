@@ -53,11 +53,26 @@ export async function authRoutes(app: FastifyInstance) {
                         }),
                         verificationToken: z.string(),
                     }),
+                    400: z.object({
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("VALIDATION_ERROR"),
+                            message: z.string(),
+                        }),
+                    }),
                     409: z.object({
-                        code: z.literal("REGISTER_DUPLICATE_EMAIL"),
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("DUPLICATE_EMAIL"),
+                            message: z.string(),
+                        }),
                     }),
                     500: z.object({
-                        code: z.literal("REGISTER_INTERNAL_SERVER_ERROR"),
+                        success: z.boolean(),
+                        error: z.object({
+                            code: z.literal("INTERNAL_ERROR"),
+                            message: z.string(),
+                        }),
                     }),
                 },
             },
