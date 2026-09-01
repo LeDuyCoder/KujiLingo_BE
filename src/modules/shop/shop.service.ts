@@ -249,5 +249,26 @@ export const shopService = {
             success: true,
             data
         };
+    },
+
+    /**
+     * Unequip item for a specific type slot (AVATAR, BACKGROUND, FRAME)
+     */
+    async unequipItem(userId: string, itemType: string) {
+        if (!["AVATAR", "BACKGROUND", "FRAME"].includes(itemType)) {
+            throw new Error("INVALID_ITEM_TYPE");
+        }
+
+        await db.prisma.$transaction(async (tx) => {
+            await shopRepository.deleteEquippedItem(tx, userId, itemType);
+        });
+
+        return {
+            success: true,
+            data: {
+                item_type: itemType
+            },
+            message: "Item unequipped."
+        };
     }
 };

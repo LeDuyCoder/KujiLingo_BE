@@ -120,3 +120,16 @@ export const listEquippedResponseSchema = z.object({
         equipped_at: z.string().nullable().or(z.date().nullable()).or(z.any()),
     })),
 });
+
+// --- POST /api/v1/shop/unequip ---
+export const unequipItemBodySchema = z.object({
+    item_type: z.enum(["AVATAR", "BACKGROUND", "FRAME"]),
+});
+
+export const unequipItemResponseSchema = z.object({
+    success: z.boolean(),
+    data: z.object({
+        item_type: z.enum(["AVATAR", "BACKGROUND", "FRAME"]),
+    }),
+    message: z.string(),
+});

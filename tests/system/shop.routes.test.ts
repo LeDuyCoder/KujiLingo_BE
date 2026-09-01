@@ -154,4 +154,20 @@ test("Shop Routes - System Tests", async (t) => {
         assert.strictEqual(body.success, true);
         assert.strictEqual(body.data.item_type, "BACKGROUND");
     });
+
+    await t.test("POST /api/v1/shop/unequip - returns 200 on success", async () => {
+        mock.method(shopRepository, "deleteEquippedItem", async () => ({}));
+
+        const response = await app.inject({
+            method: "POST",
+            url: "/api/v1/shop/unequip",
+            headers: { authorization: `Bearer ${userToken}`, "content-type": "application/json" },
+            payload: JSON.stringify({ item_type: "BACKGROUND" })
+        });
+
+        assert.strictEqual(response.statusCode, 200);
+        const body = JSON.parse(response.payload);
+        assert.strictEqual(body.success, true);
+        assert.strictEqual(body.data.item_type, "BACKGROUND");
+    });
 });
