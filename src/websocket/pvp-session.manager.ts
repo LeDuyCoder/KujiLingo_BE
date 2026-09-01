@@ -180,6 +180,10 @@ class SessionManager {
                 }
             }
         }, 25000); // 25 seconds heartbeat interval
+
+        if (this.heartbeatTimer && typeof this.heartbeatTimer.unref === "function") {
+            this.heartbeatTimer.unref();
+        }
     }
 }
 

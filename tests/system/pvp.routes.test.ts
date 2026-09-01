@@ -6,6 +6,7 @@ import app from "../../src/app.js";
 import { prisma } from "../../src/config/prisma.js";
 
 async function clearDatabase() {
+    await prisma.user_achievement_showcase.deleteMany({});
     await prisma.pvp_match_histories.deleteMany({});
     await prisma.user_pvp_statistics.deleteMany({});
     await prisma.leaderboard_snapshots.deleteMany({});
@@ -69,6 +70,8 @@ test("PVP REST API System Tests", async (t) => {
 
     after(async () => {
         await clearDatabase();
+        await app.close();
+        await prisma.$disconnect();
     });
 
     // 1. Get My Statistics
