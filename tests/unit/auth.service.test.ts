@@ -75,7 +75,7 @@ test("Auth Service - Register Unit Tests", async (t) => {
                 });
             },
             (err: any) => {
-                assert.strictEqual(err.message, "DUPLICATE_EMAIL");
+                assert.strictEqual(err.code, "DUPLICATE_EMAIL");
                 return true;
             }
         );
@@ -122,7 +122,13 @@ test("Auth Service - Verify Email Unit Tests", async (t) => {
 
     await t.test("should throw TOKEN_NOT_FOUND", async () => {
         mock.method(authRepository, "findTokenByHash", async () => null);
-        await assert.rejects(verifyEmail("invalid"), /TOKEN_NOT_FOUND/);
+        await assert.rejects(
+            verifyEmail("invalid"),
+            (err: any) => {
+                assert.strictEqual(err.code, "TOKEN_NOT_FOUND");
+                return true;
+            }
+        );
     });
 });
 
@@ -176,7 +182,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "login@example.com", password: "any" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /ACCOUNT_TEMPORARILY_LOCKED/
+            (err: any) => {
+                assert.strictEqual(err.code, "ACCOUNT_TEMPORARILY_LOCKED");
+                return true;
+            }
         );
     });
 
@@ -190,7 +199,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "nonexistent@ex.com", password: "any" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /INVALID_CREDENTIALS/
+            (err: any) => {
+                assert.strictEqual(err.code, "INVALID_CREDENTIALS");
+                return true;
+            }
         );
     });
 
@@ -212,7 +224,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "login@example.com", password: "WrongPassword" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /INVALID_CREDENTIALS/
+            (err: any) => {
+                assert.strictEqual(err.code, "INVALID_CREDENTIALS");
+                return true;
+            }
         );
     });
 
@@ -233,7 +248,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "login@example.com", password: "Pass123" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /EMAIL_NOT_VERIFIED/
+            (err: any) => {
+                assert.strictEqual(err.code, "EMAIL_NOT_VERIFIED");
+                return true;
+            }
         );
     });
 
@@ -254,7 +272,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "login@example.com", password: "Pass123" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /ACCOUNT_SUSPENDED/
+            (err: any) => {
+                assert.strictEqual(err.code, "ACCOUNT_SUSPENDED");
+                return true;
+            }
         );
     });
 
@@ -275,7 +296,10 @@ test("Auth Service - Login Unit Tests", async (t) => {
                 { email: "login@example.com", password: "Pass123" },
                 { ipAddress: "127.0.0.1" }
             ),
-            /ACCOUNT_BANNED/
+            (err: any) => {
+                assert.strictEqual(err.code, "ACCOUNT_BANNED");
+                return true;
+            }
         );
     });
 });
@@ -310,7 +334,10 @@ test("Auth Service - Logout Unit Tests", async (t) => {
                 refresh_token: "someone-elses-token",
                 all_devices: false 
             }),
-            /TOKEN_OWNERSHIP_MISMATCH/
+            (err: any) => {
+                assert.strictEqual(err.code, "TOKEN_OWNERSHIP_MISMATCH");
+                return true;
+            }
         );
     });
 
@@ -495,7 +522,10 @@ test("Auth Service - Reset Password Unit Tests", async (t) => {
                 new_password: "NewPassword123",
                 new_password_confirmation: "NewPassword123",
             }),
-            { message: "TOKEN_NOT_FOUND" }
+            (err: any) => {
+                assert.strictEqual(err.code, "TOKEN_NOT_FOUND");
+                return true;
+            }
         );
     });
 
@@ -516,7 +546,10 @@ test("Auth Service - Reset Password Unit Tests", async (t) => {
                 new_password: "NewPassword123",
                 new_password_confirmation: "NewPassword123",
             }),
-            { message: "TOKEN_ALREADY_USED" }
+            (err: any) => {
+                assert.strictEqual(err.code, "TOKEN_ALREADY_USED");
+                return true;
+            }
         );
     });
 
@@ -537,7 +570,10 @@ test("Auth Service - Reset Password Unit Tests", async (t) => {
                 new_password: "NewPassword123",
                 new_password_confirmation: "NewPassword123",
             }),
-            { message: "TOKEN_EXPIRED" }
+            (err: any) => {
+                assert.strictEqual(err.code, "TOKEN_EXPIRED");
+                return true;
+            }
         );
     });
 
@@ -558,7 +594,10 @@ test("Auth Service - Reset Password Unit Tests", async (t) => {
                 new_password: "OldPassword123",
                 new_password_confirmation: "OldPassword123",
             }),
-            { message: "PASSWORD_UNCHANGED" }
+            (err: any) => {
+                assert.strictEqual(err.code, "PASSWORD_UNCHANGED");
+                return true;
+            }
         );
     });
 });
@@ -608,7 +647,10 @@ test("Auth Service - Get Current User (Me) Unit Tests", async (t) => {
 
         await assert.rejects(
             getCurrentUser("user-uuid-nonexistent"),
-            /UNAUTHORIZED/
+            (err: any) => {
+                assert.strictEqual(err.code, "UNAUTHORIZED");
+                return true;
+            }
         );
     });
 
@@ -624,7 +666,10 @@ test("Auth Service - Get Current User (Me) Unit Tests", async (t) => {
 
         await assert.rejects(
             getCurrentUser("user-uuid-1"),
-            /ACCOUNT_SUSPENDED/
+            (err: any) => {
+                assert.strictEqual(err.code, "ACCOUNT_SUSPENDED");
+                return true;
+            }
         );
     });
 
@@ -640,7 +685,10 @@ test("Auth Service - Get Current User (Me) Unit Tests", async (t) => {
 
         await assert.rejects(
             getCurrentUser("user-uuid-1"),
-            /ACCOUNT_BANNED/
+            (err: any) => {
+                assert.strictEqual(err.code, "ACCOUNT_BANNED");
+                return true;
+            }
         );
     });
 });
