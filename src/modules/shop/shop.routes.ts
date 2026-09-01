@@ -14,7 +14,9 @@ import {
     listInventoryResponseSchema,
     equipItemBodySchema,
     equipItemResponseSchema,
-    listEquippedResponseSchema
+    listEquippedResponseSchema,
+    unequipItemBodySchema,
+    unequipItemResponseSchema
 } from "./shop.schema.js";
 
 export async function shopRoutes(app: FastifyInstance) {
@@ -156,5 +158,25 @@ export async function shopRoutes(app: FastifyInstance) {
             }
         },
         shopController.getEquipped
+    );
+
+    // 8. Unequip Item
+    router.post(
+        "/api/v1/shop/unequip",
+        {
+            schema: {
+                tags: ["Shop"],
+                summary: "Unequip Item",
+                description: "Removes currently equipped item from a slot.",
+                body: unequipItemBodySchema,
+                response: {
+                    200: unequipItemResponseSchema,
+                    400: z.object({ success: z.boolean(), error: z.object({ code: z.string(), message: z.string() }) }),
+                    401: z.object({ success: z.boolean(), error: z.object({ code: z.string(), message: z.string() }) }),
+                    500: z.object({ success: z.boolean(), error: z.object({ code: z.string(), message: z.string() }) })
+                }
+            }
+        },
+        shopController.unequip
     );
 }

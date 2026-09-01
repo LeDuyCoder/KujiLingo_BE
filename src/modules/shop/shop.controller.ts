@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { shopService } from "./shop.service.js";
+import { log } from "../../common/utils/log.js";
 
 export const shopController = {
     /**
@@ -192,6 +193,39 @@ export const shopController = {
             const result = await shopService.getEquippedItems(userId);
             return reply.status(200).send(result);
         } catch (error: any) {
+            return reply.status(500).send({
+                success: false,
+                error: { code: "INTERNAL_ERROR", message: error.message || "An unexpected error occurred." }
+            });
+        }
+    },
+
+    /**
+     * POST /api/v1/shop/unequip
+     */
+    async unequip(request: FastifyRequest, reply: FastifyReply) {
+        try {
+            const userId = request.user?.id;
+            if (!userId) {
+                return reply.status(401).send({
+                    success: false,
+                    error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." }
+                });
+            }
+
+            const { item_type } = request.body as { item_type: string };
+            const result = await shopService.unequipItem(userId, item_type);
+            return reply.status(200).send(result);
+        } catch (error: any) {
+            log.error(error);
+
+            if (error.message === "INVALID_ITEM_TYPE") {
+                return reply.status(400).send({
+                    success: false,
+                    error: { code: "INVALID_ITEM_TYPE", message: "Invalid item type specified." }
+                });
+            }
+
             return reply.status(500).send({
                 success: false,
                 error: { code: "INTERNAL_ERROR", message: error.message || "An unexpected error occurred." }

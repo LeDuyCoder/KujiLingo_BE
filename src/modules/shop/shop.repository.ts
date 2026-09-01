@@ -297,5 +297,17 @@ export const shopRepository = {
                 shop_items: true
             }
         });
+    },
+
+    /**
+     * Delete/unequip item for a specific type slot
+     */
+    async deleteEquippedItem(tx: TransactionClient, userId: string, itemType: string) {
+        return tx.user_equipped_items.deleteMany({
+            where: {
+                user_id: userId,
+                item_type: itemType as any
+            }
+        });
     }
 };
