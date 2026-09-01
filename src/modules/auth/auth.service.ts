@@ -14,6 +14,7 @@ import { log } from "../../common/utils/log.js";
 import { signToken } from "../../common/utils/jwt.js";
 import { env } from "../../config/env.js";
 import { rateLimiter } from "../../common/utils/rate-limiter.js";
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException, UnauthorizedException } from "../../common/errors/http.exception.js";
 
 /**
  * Register new user
@@ -26,7 +27,7 @@ export async function register(data: RegisterInput): Promise<{
     const existingUser = await authRepository.findActiveUserByEmail(email);
 
     if (existingUser) {
-        throw new Error("DUPLICATE_EMAIL");
+        throw new ConflictException("This email address is already in use.", "DUPLICATE_EMAIL");
     }
 
     const passwordHash = await bcrypt.hash(data.password, 12);
@@ -90,7 +91,7 @@ export async function verifyEmail(token: string): Promise<{
         const tokenRecord = await authRepository.findTokenByHash(tx, tokenHash);
 
         if (!tokenRecord) {
-            throw new Error("TOKEN_NOT_FOUND");
+            throw new NotFoundException("This verification link is invalid.", "TOKEN_NOT_FOUND");
         }
 
         if (tokenRecord.consumed_at) {
@@ -104,11 +105,11 @@ export async function verifyEmail(token: string): Promise<{
                     email_verified_at: user.email_verified_at!,
                 };
             }
-            throw new Error("TOKEN_ALREADY_USED");
+            throw new ForbiddenException("This verification link has already been used.", "TOKEN_ALREADY_USED");
         }
 
         if (new Date(tokenRecord.expires_at) < new Date()) {
-            throw new Error("TOKEN_EXPIRED");
+            throw new UnauthorizedException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
         }
 
         const now = new Date();
@@ -138,7 +139,7 @@ export async function login(
 
     const failedAttempts = await authRepository.countRecentFailedAttempts(email, 15);
     if (failedAttempts >= 10) {
-        throw new Error("ACCOUNT_TEMPORARILY_LOCKED");
+        throw new ForbiddenException("Too many failed login attempts. Please try again in 15 minutes.", "ACCOUNT_TEMPORARILY_LOCKED");
     }
 
     const user = await authRepository.findUserByEmail(email);
@@ -149,7 +150,7 @@ export async function login(
             userAgent: reqInfo.userAgent,
             succeeded: false,
         });
-        throw new Error("INVALID_CREDENTIALS");
+        throw new UnauthorizedException("Incorrect email or password.", "INVALID_CREDENTIALS");
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password_hash || "");
@@ -160,17 +161,17 @@ export async function login(
             userAgent: reqInfo.userAgent,
             succeeded: false,
         });
-        throw new Error("INVALID_CREDENTIALS");
+        throw new UnauthorizedException("Incorrect email or password.", "INVALID_CREDENTIALS");
     }
 
     if (user.status === "pending_verification" && !env.ALLOW_LOGIN_BEFORE_VERIFICATION) {
-        throw new Error("EMAIL_NOT_VERIFIED");
+        throw new ForbiddenException("Please verify your email before logging in.", "EMAIL_NOT_VERIFIED");
     }
     if (user.status === "suspended") {
-        throw new Error("ACCOUNT_SUSPENDED");
+        throw new ForbiddenException("Your account has been temporarily suspended.", "ACCOUNT_SUSPENDED");
     }
     if (user.status === "banned") {
-        throw new Error("ACCOUNT_BANNED");
+        throw new ForbiddenException("Your account has been permanently banned.", "ACCOUNT_BANNED");
     }
 
     const role = user.role || "user";
@@ -229,11 +230,11 @@ export async function resendVerificationEmail(email: string): Promise<{ success:
     const user = await authRepository.findUserByEmail(trimmedEmail);
 
     if (!user) {
-        throw new Error("USER_NOT_FOUND");
+        throw new NotFoundException("User not found with the provided email.", "USER_NOT_FOUND");
     }
 
     if (user.status === "active" || user.email_verified) {
-        throw new Error("EMAIL_ALREADY_VERIFIED");
+        throw new ConflictException("This email address is already verified.", "EMAIL_ALREADY_VERIFIED");
     }
 
     const { token, tokenHash } = generateVerificationToken();
@@ -277,7 +278,7 @@ export async function logout(userId: string, data: LogoutInput): Promise<{ succe
 
         if (tokenRecord) {
             if (tokenRecord.user_id !== userId) {
-                throw new Error("TOKEN_OWNERSHIP_MISMATCH");
+                throw new UnauthorizedException("This refresh token does not belong to the authenticated user.", "TOKEN_OWNERSHIP_MISMATCH");
             }
             await authRepository.revokeToken(tokenRecord.id);
         }
@@ -365,17 +366,17 @@ export async function resetPassword(data: ResetPasswordInput): Promise<{ success
         // 1. Tìm kiếm reset token FOR UPDATE
         const tokenRecord = await authRepository.findPasswordResetTokenByHash(tx, tokenHash);
         if (!tokenRecord) {
-            throw new Error("TOKEN_NOT_FOUND");
+            throw new ForbiddenException("This verification link is invalid.", "TOKEN_NOT_FOUND");
         }
 
         // 2. Kiểm tra xem token đã được sử dụng chưa
         if (tokenRecord.consumed_at) {
-            throw new Error("TOKEN_ALREADY_USED");
+            throw new ForbiddenException("This verification link has already been used.", "TOKEN_ALREADY_USED");
         }
 
         // 3. Kiểm tra xem token đã hết hạn chưa
         if (new Date(tokenRecord.expires_at) < new Date()) {
-            throw new Error("TOKEN_EXPIRED");
+            throw new UnauthorizedException("This verification link has expired. Please request a new one.", "TOKEN_EXPIRED");
         }
 
         // 4. Tìm kiếm người dùng tương ứng
@@ -384,13 +385,13 @@ export async function resetPassword(data: ResetPasswordInput): Promise<{ success
         });
 
         if (!user || user.deleted_at) {
-            throw new Error("TOKEN_NOT_FOUND");
+            throw new NotFoundException("This password reset link is invalid.", "TOKEN_NOT_FOUND");
         }
 
         // 5. Kiểm tra mật khẩu mới có giống mật khẩu cũ không
         const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
         if (isIdentical) {
-            throw new Error("PASSWORD_UNCHANGED");
+            throw new BadRequestException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
         }
 
         // 6. Thực hiện đổi mật khẩu, tiêu thụ token, và hủy toàn bộ refresh tokens
@@ -431,14 +432,14 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
     const user = await authRepository.findUserById(userId);
 
     if (!user) {
-        throw new Error("UNAUTHORIZED");
+        throw new UnauthorizedException("Access token is missing, invalid, or expired.");
     }
 
     if (user.status === "suspended") {
-        throw new Error("ACCOUNT_SUSPENDED");
+        throw new ForbiddenException("Your account has been temporarily suspended.", "ACCOUNT_SUSPENDED");
     }
     if (user.status === "banned") {
-        throw new Error("ACCOUNT_BANNED");
+        throw new ForbiddenException("Your account has been permanently banned.", "ACCOUNT_BANNED");
     }
 
     return {
@@ -477,7 +478,7 @@ export async function refreshToken(
         // 1. Tìm refresh token record
         const tokenRecord = await authRepository.findRefreshTokenByHash(tx, hash);
         if (!tokenRecord) {
-            throw new Error("UNAUTHORIZED");
+            throw new UnauthorizedException("Access token is missing, invalid, or expired.");
         }
 
         // 2. Kiểm tra nếu đã bị thu hồi (revoked) hoặc hết hạn (expired)
@@ -485,7 +486,7 @@ export async function refreshToken(
             if (tokenRecord.is_revoked) {
                 await authRepository.revokeAllForUser(tx, tokenRecord.user_id);
             }
-            throw new Error("UNAUTHORIZED");
+            throw new UnauthorizedException("Access token is missing, invalid, or expired.");
         }
 
         // 3. Tìm người dùng tương ứng
@@ -494,14 +495,14 @@ export async function refreshToken(
         });
 
         if (!user || user.deleted_at) {
-            throw new Error("UNAUTHORIZED");
+            throw new UnauthorizedException("Access token is missing, invalid, or expired.");
         }
 
         if (user.status === "suspended") {
-            throw new Error("ACCOUNT_SUSPENDED");
+            throw new ForbiddenException("Your account is currently suspended.", "ACCOUNT_SUSPENDED");
         }
         if (user.status === "banned") {
-            throw new Error("ACCOUNT_BANNED");
+            throw new ForbiddenException("Your account has been permanently banned.", "ACCOUNT_BANNED");
         }
 
         // 4. Thu hồi (revoke) refresh token cũ
@@ -558,19 +559,19 @@ export async function changePassword(
         // 1. Find user
         const user = await authRepository.findUserById(userId);
         if (!user) {
-            throw new Error("UNAUTHORIZED");
+            throw new UnauthorizedException("Access token is missing, invalid, or expired.");
         }
 
         // 2. Check current password
         const isPasswordValid = await bcrypt.compare(data.current_password, user.password_hash || "");
         if (!isPasswordValid) {
-            throw new Error("INVALID_CURRENT_PASSWORD");
+            throw new UnauthorizedException("Invalid current password.", "INVALID_CURRENT_PASSWORD");
         }
 
         // 3. Ensure new password is different
         const isIdentical = await bcrypt.compare(data.new_password, user.password_hash || "");
         if (isIdentical) {
-            throw new Error("PASSWORD_UNCHANGED");
+            throw new BadRequestException("New password must be different from your current password.", "PASSWORD_UNCHANGED");
         }
 
         // 4. Hash and update
