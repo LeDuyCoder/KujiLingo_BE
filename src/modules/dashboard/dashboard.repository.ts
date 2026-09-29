@@ -42,17 +42,47 @@ export const dashboardRepository = {
                 title: { contains: targetLevel },
             },
             include: {
-                lessons: { orderBy: { order_no: "asc" }, take: 1 }
+                lessons: {
+                    orderBy: { order_no: "asc" },
+                    take: 1,
+                    include: {
+                        topics: {
+                            include: {
+                                topic_vocabularies: {
+                                    select: { vocabulary_id: true }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
 
         if (!recommendedCourse || recommendedCourse.lessons.length === 0) return null;
 
+        const lesson = recommendedCourse.lessons[0]!;
+        const vocabularyIds = [...new Set(
+            lesson.topics.flatMap(topic => topic.topic_vocabularies.map(item => item.vocabulary_id))
+        )];
+        const totalVocabularyCount = vocabularyIds.length;
+        const startedVocabularyCount = totalVocabularyCount > 0
+            ? await prisma.learning_progress.count({
+                where: {
+                    user_id: userId,
+                    vocabulary_id: { in: vocabularyIds },
+                    status: { in: ["NEW", "LEARNING", "REVIEWING", "MASTERED"] }
+                }
+            })
+            : 0;
+
         return {
-            lesson_id: recommendedCourse.lessons[0]?.id,
-            lesson_title: recommendedCourse.lessons[0]?.title || "Introduction",
+            lesson_id: lesson.id,
+            lesson_title: lesson.title || "Introduction",
             course_title: recommendedCourse.title || "Target Course",
-            reason: "recommended" as const
+            reason: "recommended" as const,
+            lesson_progress_percent: totalVocabularyCount > 0
+                ? Math.round((startedVocabularyCount / totalVocabularyCount) * 100)
+                : 0
         };
     }
 }

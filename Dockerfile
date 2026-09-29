@@ -11,6 +11,6 @@ COPY . .
 RUN npm run prisma:generate
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 8000
 
 CMD ["npm", "start"]

@@ -12,6 +12,7 @@ import {
     forgotPasswordHandler,
     resetPasswordHandler,
     meHandler,
+    updateProfileHandler,
     refreshTokenHandler,
     changePasswordHandler
 } from "./auth.controller.js";
@@ -24,7 +25,8 @@ import {
     forgotPasswordSchema,
     resetPasswordSchema,
     refreshTokenSchema,
-    changePasswordSchema
+    changePasswordSchema,
+    updateProfileSchema,
 } from "./auth.schema.js";
 import { authGuard } from "../../common/middlewares/auth.guard.js";
 
@@ -317,6 +319,7 @@ export async function authRoutes(app: FastifyInstance) {
                             is_premium: z.boolean(),
                             premium_expires_at: z.string().nullable(),
                             jlpt_target_level: z.string().nullable(),
+                            learning_goal_minutes: z.number().nullable(),
                             status: z.string(),
                             email_verified_at: z.string().nullable(),
                             last_login_at: z.string().nullable(),
@@ -350,6 +353,31 @@ export async function authRoutes(app: FastifyInstance) {
             },
         },
         meHandler
+    );
+
+    router.patch(
+        "/api/v1/auth/me",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Auth"],
+                summary: "Update current user profile and study goals",
+                body: updateProfileSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            id: z.string().uuid(),
+                            email: z.string().email(),
+                            display_name: z.string(),
+                            jlpt_target_level: z.string().nullable(),
+                            learning_goal_minutes: z.number().nullable(),
+                        }),
+                    }),
+                },
+            },
+        },
+        updateProfileHandler,
     );
 
     router.post(

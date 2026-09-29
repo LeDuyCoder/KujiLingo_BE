@@ -43,6 +43,7 @@ export interface CurrentUserResponse {
     is_premium: boolean;
     premium_expires_at: string | null;
     jlpt_target_level: string | null;
+    learning_goal_minutes: number | null;
     status: string;
     email_verified_at: string | null;
     last_login_at: string | null;

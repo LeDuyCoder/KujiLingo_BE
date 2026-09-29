@@ -34,6 +34,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
                                 lesson_title: z.string(),
                                 course_title: z.string(),
                                 reason: z.enum(["in_progress", "next_up", "recommended"]),
+                                lesson_progress_percent: z.number(),
                             }).nullable(),
                             srs_due_count: z.number(),
                             recent_achievements: z.array(z.string()),

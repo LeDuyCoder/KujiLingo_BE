@@ -166,4 +166,11 @@ export const changePasswordSchema = z.object({
     }
 });
 
-export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export const updateProfileSchema = z.object({
+    display_name: z.string().trim().min(1).max(100),
+    jlpt_target_level: z.enum(["N5", "N4", "N3", "N2", "N1"]),
+    learning_goal_minutes: z.number().int().min(5).max(180),
+});
+
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

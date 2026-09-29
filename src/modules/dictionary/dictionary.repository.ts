@@ -70,21 +70,35 @@ export const dictionaryRepository = {
      */
     async fetchAndSaveFromJisho(query: string): Promise<boolean> {
         try {
-            const url = `${env.JISHO_API_URL}?keyword=${encodeURIComponent(query)}`;
-            const response = await fetch(url);
-            
-            if (!response.ok) return false;
-            
-            const json = await response.json();
-            if (!json.data || json.data.length === 0) return false;
+            const url = new URL(env.JISHO_API_URL);
+            url.searchParams.set("keyword", query);
+            const response = await fetch(url, {
+                headers: {
+                    Accept: "application/json",
+                    "User-Agent": "KujiLingo/1.0 (dictionary search)"
+                },
+                signal: AbortSignal.timeout(8000)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Jisho returned HTTP ${response.status}`);
+            }
+
+            const json = await response.json() as {
+                data?: Array<{
+                    japanese?: Array<{ word?: string; reading?: string }>;
+                    jlpt?: string[];
+                    senses?: Array<{ parts_of_speech?: string[]; english_definitions?: string[] }>;
+                    is_common?: boolean;
+                }>;
+            };
+            if (!Array.isArray(json.data) || json.data.length === 0) return false;
 
             // Chỉ lấy top 5 kết quả đầu tiên để tránh phình to DB không cần thiết
             const topResults = json.data.slice(0, 5);
-            let hasAdded = false;
-
             for (const item of topResults) {
-                const kanji = item.japanese[0]?.word || null;
-                const hiragana = item.japanese[0]?.reading || null;
+                const kanji = item.japanese?.[0]?.word || null;
+                const hiragana = item.japanese?.[0]?.reading || null;
                 
                 if (!kanji && !hiragana) continue;
 
@@ -107,7 +121,7 @@ export const dictionaryRepository = {
 
                 // Trích xuất và Map Word Type
                 let wordType: WordType | null = null;
-                const pos = item.senses[0]?.parts_of_speech?.[0]?.toLowerCase() || "";
+                const pos = item.senses?.[0]?.parts_of_speech?.[0]?.toLowerCase() || "";
                 if (pos.includes("noun")) wordType = "NOUN";
                 else if (pos.includes("suru verb") || pos.includes("verb")) wordType = "VERB";
                 else if (pos.includes("i-adjective")) wordType = "I_ADJECTIVE";
@@ -119,7 +133,7 @@ export const dictionaryRepository = {
                 else if (pos.includes("expression")) wordType = "EXPRESSION";
 
                 // Trích xuất nghĩa Tiếng Anh
-                const englishMeanings = item.senses[0]?.english_definitions?.join(", ");
+                const englishMeanings = item.senses?.[0]?.english_definitions?.join(", ");
 
                 // Tạo object dữ liệu động tránh truyền undefined
                 const vocabId = crypto.randomUUID();
@@ -147,13 +161,12 @@ export const dictionaryRepository = {
                     data: createData
                 });
 
-                hasAdded = true;
             }
 
-            return hasAdded;
+            return topResults.length > 0;
         } catch (error) {
             console.error("Error fetching from Jisho:", error);
-            return false;
+            throw new Error("JISHO_UNAVAILABLE", { cause: error });
         }
     }
 };

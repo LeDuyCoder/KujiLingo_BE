@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
-import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput } from "./auth.schema.js";
+import type { RegisterInput, VerifyEmailInput, LoginInput, ResendVerificationInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput, UpdateProfileInput } from "./auth.schema.js";
 import type { RegisterResponse } from "./auth.types.js";
 import { log } from "../../common/utils/log.js";
 import { verifyToken } from "../../common/utils/jwt.js";
@@ -443,6 +443,22 @@ export async function meHandler(
         return reply.code(401).send({
             success: false,
             error: { code: "UNAUTHORIZED", message: "Access token is missing, invalid, or expired." },
+        });
+    }
+}
+
+export async function updateProfileHandler(
+    request: FastifyRequest<{ Body: UpdateProfileInput }>,
+    reply: FastifyReply
+) {
+    try {
+        const user = await authService.updateUserProfile(request.user!.id, request.body);
+        return reply.code(200).send({ success: true, data: user });
+    } catch (error: any) {
+        log.error(error);
+        return reply.code(500).send({
+            success: false,
+            error: { code: "INTERNAL_ERROR", message: "Could not update account settings." },
         });
     }
 }

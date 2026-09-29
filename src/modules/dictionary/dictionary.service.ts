@@ -26,22 +26,25 @@ function mapToDictionaryDTO(
 
 export const dictionaryService = {
     async search(query: string, jlptLevel: any, page: number, limit: number, userId?: string) {
-        const cacheKey = `dict:search:${query}:${jlptLevel || "ALL"}:${page}:${limit}`;
+        const normalizedQuery = query.trim().normalize("NFC");
+        const cacheKey = `dict:search:${normalizedQuery}:${jlptLevel || "ALL"}:${page}:${limit}`;
         let cached = memoryCache.get<{ data: any[]; total: number }>(cacheKey);
 
         if (!cached) {
-            cached = await dictionaryRepository.search(query, jlptLevel, page, limit);
+            cached = await dictionaryRepository.search(normalizedQuery, jlptLevel, page, limit);
             
             // Nếu không có kết quả trong DB ở trang 1, tự động crawl từ Jisho
-            if (cached.total === 0 && page === 1) {
-                const jishoAdded = await dictionaryRepository.fetchAndSaveFromJisho(query);
-                if (jishoAdded) {
+            if (cached.total === 0) {
+                const jishoHasResults = await dictionaryRepository.fetchAndSaveFromJisho(normalizedQuery);
+                if (jishoHasResults) {
                     // Query lại database sau khi đã thêm mới từ vựng
-                    cached = await dictionaryRepository.search(query, jlptLevel, page, limit);
+                    cached = await dictionaryRepository.search(normalizedQuery, jlptLevel, page, limit);
                 }
             }
             
-            memoryCache.set(cacheKey, cached, 60 * 5); // Cache 5 phút
+            if (cached.total > 0) {
+                memoryCache.set(cacheKey, cached, 60 * 5);
+            }
         }
 
         let favoritedIds = new Set<string>();

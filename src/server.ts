@@ -4,7 +4,7 @@ const start = async () => {
     try {
         await app.listen({
             host: "0.0.0.0",
-            port: 8000,
+            port: Number(process.env.PORT) || 8000,
         });
         //comment test CI v0.0.1
         console.log("ðŸš€ Server running at http://localhost:8000");

@@ -18,6 +18,8 @@ await app.register(cors, {
     allowedHeaders: ["Content-Type", "Authorization"]
 });
 
+app.get("/health", async () => ({ status: "ok" }));
+
 // Register global error handler before registering routes so it is correctly inherited
 app.setErrorHandler((error: any, request, reply) => {
     const statusCode = error.statusCode || 500;

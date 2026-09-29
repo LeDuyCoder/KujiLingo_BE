@@ -302,6 +302,22 @@ export async function findUserById(id: string) {
     });
 }
 
+export async function updateUserProfile(id: string, data: {
+    display_name: string;
+    jlpt_target_level: "N5" | "N4" | "N3" | "N2" | "N1";
+    learning_goal_minutes: number;
+}) {
+    return prisma.users.update({
+        where: { id },
+        data: {
+            display_name: data.display_name,
+            jlpt_target_level: data.jlpt_target_level,
+            learning_goal_minutes: data.learning_goal_minutes,
+            updated_at: new Date(),
+        },
+    });
+}
+
 /**
  * Repository các hàm liên quan đến xác thực
  */
@@ -309,6 +325,7 @@ export const authRepository = {
     findActiveUserByEmail,
     findUserByEmail,
     findUserById,
+    updateUserProfile,
     createUser,
     createEmailVerificationToken,
     findTokenByHash,

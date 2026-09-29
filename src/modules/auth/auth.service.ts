@@ -4,7 +4,7 @@ import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
-import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput } from "./auth.schema.js";
+import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput, UpdateProfileInput } from "./auth.schema.js";
 import type { UserResponse, LoginResponse, CurrentUserResponse } from "./auth.types.js";
 import { mailService } from "../../common/services/mail/mail.service.js";
 import { buildVerificationEmail } from "./templates/verification-email.template.js";
@@ -450,12 +450,24 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
         is_premium: false,
         premium_expires_at: null,
         jlpt_target_level: user.jlpt_target_level,
+        learning_goal_minutes: user.learning_goal_minutes,
         status: user.status || "pending_verification",
         email_verified_at: user.email_verified_at ? user.email_verified_at.toISOString() : null,
         last_login_at: user.last_login_at ? user.last_login_at.toISOString() : null,
         timezone: "Asia/Ho_Chi_Minh",
         locale: "vi-VN",
         created_at: user.created_at ? user.created_at.toISOString() : new Date().toISOString(),
+    };
+}
+
+export async function updateUserProfile(userId: string, data: UpdateProfileInput) {
+    const user = await authRepository.updateUserProfile(userId, data);
+    return {
+        id: user.id,
+        email: user.email!,
+        display_name: user.display_name || "",
+        jlpt_target_level: user.jlpt_target_level,
+        learning_goal_minutes: user.learning_goal_minutes,
     };
 }
 

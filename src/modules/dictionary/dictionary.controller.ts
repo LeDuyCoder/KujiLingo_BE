@@ -21,8 +21,21 @@ function getUserIdFromAuthHeader(request: FastifyRequest): string | undefined {
 export async function searchHandler(request: FastifyRequest, reply: FastifyReply) {
     const { q, jlpt_level, page, limit } = request.query as any;
     const userId = getUserIdFromAuthHeader(request);
-    const result = await dictionaryService.search(q, jlpt_level, page, limit, userId);
-    return reply.send({ success: true, ...result });
+    try {
+        const result = await dictionaryService.search(q, jlpt_level, page, limit, userId);
+        return reply.send({ success: true, ...result });
+    } catch (error) {
+        if (error instanceof Error && error.message === "JISHO_UNAVAILABLE") {
+            return reply.code(502).send({
+                success: false,
+                error: {
+                    code: "DICTIONARY_PROVIDER_UNAVAILABLE",
+                    message: "External dictionary search is temporarily unavailable."
+                }
+            });
+        }
+        throw error;
+    }
 }
 
 export async function getDetailHandler(request: FastifyRequest, reply: FastifyReply) {
