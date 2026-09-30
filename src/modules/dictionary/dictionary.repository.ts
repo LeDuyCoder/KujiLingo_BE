@@ -105,8 +105,8 @@ export const dictionaryRepository = {
                 // Kiểm tra xem từ vựng đã tồn tại trong DB chưa để tránh trùng lặp
                 const existing = await prisma.vocabularies.findFirst({
                     where: {
-                        kanji: kanji || undefined,
-                        hiragana: hiragana || undefined
+                        ...(kanji ? { kanji } : {}),
+                        ...(hiragana ? { hiragana } : {})
                     }
                 });
 
