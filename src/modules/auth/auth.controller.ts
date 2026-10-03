@@ -329,7 +329,7 @@ export async function googleAuthHandler(request: FastifyRequest, reply: FastifyR
     const authorizeUrl = oauth2Client.generateAuthUrl({
         access_type: "offline", // Bắt buộc để lấy Refresh Token
         scope: scopes,
-        prompt: "consent" // Bắt buộc để Google luôn trả Refresh Token khi setup lại
+        prompt: "select_account consent" // Chọn tài khoản và luôn yêu cầu consent để nhận Refresh Token
     });
 
     return reply.redirect(authorizeUrl);
