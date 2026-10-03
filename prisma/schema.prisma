@@ -8,15 +8,16 @@ datasource db {
 }
 
 model achievements {
-  id                String              @id @db.Uuid
-  title             String              @db.VarChar
-  description       String
-  icon              String              @db.VarChar
-  type              AchievementType
-  condition_value   Int
-  reward_exp        Int?                @default(0)
-  created_at        DateTime?           @default(now()) @db.Timestamp(6)
-  user_achievements user_achievements[]
+  id                         String                       @id @db.Uuid
+  title                      String                       @db.VarChar
+  description                String
+  icon                       String                       @db.VarChar
+  type                       AchievementType
+  condition_value            Int
+  reward_exp                 Int?                         @default(0)
+  created_at                 DateTime?                    @default(now()) @db.Timestamp(6)
+  user_achievements          user_achievements[]
+  user_achievement_showcases user_achievement_showcase[]
 
   @@index([type])
 }
@@ -27,6 +28,7 @@ model courses {
   description String?
   image       String?   @db.VarChar
   order_no    Int?
+  deleted_at  DateTime? @db.Timestamp(6)
   lessons     lessons[]
 
   @@index([order_no])
@@ -138,17 +140,32 @@ model grammar_examples {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model grammar_points {
-  id               String             @id @db.Uuid
-  lesson_id        String?            @db.Uuid
-  title            String?            @db.VarChar
-  structure        String?
-  meaning          String?
-  usage            String?
-  jlpt             JLPTLevel?
-  grammar_examples grammar_examples[]
-  lessons          lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                String             @id @db.Uuid
+  lesson_id         String?            @db.Uuid
+  title             String?            @db.VarChar
+  structure         String?
+  meaning           String?
+  usage             String?
+  jlpt              JLPTLevel?
+  topic_id          String?            @db.Uuid
+  title_jp          String?            @db.VarChar
+  meaning_vi        String?
+  explanation       String?
+  jlpt_level        JLPTLevel?
+  example_sentences Json?
+  audio_url         String?            @db.VarChar
+  created_by        String?            @db.Uuid
+  created_at        DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?          @updatedAt @db.Timestamp(6)
+  deleted_at        DateTime?          @db.Timestamp(6)
+  grammar_examples  grammar_examples[]
+  lessons           lessons?           @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  topics            topics?            @relation(fields: [topic_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([lesson_id, jlpt])
+  @@index([lesson_id, jlpt_level])
+  @@index([topic_id])
+  @@index([jlpt_level])
+  @@index([deleted_at])
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -163,14 +180,19 @@ model kanji_vocabularies {
 }
 
 model kanjis {
-  id                 String               @id @db.Uuid
-  kanji              String?              @db.VarChar
-  meaning            String?
-  onyomi             String?              @db.VarChar
-  kunyomi            String?              @db.VarChar
-  stroke_count       Int?
-  jlpt               JLPTLevel?
-  kanji_vocabularies kanji_vocabularies[]
+  id                     String               @id @db.Uuid
+  kanji                  String?              @db.VarChar
+  meaning                String?
+  onyomi                 String?              @db.VarChar
+  kunyomi                String?              @db.VarChar
+  stroke_count           Int?
+  jlpt                   JLPTLevel?
+  deleted_at             DateTime?            @db.Timestamp(6)
+  examples               Json?
+  radical                String?              @db.VarChar
+  stroke_order_image_url String?              @db.VarChar
+  created_at             DateTime             @default(now()) @db.Timestamp(6)
+  kanji_vocabularies     kanji_vocabularies[]
 
   @@index([jlpt])
   @@index([kanji])
@@ -228,12 +250,15 @@ model payment_transactions {
   paid_at                 DateTime?          @db.Timestamp(6)
   created_at              DateTime?          @db.Timestamp(6)
   updated_at              DateTime?          @db.Timestamp(6)
+  order_code              BigInt?            @unique
+  qr_code                 String?
   gem_packages            gem_packages?      @relation(fields: [package_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   gem_promotions          gem_promotions?    @relation(fields: [promotion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users                   users?             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   wallet_histories        wallet_histories[]
 
   @@index([created_at])
+  @@index([order_code])
   @@index([package_id])
   @@index([payment_status])
   @@index([provider_transaction_id])
@@ -271,6 +296,8 @@ model pvp_match_histories {
   jlpt                                        JLPTLevel?
   question_count                              Int?
   played_at                                   DateTime?  @db.Timestamp(6)
+  rating_change_player1                       Int?       @default(0)
+  rating_change_player2                       Int?       @default(0)
   users_pvp_match_histories_player1_idTousers users?     @relation("pvp_match_histories_player1_idTousers", fields: [player1_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_pvp_match_histories_player2_idTousers users?     @relation("pvp_match_histories_player2_idTousers", fields: [player2_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_pvp_match_histories_winner_idTousers  users?     @relation("pvp_match_histories_winner_idTousers", fields: [winner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -388,6 +415,7 @@ model topics {
   description        String?
   image              String?              @db.VarChar
   order_no           Int?
+  grammar_points     grammar_points[]
   quizzes            quizzes[]
   topic_vocabularies topic_vocabularies[]
   lessons            lessons?             @relation(fields: [lesson_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -426,6 +454,8 @@ model user_pvp_statistics {
   win_count          Int?      @default(0)
   lose_count         Int?      @default(0)
   draw_count         Int?      @default(0)
+  rating             Int?      @default(1200)
+  highest_rating     Int?      @default(1200)
   total_score        Int?      @default(0)
   average_score      Float?    @default(0)
   longest_win_streak Int?      @default(0)
@@ -478,31 +508,130 @@ model user_wallets {
 }
 
 model users {
-  id                                                        String                  @id @db.Uuid
-  email                                                     String?                 @unique @db.VarChar
-  password_hash                                             String?                 @db.VarChar
-  display_name                                              String?                 @db.VarChar
-  avatar                                                    String?                 @db.VarChar
+  id                                                        String                      @id @db.Uuid
+  email                                                     String?                     @unique @db.VarChar
+  password_hash                                             String?                     @db.VarChar
+  display_name                                              String?                     @db.VarChar
+  avatar                                                    String?                     @db.VarChar
   level                                                     Int?
   exp                                                       Int?
   streak                                                    Int?
-  created_at                                                DateTime?               @db.Timestamp(6)
+  accepted_terms                                            Boolean?                    @default(false)
+  jlpt_target_level                                         JLPTLevel?
+  status                                                    String?                     @default("pending_verification") @db.VarChar
+  email_verified                                            Boolean?                    @default(false)
+  email_verified_at                                         DateTime?                   @db.Timestamp(6)
+  last_login_at                                             DateTime?                   @db.Timestamp(6)
+  created_at                                                DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                                                DateTime?                   @db.Timestamp(6)
+  deleted_at                                                DateTime?                   @db.Timestamp(6)
+  role                                                      String                      @default("user") @db.VarChar
+  learning_goal_minutes                                     Int?                        @default(15)
+  longest_streak                                            Int?                        @default(0)
+  admin_audit_logs                                          admin_audit_logs[]
+  email_verification_tokens                                 email_verification_tokens[]
   favorite_vocabularies                                     favorite_vocabularies[]
   folders                                                   folders[]
+  leaderboard_snapshots                                     leaderboard_snapshots[]
   learning_progress                                         learning_progress[]
+  password_reset_tokens                                     password_reset_tokens[]
   payment_transactions                                      payment_transactions[]
   purchase_histories                                        purchase_histories[]
-  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player1_idTousers")
-  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]   @relation("pvp_match_histories_player2_idTousers")
-  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]   @relation("pvp_match_histories_winner_idTousers")
+  pvp_match_histories_pvp_match_histories_player1_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player1_idTousers")
+  pvp_match_histories_pvp_match_histories_player2_idTousers pvp_match_histories[]       @relation("pvp_match_histories_player2_idTousers")
+  pvp_match_histories_pvp_match_histories_winner_idTousers  pvp_match_histories[]       @relation("pvp_match_histories_winner_idTousers")
+  refresh_tokens                                            refresh_tokens[]
   review_histories                                          review_histories[]
+  srs_cards                                                 srs_cards[]
+  srs_review_histories                                      srs_review_histories[]
   user_achievements                                         user_achievements[]
   user_equipped_items                                       user_equipped_items[]
   user_pvp_statistics                                       user_pvp_statistics?
   user_shop_items                                           user_shop_items[]
+  user_statistics_daily                                     user_statistics_daily[]
   user_vocabularies                                         user_vocabularies[]
   user_wallets                                              user_wallets?
   wallet_histories                                          wallet_histories[]
+  user_achievement_showcases                                user_achievement_showcase[]
+}
+
+model user_statistics_daily {
+  user_id           String   @db.Uuid
+  stat_date         DateTime @db.Date
+  minutes_studied   Int      @default(0)
+  lessons_completed Int      @default(0)
+  exp_earned        Int      @default(0)
+  words_reviewed    Int      @default(0)
+  users             users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, stat_date])
+  @@index([user_id, stat_date])
+}
+
+model password_reset_tokens {
+  id          String    @id @default(uuid()) @db.Uuid
+  user_id     String    @db.Uuid
+  token_hash  String    @unique @db.VarChar
+  expires_at  DateTime  @db.Timestamp(6)
+  consumed_at DateTime? @db.Timestamp(6)
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model admin_audit_logs {
+  id           String   @id @default(uuid()) @db.Uuid
+  admin_id     String   @db.Uuid
+  action       String   @db.VarChar
+  entity_id    String?  @db.VarChar
+  before_state Json?
+  after_state  Json?
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  users        users    @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at(sort: Desc)])
+  @@index([admin_id, created_at(sort: Desc)])
+}
+
+model email_verification_tokens {
+  id          String    @id @default(uuid()) @db.Uuid
+  user_id     String    @db.Uuid
+  token_hash  String    @db.VarChar
+  expires_at  DateTime  @db.Timestamp(6)
+  consumed_at DateTime? @db.Timestamp(6)
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([token_hash])
+}
+
+model login_attempts {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @db.VarChar
+  ip_address String   @db.VarChar
+  succeeded  Boolean
+  user_agent String?
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([email, created_at])
+}
+
+model refresh_tokens {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  token_hash  String   @unique @db.VarChar
+  device_id   String?  @db.VarChar
+  device_name String?  @db.VarChar
+  ip_address  String   @db.VarChar
+  user_agent  String?
+  expires_at  DateTime @db.Timestamp(6)
+  is_revoked  Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
 }
 
 model vocabularies {
@@ -516,6 +645,7 @@ model vocabularies {
   audio                      String?                      @db.VarChar
   image                      String?                      @db.VarChar
   created_at                 DateTime?                    @db.Timestamp(6)
+  deleted_at                 DateTime?                    @db.Timestamp(6)
   example_sentences          example_sentences[]
   favorite_vocabularies      favorite_vocabularies[]
   folder_system_vocabularies folder_system_vocabularies[]
@@ -529,6 +659,7 @@ model vocabularies {
   @@index([jlpt, frequency])
   @@index([jlpt])
   @@index([kanji])
+  @@index([deleted_at])
 }
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
@@ -561,6 +692,65 @@ model wallet_histories {
   @@index([created_at])
   @@index([payment_transaction_id])
   @@index([user_id])
+}
+
+model leaderboard_snapshots {
+  id           String                @id @default(uuid()) @db.Uuid
+  period_type  LeaderboardPeriodType
+  period_key   String                @db.VarChar
+  rank         Int
+  user_id      String                @db.Uuid
+  display_name String?               @db.VarChar
+  avatar_url   String?               @db.VarChar
+  xp_total     Int
+  created_at   DateTime              @default(now()) @db.Timestamp(6)
+  users        users                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([period_type, period_key, user_id])
+  @@index([period_type, period_key, rank])
+}
+
+model srs_cards {
+  id                   String                 @id @db.Uuid
+  user_id              String                 @db.Uuid
+  item_type            SRSItemType
+  item_id              String                 @db.Uuid
+  ease_factor          Decimal                @default(2.5) @db.Decimal(4, 2)
+  interval_days        Int                    @default(0)
+  repetitions          Int                    @default(0)
+  due_at               DateTime               @db.Timestamp(6)
+  state                SRSState               @default(new)
+  created_at           DateTime               @default(now()) @db.Timestamp(6)
+  updated_at           DateTime               @updatedAt @db.Timestamp(6)
+  users                users                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  srs_review_histories srs_review_histories[]
+
+  @@unique([user_id, item_type, item_id])
+  @@index([user_id, due_at])
+}
+
+model srs_review_histories {
+  id                   String    @id @db.Uuid
+  srs_card_id          String    @db.Uuid
+  user_id              String    @db.Uuid
+  rating               SRSRating
+  interval_before_days Int
+  interval_after_days  Int
+  ease_factor_before   Decimal   @db.Decimal(4, 2)
+  ease_factor_after    Decimal   @db.Decimal(4, 2)
+  reviewed_at          DateTime  @db.Timestamp(6)
+  srs_cards            srs_cards @relation(fields: [srs_card_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([srs_card_id])
+}
+
+enum LeaderboardPeriodType {
+  daily
+  weekly
+  monthly
+  all_time
 }
 
 enum AchievementType {
@@ -616,7 +806,7 @@ enum PVPMatchResult {
 
 enum PaymentMethod {
   MOMO
-  VNPAY
+  PAYOS
 }
 
 enum PaymentStatus {
@@ -647,3 +837,40 @@ enum WordType {
   CONJUNCTION
   EXPRESSION
 }
+
+enum SRSItemType {
+  vocabulary
+  kanji
+  grammar
+}
+
+enum SRSState {
+  new
+  learning
+  review
+  relearning
+}
+
+enum SRSRating {
+  again
+  hard
+  good
+  easy
+}
+
+model user_achievement_showcase {
+  id             String    @id @db.Uuid
+  user_id        String    @db.Uuid
+  achievement_id String    @db.Uuid
+  slot           Int       @default(1)
+  is_public      Boolean   @default(true)
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+  updated_at     DateTime  @default(now()) @db.Timestamp(6)
+
+  users        users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  achievements achievements @relation(fields: [achievement_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, slot])
+  @@index([user_id, is_public])
+}
+

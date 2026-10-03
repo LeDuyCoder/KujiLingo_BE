@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import { jsonSchemaTransform } from "fastify-type-provider-zod";
 
 export async function registerSwagger(app: FastifyInstance) {
     await app.register(swagger, {
@@ -16,7 +17,22 @@ export async function registerSwagger(app: FastifyInstance) {
                     description: "Development Server",
                 },
             ],
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: "http",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                    },
+                },
+            },
+            security: [
+                {
+                    bearerAuth: [],
+                },
+            ],
         },
+        transform: jsonSchemaTransform,
     });
 
     await app.register(swaggerUi, {
