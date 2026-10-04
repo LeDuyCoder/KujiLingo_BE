@@ -4,7 +4,7 @@ services:
   # BACKEND (From GitHub Container Registry)
   # ==========================================
   backend:
-    image: ghcr.io/leduycoder/kujilingo_be:latest
+    image: ghcr.io/leduycoder/kujilingo_be:${IMAGE_TAG:-latest}
     container_name: kujilingo-backend
     restart: unless-stopped
     ports:
