@@ -10,6 +10,26 @@ export const lessonsService = {
      * Get details of a lesson (with ordered topics). Cache for 30 minutes.
      */
     async getLessonDetail(id: string, userId?: string) {
+        const cacheKey = `lessons:detail:${id}`;
+        const accessCacheKey = `lessons:detail:access:${id}`;
+        const cached = memoryCache.get(cacheKey);
+        if (cached) {
+            let courseTitle = memoryCache.get(accessCacheKey) as string | null;
+            if (courseTitle === null) {
+                const cachedLesson = await lessonsRepository.findLessonDetail(id);
+                if (!cachedLesson) {
+                    throw new Error("LESSON_NOT_FOUND");
+                }
+                courseTitle = cachedLesson.courses?.title ?? "";
+                memoryCache.set(accessCacheKey, courseTitle, 1800);
+            }
+            const cachedJlptLevel = courseTitle?.match(/N([1-5])/i)?.[1];
+            if (cachedJlptLevel && Number(cachedJlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+                throw new Error("PRO_REQUIRED");
+            }
+            return cached;
+        }
+
         const lesson = await lessonsRepository.findLessonDetail(id);
         if (!lesson) {
             throw new Error("LESSON_NOT_FOUND");
@@ -17,12 +37,6 @@ export const lessonsService = {
         const jlptLevel = lesson.courses?.title?.match(/N([1-5])/i)?.[1];
         if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
             throw new Error("PRO_REQUIRED");
-        }
-
-        const cacheKey = `lessons:detail:${id}`;
-        const cached = memoryCache.get(cacheKey);
-        if (cached) {
-            return cached;
         }
 
         const result = {
@@ -43,6 +57,7 @@ export const lessonsService = {
         };
 
         memoryCache.set(cacheKey, result, 1800); // 30 minutes
+        memoryCache.set(accessCacheKey, lesson.courses?.title ?? "", 1800);
         return result;
     },
 
@@ -158,6 +173,7 @@ export const lessonsService = {
 
         // Invalidate caches
         memoryCache.delete(`lessons:detail:${id}`);
+        memoryCache.delete(`lessons:detail:access:${id}`);
         memoryCache.deletePattern("courses:list:*");
         if (result.oldCourseId) {
             memoryCache.delete(`courses:detail:${result.oldCourseId}`);
@@ -207,6 +223,7 @@ export const lessonsService = {
 
         // Invalidate caches
         memoryCache.delete(`lessons:detail:${id}`);
+        memoryCache.delete(`lessons:detail:access:${id}`);
         memoryCache.deletePattern("courses:list:*");
         if (result.course_id) {
             memoryCache.delete(`courses:detail:${result.course_id}`);
