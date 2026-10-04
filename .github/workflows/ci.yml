@@ -140,6 +140,22 @@ jobs:
     needs: publish-image
     runs-on: ubuntu-latest
     steps:
+      - name: Validate deployment secrets
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          for name in SERVER_HOST SERVER_USER SERVER_PASSWORD GHCR_USERNAME GHCR_TOKEN; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Secret $name is empty or unavailable to this workflow run."
+              exit 1
+            fi
+          done
+
       - name: Deploy image and run migrations over SSH
         uses: appleboy/ssh-action@v1.2.0
         env:
