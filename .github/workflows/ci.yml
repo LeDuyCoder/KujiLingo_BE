@@ -72,15 +72,16 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:123456@localhost:5432/kujilingo?schema=public
 
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
-      GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+      # Tests use the mock mail provider, so valid placeholders are enough.
+      GOOGLE_CLIENT_ID: test-google-client-id
+      GOOGLE_CLIENT_SECRET: test-google-client-secret
+      GOOGLE_REDIRECT_URI: http://localhost:3000/auth/google/callback
+      GOOGLE_REFRESH_TOKEN: test-google-refresh-token
 
-      MAIL_FROM_EMAIL: ${{ secrets.MAIL_FROM_EMAIL }}
+      MAIL_FROM_EMAIL: test@kujilingo.local
       MAIL_FROM_NAME: KujiLingo
 
-      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      FRONTEND_URL: http://localhost:3000
 
       ALLOW_LOGIN_BEFORE_VERIFICATION: "false"
 
