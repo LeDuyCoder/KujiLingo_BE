@@ -120,7 +120,7 @@ jobs:
         with:
           images: ghcr.io/leduycoder/kujilingo_be
           tags: |
-            type=sha,prefix=sha-
+            type=sha,format=long,prefix=sha-
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
 
@@ -139,6 +139,9 @@ jobs:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: publish-image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Validate deployment secrets
         shell: bash
@@ -146,10 +149,9 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          for name in SERVER_HOST SERVER_USER SERVER_PASSWORD GHCR_USERNAME GHCR_TOKEN; do
+          for name in SERVER_HOST SERVER_USER SERVER_PASSWORD GHCR_TOKEN; do
             if [[ -z "${!name}" ]]; then
               echo "::error::Secret $name is empty or unavailable to this workflow run."
               exit 1
@@ -157,24 +159,24 @@ jobs:
           done
 
       - name: Deploy image and run migrations over SSH
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.2
         env:
           IMAGE_TAG: sha-${{ github.sha }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SERVER_APP_DIR: ${{ secrets.SERVER_APP_DIR }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT || 22 }}
-          envs: IMAGE_TAG,GHCR_USERNAME,GHCR_TOKEN,SERVER_APP_DIR
+          envs: IMAGE_TAG,GITHUB_ACTOR,GITHUB_TOKEN,SERVER_APP_DIR
           script: |
             set -euo pipefail
             APP_DIR="${SERVER_APP_DIR:-/var/www/kujilingo-be}"
             cd "$APP_DIR"
 
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             export IMAGE_TAG
 
             docker compose -f docker-compose.prod.yml pull backend
