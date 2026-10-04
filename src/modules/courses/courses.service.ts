@@ -4,6 +4,7 @@ import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { ListCoursesQuery, CreateCourseBody, UpdateCourseBody } from "./courses.schema.js";
 import type { CourseDTO, CourseDetailDTO } from "./courses.types.js";
+import { hasActivePremium } from "../../common/utils/premium.js";
 
 /**
  * Lấy danh sách khóa học có phân trang (Public)
@@ -62,17 +63,35 @@ export async function listCourses(query: ListCoursesQuery) {
  * Lấy thông tin chi tiết một khóa học (Public)
  * Tích hợp Cache 30 phút
  */
-export async function getCourseDetail(courseId: string) {
+export async function getCourseDetail(courseId: string, userId?: string) {
     const cacheKey = `courses:detail:${courseId}`;
+    const accessCacheKey = `courses:detail:access:${courseId}`;
     const cachedData = memoryCache.get(cacheKey);
+    let courseTitle = memoryCache.get(accessCacheKey) as string | null;
 
     if (cachedData) {
+        if (courseTitle === null) {
+            const cachedCourse = await courseRepository.findCourseById(courseId);
+            if (!cachedCourse) {
+                throw new Error("COURSE_NOT_FOUND");
+            }
+            courseTitle = cachedCourse.title ?? "";
+            memoryCache.set(accessCacheKey, courseTitle, 1800);
+        }
+        const cachedJlptLevel = courseTitle?.match(/N([1-5])/i)?.[1];
+        if (cachedJlptLevel && Number(cachedJlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+            throw new Error("PRO_REQUIRED");
+        }
         return cachedData;
     }
 
     const course = await courseRepository.findCourseById(courseId);
     if (!course) {
         throw new Error("COURSE_NOT_FOUND");
+    }
+    const jlptLevel = course.title?.match(/N([1-5])/i)?.[1];
+    if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+        throw new Error("PRO_REQUIRED");
     }
 
     const lessons = await courseRepository.findLessonsByCourseId(courseId);
@@ -97,6 +116,7 @@ export async function getCourseDetail(courseId: string) {
 
     // Cache kết quả trong 30 phút (1800 giây)
     memoryCache.set(cacheKey, result, 1800);
+    memoryCache.set(accessCacheKey, course.title ?? "", 1800);
 
     return result;
 }
@@ -172,6 +192,8 @@ export async function updateCourse(adminId: string, courseId: string, data: Upda
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
     memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:access:${courseId}`);
+    memoryCache.deletePattern("lessons:detail:access:*");
 
     return {
         success: true,
@@ -218,6 +240,7 @@ export async function deleteCourse(adminId: string, courseId: string) {
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
     memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:access:${courseId}`);
 
     return {
         success: true,
@@ -250,6 +273,7 @@ export async function restoreCourse(adminId: string, courseId: string) {
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
     memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:access:${courseId}`);
 
     return {
         success: true,

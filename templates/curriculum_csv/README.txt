@@ -1,0 +1,1 @@
+﻿CSV export cua curriculum_import_template.xlsx. Moi sheet duoc tach thanh mot file CSV rieng; cac dong trong duoc loai bo. Ma hoa UTF-8 BOM. Cac cot ID va khoa ngoai phai duoc dien bang UUID hop le khi import database. Xem Huong dan.csv de biet thu tu nhap va quan he giua cac bang.

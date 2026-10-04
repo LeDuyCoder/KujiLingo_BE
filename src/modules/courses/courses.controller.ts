@@ -28,7 +28,7 @@ export async function getCourseDetailHandler(
 ) {
     try {
         const { id } = request.params;
-        const result = await coursesService.getCourseDetail(id);
+        const result = await coursesService.getCourseDetail(id, request.user?.id);
         return reply.code(200).send(result);
     } catch (error: any) {
         log.error(error);
@@ -39,6 +39,12 @@ export async function getCourseDetailHandler(
                     code: "COURSE_NOT_FOUND",
                     message: "Course not found.",
                 },
+            });
+        }
+        if (error.message === "PRO_REQUIRED") {
+            return reply.code(403).send({
+                success: false,
+                error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access JLPT N3–N1 courses." },
             });
         }
         return reply.code(500).send({

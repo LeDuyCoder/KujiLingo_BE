@@ -14,6 +14,7 @@ import { lessonsRoutes } from "../modules/lessons/index.js";
 import { topicsRoutes } from "../modules/topics/index.js";
 import { shopRoutes } from "../modules/shop/index.js";
 import { gemsRoutes } from "../modules/gems/index.js";
+import { premiumRoutes } from "../modules/premium/premium.routes.js";
 import { srsRoutes } from "../modules/srs/index.js";
 import { statisticsRoutes } from "../modules/statistics/index.js";
 import { userVocabulariesRoutes } from "../modules/user-vocabularies/index.js";
@@ -34,6 +35,7 @@ export async function registerRoutes(app: FastifyInstance) {
     await app.register(leaderboardRoutes);
     await app.register(learningProgressRoutes);
     await app.register(gemsRoutes);
+    await app.register(premiumRoutes);
     await app.register(lessonsRoutes);
     await app.register(topicsRoutes);
     await app.register(shopRoutes);

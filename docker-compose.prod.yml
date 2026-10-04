@@ -12,7 +12,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://postgres:123456@postgres:5432/kujilingo
+      # Override both URLs from .env so Prisma always uses the same credentials
+      # as the PostgreSQL container, including for `prisma migrate deploy`.
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-kujilingo}?schema=public"
+      DIRECT_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-kujilingo}?schema=public"
     depends_on:
       postgres:
         condition: service_healthy
@@ -26,16 +29,16 @@ services:
     image: postgres:17
     container_name: kujilingo-postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: kujilingo
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-kujilingo}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d kujilingo"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-kujilingo}"]
       interval: 10s
       timeout: 5s
       retries: 5

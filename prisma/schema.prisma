@@ -526,6 +526,7 @@ model users {
   updated_at                                                DateTime?                   @db.Timestamp(6)
   deleted_at                                                DateTime?                   @db.Timestamp(6)
   role                                                      String                      @default("user") @db.VarChar
+  premium_expires_at                                        DateTime?                   @db.Timestamp(6)
   learning_goal_minutes                                     Int?                        @default(15)
   longest_streak                                            Int?                        @default(0)
   admin_audit_logs                                          admin_audit_logs[]
