@@ -1,158 +1,180 @@
-name: CI
+name: CI/CD
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - ci/github-actions
-
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 22
 
 jobs:
-
-  # =======================================================
-  # JOB 1: TYPE CHECK
-  # =======================================================
-  typecheck:
-    name: Type Check
+  verify:
+    name: Typecheck, test, and build
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npm run prisma:generate
-
-      - name: Type check
-        run: npm run typecheck
-
-
-  # =======================================================
-  # JOB 2: TEST
-  # =======================================================
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-
-    needs:
-      - typecheck
-
     services:
       postgres:
         image: postgres:17
-
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: kujilingo
-
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kujilingo_test
         ports:
           - 5432:5432
-
         options: >-
-          --health-cmd="pg_isready -U postgres -d kujilingo"
+          --health-cmd="pg_isready -U postgres -d kujilingo_test"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
     env:
-      DATABASE_URL: postgresql://postgres:123456@localhost:5432/kujilingo?schema=public
-
-      # Tests use the mock mail provider, so valid placeholders are enough.
-      GOOGLE_CLIENT_ID: test-google-client-id
-      GOOGLE_CLIENT_SECRET: test-google-client-secret
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/kujilingo_test?schema=public
+      GOOGLE_CLIENT_ID: ci-google-client-id
+      GOOGLE_CLIENT_SECRET: ci-google-client-secret
       GOOGLE_REDIRECT_URI: http://localhost:3000/auth/google/callback
-      GOOGLE_REFRESH_TOKEN: test-google-refresh-token
-
-      MAIL_FROM_EMAIL: test@kujilingo.local
-      MAIL_FROM_NAME: KujiLingo
-
+      GOOGLE_REFRESH_TOKEN: ci-google-refresh-token
+      MAIL_FROM_EMAIL: ci@kujilingo.local
+      MAIL_FROM_NAME: KujiLingo CI
       FRONTEND_URL: http://localhost:3000
-
       ALLOW_LOGIN_BEFORE_VERIFICATION: "false"
-
       JISHO_API_URL: https://jisho.org/api/v1/search/words
-
-      PAYOS_CLIENT_ID: ${{ secrets.PAYOS_CLIENT_ID }}
-      PAYOS_API_KEY: ${{ secrets.PAYOS_API_KEY }}
-      PAYOS_CHECKSUM_KEY: ${{ secrets.PAYOS_CHECKSUM_KEY }}
-
+      PAYOS_CLIENT_ID: ci-payos-client-id
+      PAYOS_API_KEY: ci-payos-api-key
+      PAYOS_CHECKSUM_KEY: ci-payos-checksum-key
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate RSA Keys for Testing
+      - name: Generate JWT keys for tests
+        shell: bash
         run: |
           openssl genrsa -out private.pem 2048
-          openssl rsa -in private.pem -outform PEM -pubout -out public.pem
-
-          echo "JWT_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-          cat private.pem >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-          echo "JWT_PUBLIC_KEY<<EOF" >> $GITHUB_ENV
-          cat public.pem >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          openssl rsa -in private.pem -pubout -out public.pem
+          {
+            echo 'JWT_PRIVATE_KEY<<EOF'
+            cat private.pem
+            echo 'EOF'
+            echo 'JWT_PUBLIC_KEY<<EOF'
+            cat public.pem
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
 
       - name: Generate Prisma Client
         run: npm run prisma:generate
 
-      - name: Push Prisma schema to database
+      - name: Prepare test database
         run: npx prisma db push --accept-data-loss
+
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Run tests
         run: npm test
 
-
-  # =======================================================
-  # JOB 3: BUILD
-  # =======================================================
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    needs:
-      - typecheck
-      - test
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npm run prisma:generate
-
       - name: Build
         run: npm run build
+
+  publish-image:
+    name: Build and publish Docker image
+    if: github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/leduycoder/kujilingo_be
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-production:
+    name: Deploy production to VPS
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: publish-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy image and run migrations over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          SERVER_APP_DIR: ${{ secrets.SERVER_APP_DIR }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          envs: IMAGE_TAG,GHCR_USERNAME,GHCR_TOKEN,SERVER_APP_DIR
+          script: |
+            set -euo pipefail
+            APP_DIR="${SERVER_APP_DIR:-/var/www/kujilingo-be}"
+            cd "$APP_DIR"
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+            export IMAGE_TAG
+
+            docker compose -f docker-compose.prod.yml pull backend
+            docker compose -f docker-compose.prod.yml run --rm backend npx prisma migrate deploy
+            docker compose -f docker-compose.prod.yml up -d --no-deps backend
+
+            for attempt in $(seq 1 30); do
+              if curl --fail --silent http://localhost:8000/health >/dev/null; then
+                docker logout ghcr.io
+                echo "Deployment healthy: $IMAGE_TAG"
+                exit 0
+              fi
+              sleep 2
+            done
+
+            docker compose -f docker-compose.prod.yml logs --tail=100 backend
+            docker logout ghcr.io
+            echo "Backend health check failed"
+            exit 1
