@@ -3,21 +3,26 @@ import { lessonsRepository } from "./lessons.repository.js";
 import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { CreateLessonBody, UpdateLessonBody } from "./lessons.types.js";
+import { hasActivePremium } from "../../common/utils/premium.js";
 
 export const lessonsService = {
     /**
      * Get details of a lesson (with ordered topics). Cache for 30 minutes.
      */
-    async getLessonDetail(id: string) {
+    async getLessonDetail(id: string, userId?: string) {
+        const lesson = await lessonsRepository.findLessonDetail(id);
+        if (!lesson) {
+            throw new Error("LESSON_NOT_FOUND");
+        }
+        const jlptLevel = lesson.courses?.title?.match(/N([1-5])/i)?.[1];
+        if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+            throw new Error("PRO_REQUIRED");
+        }
+
         const cacheKey = `lessons:detail:${id}`;
         const cached = memoryCache.get(cacheKey);
         if (cached) {
             return cached;
-        }
-
-        const lesson = await lessonsRepository.findLessonDetail(id);
-        if (!lesson) {
-            throw new Error("LESSON_NOT_FOUND");
         }
 
         const result = {

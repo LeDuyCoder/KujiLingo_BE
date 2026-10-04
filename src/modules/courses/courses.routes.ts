@@ -2,6 +2,8 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { adminGuard } from "../../common/middlewares/admin.guard.js";
+import { verifyToken } from "../../common/utils/jwt.js";
+import { authRepository } from "../auth/auth.repository.js";
 import {
     listCoursesHandler,
     getCourseDetailHandler,
@@ -21,6 +23,17 @@ const looseUuid = z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4
 
 export async function coursesRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
+    const optionalAuth = async (request: any) => {
+        const header = request.headers.authorization;
+        if (!header?.startsWith("Bearer ")) return;
+        try {
+            const decoded = verifyToken(header.slice(7)) as { sub: string };
+            const user = await authRepository.findUserById(decoded.sub);
+            if (user?.status === "active") request.user = { id: user.id, role: user.role };
+        } catch {
+            // Requests without valid credentials can still view free courses.
+        }
+    };
 
     // ==========================================
     // Public Endpoints
@@ -30,6 +43,7 @@ export async function coursesRoutes(app: FastifyInstance) {
     router.get(
         "/api/v1/courses",
         {
+            preHandler: [optionalAuth],
             schema: {
                 tags: ["Courses"],
                 summary: "List Courses",
@@ -73,6 +87,7 @@ export async function coursesRoutes(app: FastifyInstance) {
     router.get(
         "/api/v1/courses/:id",
         {
+            preHandler: [optionalAuth],
             schema: {
                 tags: ["Courses"],
                 summary: "Get Course Detail",

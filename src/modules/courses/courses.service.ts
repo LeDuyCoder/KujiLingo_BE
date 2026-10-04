@@ -4,6 +4,7 @@ import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { ListCoursesQuery, CreateCourseBody, UpdateCourseBody } from "./courses.schema.js";
 import type { CourseDTO, CourseDetailDTO } from "./courses.types.js";
+import { hasActivePremium } from "../../common/utils/premium.js";
 
 /**
  * Lấy danh sách khóa học có phân trang (Public)
@@ -62,17 +63,21 @@ export async function listCourses(query: ListCoursesQuery) {
  * Lấy thông tin chi tiết một khóa học (Public)
  * Tích hợp Cache 30 phút
  */
-export async function getCourseDetail(courseId: string) {
+export async function getCourseDetail(courseId: string, userId?: string) {
+    const course = await courseRepository.findCourseById(courseId);
+    if (!course) {
+        throw new Error("COURSE_NOT_FOUND");
+    }
+    const jlptLevel = course.title?.match(/N([1-5])/i)?.[1];
+    if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+        throw new Error("PRO_REQUIRED");
+    }
+
     const cacheKey = `courses:detail:${courseId}`;
     const cachedData = memoryCache.get(cacheKey);
 
     if (cachedData) {
         return cachedData;
-    }
-
-    const course = await courseRepository.findCourseById(courseId);
-    if (!course) {
-        throw new Error("COURSE_NOT_FOUND");
     }
 
     const lessons = await courseRepository.findLessonsByCourseId(courseId);

@@ -2,6 +2,8 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { adminGuard } from "../../common/middlewares/admin.guard.js";
+import { verifyToken } from "../../common/utils/jwt.js";
+import { authRepository } from "../auth/auth.repository.js";
 import { lessonsController } from "./lessons.controller.js";
 import {
     getLessonDetailParamsSchema,
@@ -17,6 +19,17 @@ import {
 
 export async function lessonsRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
+    const optionalAuth = async (request: any) => {
+        const header = request.headers.authorization;
+        if (!header?.startsWith("Bearer ")) return;
+        try {
+            const decoded = verifyToken(header.slice(7)) as { sub: string };
+            const user = await authRepository.findUserById(decoded.sub);
+            if (user?.status === "active") request.user = { id: user.id, role: user.role };
+        } catch {
+            // Unauthenticated access remains available for free lessons.
+        }
+    };
 
     // ==========================================
     // Public Endpoints
@@ -25,6 +38,7 @@ export async function lessonsRoutes(app: FastifyInstance) {
     router.get(
         "/api/v1/lessons/:id",
         {
+            preHandler: [optionalAuth],
             schema: {
                 tags: ["Lessons"],
                 summary: "Get Lesson Detail",

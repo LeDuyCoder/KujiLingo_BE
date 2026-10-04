@@ -12,6 +12,7 @@ export const lessonsRepository = {
         return prisma.lessons.findUnique({
             where: { id },
             include: {
+                courses: { select: { title: true } },
                 topics: {
                     orderBy: { order_no: "asc" }
                 }

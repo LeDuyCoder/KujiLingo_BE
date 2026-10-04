@@ -13,6 +13,7 @@ import { buildPasswordChangedEmail } from "./templates/password-changed.template
 import { log } from "../../common/utils/log.js";
 import { signToken } from "../../common/utils/jwt.js";
 import { env } from "../../config/env.js";
+import { hasActivePremium } from "../../common/utils/premium.js";
 import { rateLimiter } from "../../common/utils/rate-limiter.js";
 
 /**
@@ -174,7 +175,7 @@ export async function login(
     }
 
     const role = user.role || "user";
-    const isPremium = false;
+    const isPremium = await hasActivePremium(user.id);
 
     const accessToken = signToken({
         sub: user.id,
@@ -447,8 +448,8 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
         display_name: user.display_name || "",
         avatar_url: user.avatar ?? null,
         role: user.role || "user",
-        is_premium: false,
-        premium_expires_at: null,
+        is_premium: await hasActivePremium(user.id),
+        premium_expires_at: user.premium_expires_at?.toISOString() ?? null,
         jlpt_target_level: user.jlpt_target_level,
         learning_goal_minutes: user.learning_goal_minutes,
         status: user.status || "pending_verification",
@@ -542,7 +543,7 @@ export async function refreshToken(
 
         // 6. Tạo access token mới
         const role = user.role || "user";
-        const isPremium = false;
+        const isPremium = await hasActivePremium(user.id);
 
         const accessToken = signToken({
             sub: user.id,

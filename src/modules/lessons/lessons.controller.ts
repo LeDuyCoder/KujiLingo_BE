@@ -9,7 +9,7 @@ export const lessonsController = {
     async getLessonDetail(request: FastifyRequest, reply: FastifyReply) {
         try {
             const { id } = request.params as { id: string };
-            const result = await lessonsService.getLessonDetail(id);
+            const result = await lessonsService.getLessonDetail(id, request.user?.id);
             return reply.status(200).send(result);
         } catch (error: any) {
             if (error.message === "LESSON_NOT_FOUND") {
@@ -19,6 +19,12 @@ export const lessonsController = {
                         code: "LESSON_NOT_FOUND",
                         message: "Lesson not found."
                     }
+                });
+            }
+            if (error.message === "PRO_REQUIRED") {
+                return reply.status(403).send({
+                    success: false,
+                    error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access JLPT N3–N1 lessons." }
                 });
             }
 
