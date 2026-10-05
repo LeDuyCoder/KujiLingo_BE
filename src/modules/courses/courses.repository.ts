@@ -42,14 +42,28 @@ export async function findCourseById(id: string, includeDeleted = false, tx?: Tr
 export async function findLessonsByCourseId(courseId: string) {
     return prisma.lessons.findMany({
         where: { course_id: courseId },
-        orderBy: { order_no: "asc" },
+        orderBy: [{ order_no: "asc" }, { id: "asc" }],
         select: {
             id: true,
             title: true,
             description: true,
-            order_no: true
+            order_no: true,
+            topics: {
+                select: {
+                    quizzes: { select: { id: true } }
+                }
+            }
         }
     });
+}
+
+export async function findCompletedLessonIds(userId: string, lessonIds: string[]) {
+    if (lessonIds.length === 0) return [];
+    const rows = await prisma.user_lesson_quiz_completions.findMany({
+        where: { user_id: userId, lesson_id: { in: lessonIds }, passed: true },
+        select: { lesson_id: true }
+    });
+    return rows.map(row => row.lesson_id);
 }
 
 export async function createCourse(tx: TransactionClient, data: {
@@ -132,6 +146,7 @@ export const courseRepository = {
     countLessonsByCourses,
     findCourseById,
     findLessonsByCourseId,
+    findCompletedLessonIds,
     createCourse,
     updateCourse,
     softDeleteCourse,

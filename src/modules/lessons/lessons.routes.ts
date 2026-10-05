@@ -2,12 +2,16 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { adminGuard } from "../../common/middlewares/admin.guard.js";
+import { authGuard } from "../../common/middlewares/auth.guard.js";
 import { verifyToken } from "../../common/utils/jwt.js";
 import { authRepository } from "../auth/auth.repository.js";
 import { lessonsController } from "./lessons.controller.js";
 import {
     getLessonDetailParamsSchema,
     getLessonDetailResponseSchema,
+    getLessonQuizResponseSchema,
+    submitLessonQuizBodySchema,
+    submitLessonQuizResponseSchema,
     createLessonBodySchema,
     createLessonResponseSchema,
     updateLessonParamsSchema,
@@ -46,6 +50,7 @@ export async function lessonsRoutes(app: FastifyInstance) {
                 params: getLessonDetailParamsSchema,
                 response: {
                     200: getLessonDetailResponseSchema,
+                    403: z.object({ success: z.boolean(), error: z.object({ code: z.union([z.literal("PRO_REQUIRED"), z.literal("LESSON_LOCKED")]), message: z.string() }) }),
                     400: z.object({
                         success: z.boolean(),
                         error: z.object({ code: z.literal("VALIDATION_ERROR"), message: z.string() })
@@ -62,6 +67,49 @@ export async function lessonsRoutes(app: FastifyInstance) {
             }
         },
         lessonsController.getLessonDetail
+    );
+
+    router.get(
+        "/api/v1/lessons/:id/quiz",
+        {
+            preHandler: [optionalAuth],
+            schema: {
+                tags: ["Lessons"],
+                summary: "Get Lesson Quiz",
+                description: "Returns questions and answer choices for all quizzes in a lesson without revealing correct answers.",
+                params: getLessonDetailParamsSchema,
+                response: {
+                    200: getLessonQuizResponseSchema,
+                    403: z.object({ success: z.boolean(), error: z.object({ code: z.union([z.literal("PRO_REQUIRED"), z.literal("LESSON_LOCKED")]), message: z.string() }) }),
+                    404: z.object({ success: z.boolean(), error: z.object({ code: z.union([z.literal("LESSON_NOT_FOUND"), z.literal("QUIZ_NOT_FOUND")]), message: z.string() }) }),
+                    500: z.object({ success: z.boolean(), error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }) })
+                }
+            }
+        },
+        lessonsController.getLessonQuiz
+    );
+
+    router.post(
+        "/api/v1/lessons/:id/quiz",
+        {
+            preHandler: [authGuard],
+            schema: {
+                tags: ["Lessons"],
+                summary: "Submit Lesson Quiz",
+                description: "Grades one submitted answer for every question in the lesson quiz.",
+                params: getLessonDetailParamsSchema,
+                body: submitLessonQuizBodySchema,
+                response: {
+                    200: submitLessonQuizResponseSchema,
+                    401: z.object({ success: z.boolean(), error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }) }),
+                    403: z.object({ success: z.boolean(), error: z.object({ code: z.union([z.literal("PRO_REQUIRED"), z.literal("LESSON_LOCKED")]), message: z.string() }) }),
+                    404: z.object({ success: z.boolean(), error: z.object({ code: z.union([z.literal("LESSON_NOT_FOUND"), z.literal("QUIZ_NOT_FOUND")]), message: z.string() }) }),
+                    422: z.object({ success: z.boolean(), error: z.object({ code: z.literal("INVALID_QUIZ_ANSWERS"), message: z.string() }) }),
+                    500: z.object({ success: z.boolean(), error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }) })
+                }
+            }
+        },
+        lessonsController.submitLessonQuiz
     );
 
     // ==========================================

@@ -43,6 +43,12 @@ export const topicsController = {
                     }
                 });
             }
+            if (error.message === "LESSON_LOCKED") {
+                return reply.status(403).send({
+                    success: false,
+                    error: { code: "LESSON_LOCKED", message: "Complete the previous lesson quiz to unlock this lesson." }
+                });
+            }
 
             return reply.status(500).send({
                 success: false,

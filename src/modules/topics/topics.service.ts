@@ -3,6 +3,7 @@ import { topicsRepository } from "./topics.repository.js";
 import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { CreateTopicBody, UpdateTopicBody, AddVocabularyBody } from "./topics.types.js";
+import { lessonsService } from "../lessons/lessons.service.js";
 
 export const topicsService = {
     /**
@@ -83,6 +84,10 @@ export const topicsService = {
             };
 
             memoryCache.set(cacheKey, cached, 3600); // 1 hour TTL
+        }
+
+        if (cached.lesson_id) {
+            await lessonsService.assertLessonUnlocked(cached.lesson_id, userId);
         }
 
         // Live Personalization

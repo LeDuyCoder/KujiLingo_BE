@@ -12,6 +12,7 @@ export interface LessonEmbeddedDTO {
     title: string | null;
     description: string | null;
     order_no: number | null;
+    quiz_count: number;
 }
 
 export interface CourseDetailDTO {

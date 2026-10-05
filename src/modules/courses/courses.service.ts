@@ -3,8 +3,9 @@ import { courseRepository } from "./courses.repository.js";
 import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { ListCoursesQuery, CreateCourseBody, UpdateCourseBody } from "./courses.schema.js";
-import type { CourseDTO, CourseDetailDTO } from "./courses.types.js";
+import type { CourseDTO, CourseDetailDTO, LessonEmbeddedDTO } from "./courses.types.js";
 import { hasActivePremium } from "../../common/utils/premium.js";
+import { buildLessonProgress } from "../../common/utils/lesson-progress.js";
 
 /**
  * Lấy danh sách khóa học có phân trang (Public)
@@ -106,6 +107,7 @@ export async function getCourseDetail(courseId: string, userId?: string) {
             title: l.title,
             description: l.description,
             order_no: l.order_no,
+            quiz_count: l.topics.reduce((count, topic) => count + topic.quizzes.length, 0),
         })),
     };
 
@@ -119,6 +121,24 @@ export async function getCourseDetail(courseId: string, userId?: string) {
     memoryCache.set(accessCacheKey, course.title ?? "", 1800);
 
     return result;
+}
+
+export async function getCourseLessonProgress(courseId: string, userId: string) {
+    const course = await getCourseDetail(courseId, userId);
+    const lessons: LessonEmbeddedDTO[] = course.data.lessons;
+    const lessonIds = lessons.map(lesson => lesson.id);
+    const completedIds = await courseRepository.findCompletedLessonIds(userId, lessonIds);
+
+    return {
+        success: true,
+        data: {
+            course_id: courseId,
+            lessons: buildLessonProgress(
+                lessons.map(lesson => ({ id: lesson.id, quiz_count: lesson.quiz_count })),
+                new Set(completedIds)
+            )
+        }
+    };
 }
 
 /**

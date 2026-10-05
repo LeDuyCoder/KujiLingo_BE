@@ -45,6 +45,10 @@ export async function topicsRoutes(app: FastifyInstance) {
                         success: z.boolean(),
                         error: z.object({ code: z.literal("TOPIC_NOT_FOUND"), message: z.string() })
                     }),
+                    403: z.object({
+                        success: z.boolean(),
+                        error: z.object({ code: z.literal("LESSON_LOCKED"), message: z.string() })
+                    }),
                     500: z.object({
                         success: z.boolean(),
                         error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() })

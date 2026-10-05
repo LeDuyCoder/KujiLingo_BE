@@ -57,6 +57,28 @@ export async function getCourseDetailHandler(
     }
 }
 
+export async function getCourseLessonProgressHandler(
+    request: FastifyRequest<{ Params: CourseIdParams }>,
+    reply: FastifyReply
+) {
+    try {
+        const userId = request.user?.id;
+        if (!userId) {
+            return reply.code(401).send({ success: false, error: { code: "UNAUTHORIZED", message: "Sign in to view lesson progress." } });
+        }
+        return reply.code(200).send(await coursesService.getCourseLessonProgress(request.params.id, userId));
+    } catch (error: any) {
+        if (error.message === "COURSE_NOT_FOUND") {
+            return reply.code(404).send({ success: false, error: { code: "COURSE_NOT_FOUND", message: "Course not found." } });
+        }
+        if (error.message === "PRO_REQUIRED") {
+            return reply.code(403).send({ success: false, error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access this course." } });
+        }
+        log.error(error);
+        return reply.code(500).send({ success: false, error: { code: "INTERNAL_ERROR", message: "An unexpected error occurred. Please try again later." } });
+    }
+}
+
 export async function createCourseHandler(
     request: FastifyRequest<{ Body: CreateCourseBody }>,
     reply: FastifyReply
