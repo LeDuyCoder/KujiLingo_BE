@@ -3,6 +3,54 @@ import { lessonsService } from "./lessons.service.js";
 import type { CreateLessonBody, UpdateLessonBody } from "./lessons.types.js";
 
 export const lessonsController = {
+    async getLessonQuiz(request: FastifyRequest, reply: FastifyReply) {
+        try {
+            const { id } = request.params as { id: string };
+            return reply.status(200).send(await lessonsService.getLessonQuiz(id, request.user?.id));
+        } catch (error: any) {
+            if (error.message === "LESSON_NOT_FOUND" || error.message === "QUIZ_NOT_FOUND") {
+                const code = error.message;
+                return reply.status(404).send({
+                    success: false,
+                    error: { code, message: code === "QUIZ_NOT_FOUND" ? "This lesson does not have a quiz yet." : "Lesson not found." }
+                });
+            }
+            if (error.message === "PRO_REQUIRED") {
+                return reply.status(403).send({ success: false, error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access this lesson." } });
+            }
+            if (error.message === "LESSON_LOCKED") {
+                return reply.status(403).send({ success: false, error: { code: "LESSON_LOCKED", message: "Complete the previous lesson quiz to unlock this lesson." } });
+            }
+            return reply.status(500).send({ success: false, error: { code: "INTERNAL_ERROR", message: error.message || "An unexpected error occurred." } });
+        }
+    },
+
+    async submitLessonQuiz(request: FastifyRequest, reply: FastifyReply) {
+        try {
+            const { id } = request.params as { id: string };
+            const body = request.body as { answers: Array<{ question_id: string; answer_id: string }> };
+            return reply.status(200).send(await lessonsService.submitLessonQuiz(id, request.user?.id, body.answers));
+        } catch (error: any) {
+            if (error.message === "LESSON_NOT_FOUND" || error.message === "QUIZ_NOT_FOUND") {
+                const code = error.message;
+                return reply.status(404).send({ success: false, error: { code, message: code === "QUIZ_NOT_FOUND" ? "This lesson does not have a quiz yet." : "Lesson not found." } });
+            }
+            if (error.message === "PRO_REQUIRED") {
+                return reply.status(403).send({ success: false, error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access this lesson." } });
+            }
+            if (error.message === "LESSON_LOCKED") {
+                return reply.status(403).send({ success: false, error: { code: "LESSON_LOCKED", message: "Complete the previous lesson quiz to unlock this lesson." } });
+            }
+            if (error.message === "UNAUTHORIZED") {
+                return reply.status(401).send({ success: false, error: { code: "UNAUTHORIZED", message: "Sign in to submit a quiz and save lesson progress." } });
+            }
+            if (error.message === "INVALID_QUIZ_ANSWERS") {
+                return reply.status(422).send({ success: false, error: { code: "INVALID_QUIZ_ANSWERS", message: "Submit exactly one valid answer for every quiz question." } });
+            }
+            return reply.status(500).send({ success: false, error: { code: "INTERNAL_ERROR", message: error.message || "An unexpected error occurred." } });
+        }
+    },
+
     /**
      * GET /api/v1/lessons/{id}
      */
@@ -26,6 +74,9 @@ export const lessonsController = {
                     success: false,
                     error: { code: "PRO_REQUIRED", message: "Upgrade to Pro to access JLPT N3–N1 lessons." }
                 });
+            }
+            if (error.message === "LESSON_LOCKED") {
+                return reply.status(403).send({ success: false, error: { code: "LESSON_LOCKED", message: "Complete the previous lesson quiz to unlock this lesson." } });
             }
 
             return reply.status(500).send({

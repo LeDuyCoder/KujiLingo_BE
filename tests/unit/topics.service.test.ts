@@ -2,6 +2,7 @@ import { test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
 import { topicsService } from "../../src/modules/topics/topics.service.js";
 import { topicsRepository } from "../../src/modules/topics/topics.repository.js";
+import { lessonsService } from "../../src/modules/lessons/lessons.service.js";
 import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 import { memoryCache } from "../../src/common/utils/cache.js";
 
@@ -9,6 +10,7 @@ test("Topics Service - Unit Tests", async (t) => {
     beforeEach(() => {
         mock.restoreAll();
         memoryCache.clear();
+        mock.method(lessonsService, "assertLessonUnlocked", async (id: string) => ({ id, course_id: null }));
     });
 
     afterEach(() => {

@@ -27,6 +27,7 @@ test("Lessons Service - Unit Tests", async (t) => {
             ]
         };
 
+        mock.method(lessonsRepository, "findLessonProgression", async (id: string) => ({ id, course_id: null }));
         const findMock = mock.method(lessonsRepository, "findLessonDetail", async () => mockLesson);
 
         // 1st request (cache miss)
@@ -46,6 +47,7 @@ test("Lessons Service - Unit Tests", async (t) => {
     });
 
     await t.test("getLessonDetail - throws LESSON_NOT_FOUND if lesson missing", async () => {
+        mock.method(lessonsRepository, "findLessonProgression", async () => null);
         mock.method(lessonsRepository, "findLessonDetail", async () => null);
 
         await assert.rejects(

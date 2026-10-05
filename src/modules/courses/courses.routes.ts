@@ -2,11 +2,13 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { adminGuard } from "../../common/middlewares/admin.guard.js";
+import { authGuard } from "../../common/middlewares/auth.guard.js";
 import { verifyToken } from "../../common/utils/jwt.js";
 import { authRepository } from "../auth/auth.repository.js";
 import {
     listCoursesHandler,
     getCourseDetailHandler,
+    getCourseLessonProgressHandler,
     createCourseHandler,
     updateCourseHandler,
     deleteCourseHandler,
@@ -107,6 +109,7 @@ export async function coursesRoutes(app: FastifyInstance) {
                                     title: z.string().nullable(),
                                     description: z.string().nullable(),
                                     order_no: z.number().nullable(),
+                                    quiz_count: z.number().int().nonnegative(),
                                 })
                             ),
                         }),
@@ -127,6 +130,37 @@ export async function coursesRoutes(app: FastifyInstance) {
             },
         },
         getCourseDetailHandler
+    );
+
+    router.get(
+        "/api/v1/courses/:id/progress",
+        {
+            onRequest: [authGuard],
+            schema: {
+                tags: ["Courses"],
+                summary: "Get Course Lesson Quiz Progress",
+                params: courseIdParamsSchema,
+                response: {
+                    200: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            course_id: looseUuid,
+                            lessons: z.array(z.object({
+                                id: looseUuid,
+                                quiz_count: z.number().int().nonnegative(),
+                                is_completed: z.boolean(),
+                                is_unlocked: z.boolean()
+                            }))
+                        })
+                    }),
+                    401: z.object({ success: z.boolean(), error: z.object({ code: z.literal("UNAUTHORIZED"), message: z.string() }) }),
+                    403: z.object({ success: z.boolean(), error: z.object({ code: z.literal("PRO_REQUIRED"), message: z.string() }) }),
+                    404: z.object({ success: z.boolean(), error: z.object({ code: z.literal("COURSE_NOT_FOUND"), message: z.string() }) }),
+                    500: z.object({ success: z.boolean(), error: z.object({ code: z.literal("INTERNAL_ERROR"), message: z.string() }) })
+                }
+            }
+        },
+        getCourseLessonProgressHandler
     );
 
     // ==========================================

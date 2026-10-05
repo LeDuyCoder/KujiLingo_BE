@@ -226,6 +226,7 @@ model lessons {
   grammar_points grammar_points[]
   courses        courses?         @relation(fields: [course_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   topics         topics[]
+  user_lesson_quiz_completions user_lesson_quiz_completions[]
 
   @@index([course_id, order_no])
 }
@@ -535,6 +536,7 @@ model users {
   folders                                                   folders[]
   leaderboard_snapshots                                     leaderboard_snapshots[]
   learning_progress                                         learning_progress[]
+  lesson_quiz_completions                                   user_lesson_quiz_completions[]
   password_reset_tokens                                     password_reset_tokens[]
   payment_transactions                                      payment_transactions[]
   purchase_histories                                        purchase_histories[]
@@ -554,6 +556,18 @@ model users {
   user_wallets                                              user_wallets?
   wallet_histories                                          wallet_histories[]
   user_achievement_showcases                                user_achievement_showcase[]
+}
+
+model user_lesson_quiz_completions {
+  user_id      String   @db.Uuid
+  lesson_id    String   @db.Uuid
+  completed_at DateTime @default(now()) @db.Timestamp(6)
+  passed       Boolean  @default(false)
+  lessons      lessons  @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, lesson_id])
+  @@index([lesson_id])
 }
 
 model user_statistics_daily {

@@ -1,4 +1,5 @@
 import csv
+import json
 import uuid
 from copy import copy
 from pathlib import Path
@@ -39,6 +40,35 @@ LESSONS = [
     ("Lời cảm ơn và kết thúc", "Ôn từ vựng lịch sự để cảm ơn, xin lỗi và kết thúc trao đổi.", "感謝|かんしゃ|lòng biết ơn|NOUN;おかげ|おかげ|nhờ có, nhờ vào|NOUN;心|こころ|trái tim, tấm lòng|NOUN;皆様|みなさま|quý vị, mọi người|NOUN;迷惑|めいわく|phiền toái, làm phiền|NOUN;今後|こんご|từ nay về sau|NOUN;改めて|あらためて|một lần nữa, dịp khác|ADVERB;本当に|ほんとうに|thật sự|ADVERB;どうも|どうも|cảm ơn/nhiều (tùy ngữ cảnh)|EXPRESSION;お元気で|おげんきで|chúc mạnh khỏe|EXPRESSION;よろしくお願いします|よろしくおねがいします|mong được giúp đỡ|EXPRESSION;失礼します|しつれいします|xin phép (ra về/kết thúc)|EXPRESSION"),
 ]
 
+# Two original grammar points and examples for each lesson, in lesson order.
+GRAMMAR = [
+    [("Giải thích bằng んです", "V thể thường・Aい + んです / N・Aな + なんです", "Dùng để giải thích, hỏi nguyên nhân hoặc nhấn mạnh bối cảnh.", "Thường dùng trong hội thoại khi người nghe cần thêm thông tin.", "どうして遅れたんですか。電車が遅れたんです。", "Sao bạn đến muộn vậy? Vì tàu bị trễ."), ("Nhờ vả lịch sự", "Vていただけませんか", "Anh/chị có thể vui lòng làm giúp tôi ... được không?", "Cách nhờ vả trang trọng, lịch sự.", "もう一度説明していただけませんか。", "Anh/chị có thể vui lòng giải thích lại một lần nữa không?")],
+    [("Thể khả năng", "Động từ thể khả năng", "Diễn tả khả năng hoặc việc có thể thực hiện.", "Dùng dạng khả năng của động từ; đối tượng thường đi với が.", "私は漢字が少し読めます。", "Tôi có thể đọc được một ít kanji."), ("Nhìn thấy và nghe thấy", "N が見えます／聞こえます", "Có thể nhìn thấy / nghe thấy một cách tự nhiên.", "見えます và 聞こえます mô tả điều lọt vào tầm nhìn hoặc thính giác.", "ここから海が見えます。", "Từ đây có thể nhìn thấy biển.")],
+    [("Hai hành động đồng thời", "Vます bỏ ます + ながら", "Vừa làm việc này vừa làm việc khác.", "Hai hành động thường do cùng một chủ thể thực hiện.", "音楽を聞きながら勉強します。", "Tôi vừa nghe nhạc vừa học."), ("Liệt kê lý do", "Thể thường + し、～し", "Vừa ... vừa ...; nêu nhiều lý do hoặc đặc điểm.", "し có thể nối các lý do trước khi nêu kết luận.", "この店は安いし、おいしいし、よく来ます。", "Quán này vừa rẻ vừa ngon nên tôi thường đến.")],
+    [("Trạng thái do hành động hoàn tất", "Tự động từ thể ています", "Đang ở trạng thái là kết quả của một hành động.", "Phân biệt với hành động đang diễn ra; thường đi với tự động từ.", "窓が開いています。", "Cửa sổ đang mở."), ("Tha động từ và tự động từ", "N が tự động từ / N を tha động từ", "Diễn tả vật tự thay đổi trạng thái hoặc có người tác động lên vật.", "Chọn trợ từ và động từ theo việc có chủ thể tác động hay không.", "私が窓を開けました。", "Tôi đã mở cửa sổ.")],
+    [("Trạng thái chuẩn bị sẵn", "N が Vてあります", "Một việc đã được làm và trạng thái vẫn còn.", "Dùng tha động từ; tập trung vào kết quả đã chuẩn bị.", "会議室にいすが並べてあります。", "Ghế đã được xếp sẵn trong phòng họp."), ("Làm trước để chuẩn bị", "Vておきます", "Làm trước, chuẩn bị sẵn cho việc sau.", "Dùng khi chủ động hoàn tất việc cần thiết từ trước.", "旅行の前に切符を買っておきます。", "Tôi sẽ mua vé trước chuyến đi.")],
+    [("Thể ý chí", "Động từ thể ý chí", "Rủ rê hoặc tự nhủ sẽ cùng làm việc gì.", "Dạng thân mật của ～ましょう; cách tạo dạng thay đổi theo nhóm động từ.", "少し休もう。", "Nghỉ một chút nhé."), ("Dự định", "Thể ý chí + と思っています / Vるつもりです", "Đang dự định hoặc có ý định làm gì.", "Nêu kế hoạch đã hình thành trước thời điểm nói.", "来年、日本へ留学しようと思っています。", "Tôi đang định năm sau đi du học Nhật Bản.")],
+    [("Lời khuyên", "Vたほうがいいです／Vないほうがいいです", "Nên làm / không nên làm.", "Dùng để đưa ra lời khuyên hoặc khuyến nghị.", "熱がありますから、今日は休んだほうがいいです。", "Vì bị sốt nên hôm nay bạn nên nghỉ."), ("Dự đoán và khả năng", "～でしょう／～かもしれません", "Có lẽ ... / có thể ...", "でしょう thể hiện dự đoán khá có cơ sở; かもしれません thể hiện khả năng.", "午後から雨が降るかもしれません。", "Có thể từ buổi chiều trời sẽ mưa.")],
+    [("Mệnh lệnh và cấm đoán", "Động từ thể mệnh lệnh／thể cấm", "Ra lệnh mạnh hoặc yêu cầu không được làm.", "Thường gặp trong biển báo, khẩu hiệu và tình huống khẩn cấp.", "危ないですから、そこに入るな。", "Nguy hiểm nên đừng vào đó."), ("Đọc và hiểu biển báo", "～と書いてあります／～と読みます", "Có viết là ... / đọc là ...", "Trích nội dung chữ viết hoặc cách đọc một từ.", "この漢字は「出口」と読みます。", "Kanji này đọc là “deguchi” (lối ra).")],
+    [("Làm theo hướng dẫn", "Vる／Vた／Nの とおりに", "Làm theo đúng như ...", "とおりに đứng sau hành động, chỉ dẫn hoặc danh từ の.", "説明書に書いてあるとおりに組み立ててください。", "Xin hãy lắp theo đúng như hướng dẫn viết trong sách."), ("Sau khi và không làm", "Vたあとで / Vないで", "Sau khi làm ... / không làm ... mà ...", "あとで nêu trình tự; ないで nối hành động không thực hiện với hành động kế tiếp.", "宿題をしたあとで、テレビを見ます。", "Sau khi làm bài tập, tôi xem ti vi.")],
+    [("Điều kiện ば", "Vば／Aければ／Nなら", "Nếu ... thì ...", "Dùng để nêu điều kiện dẫn đến kết quả hoặc lời khuyên.", "時間があれば、手伝います。", "Nếu có thời gian, tôi sẽ giúp."), ("Nếu là N thì", "Nなら、～", "Nếu nói về N / nếu là N thì ...", "なら nhận chủ đề hoặc thông tin vừa được nêu làm điều kiện.", "京都へ行くなら、秋がいいですよ。", "Nếu đi Kyoto thì mùa thu đẹp đấy.")],
+    [("Mục đích và trạng thái đạt được", "Vる／Vない + ように", "Để có thể ... / để không ...", "ように dùng với khả năng hoặc trạng thái không do ý chí trực tiếp kiểm soát.", "忘れないように、メモしてください。", "Hãy ghi chú để khỏi quên."), ("Thay đổi khả năng/thói quen", "Vる／Vない + ようになります", "Trở nên có thể / dần hình thành thói quen.", "Diễn tả sự thay đổi theo thời gian.", "毎日練習して、長い文章も読めるようになりました。", "Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.")],
+    [("Câu bị động", "Động từ thể bị động", "Chủ thể chịu tác động của hành động.", "Dùng khi muốn đưa người/vật chịu tác động lên làm chủ đề.", "私は先生にほめられました。", "Tôi được thầy/cô khen."), ("Bị ảnh hưởng bởi hành động", "Người は người に V bị động", "Ai đó bị người khác làm gì hoặc bị ảnh hưởng.", "に đánh dấu người thực hiện hành động bị động.", "弟にケーキを食べられました。", "Tôi bị em trai ăn mất bánh." )],
+    [("Danh từ hóa hành động", "Vる + のは／のが／のを", "Việc làm V thì ... / thích, thấy, biết việc làm V.", "の biến mệnh đề động từ thành cụm danh từ.", "外国語を勉強するのは楽しいです。", "Việc học ngoại ngữ rất vui."), ("Nêu mục đích sử dụng", "Vます bỏ ます + のに使います", "Được dùng để làm ...", "Nêu công dụng của dụng cụ hoặc phương tiện.", "このはさみは紙を切るのに使います。", "Cái kéo này được dùng để cắt giấy.")],
+    [("Lý do với ので", "Thể thường + ので", "Vì ... nên ...", "Nêu lý do mềm mại, thường dùng để giải thích hoặc xin phép.", "電車が遅れたので、会議に遅刻しました。", "Vì tàu trễ nên tôi đã đến cuộc họp muộn."), ("Nguyên nhân và cảm xúc", "Vて、～", "Vì ... nên ...; nối nguyên nhân với cảm xúc/kết quả.", "Câu trước nêu nguyên nhân dẫn đến cảm xúc hoặc tình trạng.", "試験に合格して、とてもうれしかったです。", "Tôi rất vui vì đã thi đỗ.")],
+    [("Câu hỏi gián tiếp", "Từ để hỏi + thể thường + か", "Ai/ở đâu/khi nào ...; câu hỏi được đưa vào câu lớn hơn.", "Mệnh đề câu hỏi kết thúc bằng か trước động từ chính.", "駅までどう行くか、教えてください。", "Xin hãy chỉ cho tôi cách đi đến nhà ga."), ("Không biết có hay không; thử làm", "～かどうか / Vてみます", "Có ... hay không / thử làm ...", "かどうか dùng khi không có từ để hỏi; てみる nói thử làm.", "この方法が正しいかどうか、調べてみます。", "Tôi sẽ thử kiểm tra xem cách này có đúng không.")],
+    [("Kính ngữ tôn kính", "お／ご + Vます bỏ ます + になります", "Cách nói tôn kính về hành động của người nghe/người được nhắc đến.", "Dùng trong giao tiếp trang trọng; một số động từ có dạng kính ngữ riêng.", "社長はもうお帰りになりました。", "Giám đốc đã về rồi."), ("Nhận với sắc thái kính trọng", "いただきます／くださいます", "Nhận hoặc được ai đó làm giúp theo cách nói lịch sự.", "Chọn cách nói theo vai trò của người cho và người nhận.", "先生に本をいただきました。", "Tôi đã nhận sách từ thầy/cô.")],
+    [("Vì mục đích", "Nのために／Vるために", "Vì ... / để đạt mục đích ...", "Nêu mục tiêu chủ động mà hành động hướng tới.", "日本で働くために、日本語を勉強しています。", "Tôi học tiếng Nhật để làm việc ở Nhật."), ("Công dụng, thời gian, chi phí", "Nに使います／時間・お金がかかります", "Dùng cho N / tốn thời gian hoặc tiền bạc.", "に chỉ mục đích sử dụng; かかる diễn tả thời lượng hoặc chi phí cần thiết.", "この機械は写真を印刷するのに使います。", "Máy này được dùng để in ảnh.")],
+    [("Trông có vẻ sắp", "Vます bỏ ます + そうです", "Trông có vẻ sắp xảy ra.", "Dùng với động từ để suy đoán từ dấu hiệu quan sát được.", "雨が降りそうです。", "Trông có vẻ sắp mưa."), ("Trông có vẻ như thế nào", "Aい bỏ い + そうです／Aな + そうです", "Trông có vẻ ...", "Dùng để nhận xét vẻ ngoài hoặc cảm nhận từ quan sát.", "このケーキはおいしそうです。", "Cái bánh này trông có vẻ ngon.")],
+    [("Quá mức", "Vます bỏ ます／A bỏ い・な + すぎます", "Làm quá nhiều hoặc quá ...", "すぎる kết hợp với động từ và tính từ để nói vượt mức phù hợp.", "昨日、食べすぎました。", "Hôm qua tôi đã ăn quá nhiều."), ("Dễ/khó làm", "Vます bỏ ます + やすい／にくい", "Dễ làm / khó làm.", "Đánh giá mức độ thuận tiện khi thực hiện hành động.", "このペンは書きやすいです。", "Cây bút này dễ viết.")],
+    [("Trong trường hợp", "Vる／Vた／Nの 場合は", "Trong trường hợp ...", "Nêu cách xử lý khi một tình huống cụ thể xảy ra.", "パスポートをなくした場合は、すぐ連絡してください。", "Nếu làm mất hộ chiếu, hãy liên lạc ngay."), ("Mặc dù nhưng", "Thể thường + のに", "Mặc dù ... nhưng ...", "Nối hai ý trái với điều người nghe thường dự đoán.", "薬を飲んだのに、熱が下がりません。", "Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.")],
+    [("Các giai đoạn của hành động", "Vる／Vている／Vた + ところです", "Sắp làm / đang làm / vừa làm xong.", "ところ chỉ đúng giai đoạn của hành động tại thời điểm nói.", "今から出かけるところです。", "Bây giờ tôi sắp ra ngoài."), ("Vừa mới và chắc là", "Vたばかりです／～はずです", "Vừa mới ... / chắc là ... theo căn cứ.", "ばかり nhấn mạnh hành động mới xảy ra; はず nêu kỳ vọng có căn cứ.", "彼はもう駅に着いたはずです。", "Chắc anh ấy đã đến nhà ga rồi.")],
+    [("Nghe nói", "Thể thường + そうです", "Nghe nói rằng ...", "Truyền đạt thông tin nhận được từ người khác hoặc nguồn tin.", "天気予報によると、明日は雨だそうです。", "Theo dự báo thời tiết, nghe nói ngày mai trời mưa."), ("Suy đoán từ dấu hiệu", "Thể thường + ようです", "Có vẻ như ..., dường như ...", "Người nói suy luận dựa trên tình huống hoặc dấu hiệu.", "電気が消えています。もう誰もいないようです。", "Đèn đã tắt. Có vẻ như không còn ai ở đó.")],
+    [("Sai khiến", "Động từ thể sai khiến", "Bắt/cho phép ai làm gì.", "Dùng theo quan hệ quyền hạn hoặc ngữ cảnh cho phép.", "母は子どもに野菜を食べさせました。", "Mẹ bắt/cho phép đứa trẻ ăn rau."), ("Xin phép được làm", "Vさせてください", "Xin hãy cho phép tôi làm ...", "Người nói xin phép thực hiện hành động.", "今日は早く帰らせてください。", "Hôm nay xin hãy cho phép tôi về sớm.")],
+    [("Kính ngữ trong giao tiếp", "いらっしゃいます／召し上がります／ご覧になります", "Các dạng tôn kính thường gặp: đến/đi/ở, ăn/uống, xem.", "Dùng động từ tôn kính riêng khi nói về hành động của khách hoặc cấp trên.", "先生は何時にいらっしゃいますか。", "Thầy/cô sẽ đến lúc mấy giờ ạ?"), ("Cách mời lịch sự", "お／ご + Vます bỏ ます + ください", "Xin mời vui lòng làm ...", "Dùng trong hướng dẫn và phục vụ khách.", "こちらで少々お待ちください。", "Xin quý khách vui lòng đợi một chút ở đây.")],
+    [("Khiêm nhường ngữ", "お／ご + Vます bỏ ます + します", "Cách nói khiêm nhường về hành động của mình.", "Dùng khi nói với khách, cấp trên hoặc trong môi trường công việc.", "私が資料をお持ちします。", "Để tôi mang tài liệu ạ."), ("Diễn đạt trang trọng", "ございます／でございます", "Cách nói lịch sự, trang trọng của あります／です.", "Thường dùng trong thông báo và phục vụ khách hàng.", "こちらが受付でございます。", "Đây là quầy tiếp tân ạ.")],
+]
+
 TABLES = {
     "Courses": ["id", "title", "description", "image", "order_no", "deleted_at"],
     "Lessons": ["id", "course_id", "title", "description", "order_no"],
@@ -69,13 +99,16 @@ def write_csv(name, records):
 course_id = new_id()
 courses = [{
     "id": course_id,
-    "title": "Tiếng Nhật N4 - Từ vựng Sơ cấp II",
-    "description": "Bộ từ vựng tham khảo 25 bài, biên soạn theo các chủ đề giao tiếp sơ cấp nâng cao; JLPT không công bố danh sách từ cố định theo cấp.",
+    "title": "Tiếng Nhật N4 - Minna no Nihongo Sơ cấp II",
+    "description": "Giáo trình tham khảo 25 bài gồm từ vựng, ngữ pháp, ví dụ và quiz. Nội dung biên soạn mới theo phạm vi sơ cấp nâng cao; JLPT không công bố danh sách từ cố định theo cấp.",
     "order_no": 2,
 }]
 lessons, topics, vocabularies, meanings, topic_vocabularies = [], [], [], [], []
+vocabulary_examples, grammar_points, grammar_examples = [], [], []
+quizzes, quiz_questions, quiz_answers = [], [], []
+quiz_specs = []
 vocabulary_ids = {}
-for order, (title, description, raw_words) in enumerate(LESSONS, 1):
+for order, ((title, description, raw_words), lesson_grammar) in enumerate(zip(LESSONS, GRAMMAR), 1):
     lesson_id, topic_id = new_id(), new_id()
     lessons.append({"id": lesson_id, "course_id": course_id, "title": f"Bài {order + 25}: {title}", "description": description, "order_no": order})
     topics.append({"id": topic_id, "lesson_id": lesson_id, "title": title, "description": description, "order_no": 1})
@@ -88,7 +121,34 @@ for order, (title, description, raw_words) in enumerate(LESSONS, 1):
             vocabulary_ids[key] = vocabulary_id
             vocabularies.append({"id": vocabulary_id, "kanji": surface, "hiragana": reading, "word_type": word_type, "jlpt": "N4", "frequency": 1})
             meanings.append({"id": new_id(), "vocabulary_id": vocabulary_id, "language": "vi", "meaning": meaning, "display_order": 1})
+            vocabulary_examples.append({"id": new_id(), "vocabulary_id": vocabulary_id, "japanese": f"「{surface}」という言葉を覚えました。", "hiragana": f"「{reading}」ということばをおぼえました。", "translation": f"Tôi đã học từ/cụm từ “{meaning}”."})
         topic_vocabularies.append({"topic_id": topic_id, "vocabulary_id": vocabulary_id})
+
+    for grammar_title, structure, meaning, usage, japanese, vietnamese in lesson_grammar:
+        grammar_id = new_id()
+        example = {"jp": japanese, "vi": vietnamese, "audio_url": ""}
+        grammar_points.append({"id": grammar_id, "lesson_id": lesson_id, "title": grammar_title, "structure": structure, "meaning": meaning, "usage": usage, "jlpt": "N4", "topic_id": topic_id, "title_jp": structure, "meaning_vi": meaning, "explanation": usage, "jlpt_level": "N4", "example_sentences": json.dumps([example], ensure_ascii=False)})
+        grammar_examples.append({"id": new_id(), "grammar_id": grammar_id, "japanese": japanese, "translation": vietnamese})
+    quiz_specs.append((topic_id, title, lesson_grammar))
+
+translation_pool = [grammar[5] for lesson_grammar in GRAMMAR for grammar in lesson_grammar]
+for topic_id, title, lesson_grammar in quiz_specs:
+    quiz_id = new_id()
+    quizzes.append({"id": quiz_id, "topic_id": topic_id, "title": f"Ôn tập N4: {title}"})
+    for item_no, grammar in enumerate(lesson_grammar, 1):
+        japanese, correct = grammar[4], grammar[5]
+        question_id = new_id()
+        quiz_questions.append({"id": question_id, "quiz_id": quiz_id, "question": f"Câu {item_no}. Chọn nghĩa đúng của câu: {japanese}"})
+        choices = [correct]
+        start = (len(quiz_questions) * 7) % len(translation_pool)
+        for offset in range(len(translation_pool)):
+            choice = translation_pool[(start + offset) % len(translation_pool)]
+            if choice not in choices:
+                choices.append(choice)
+            if len(choices) == 4:
+                break
+        for choice_no, answer in enumerate(choices):
+            quiz_answers.append({"id": new_id(), "question_id": question_id, "answer": answer, "is_correct": str(choice_no == 0).upper()})
 
 records = {
     "Courses": courses,
@@ -97,12 +157,12 @@ records = {
     "Vocabularies": vocabularies,
     "VocabularyMeanings": meanings,
     "TopicVocabularies": topic_vocabularies,
-    "VocabularyExamples": [],
-    "GrammarPoints": [],
-    "GrammarExamples": [],
-    "Quizzes": [],
-    "QuizQuestions": [],
-    "QuizAnswers": [],
+    "VocabularyExamples": vocabulary_examples,
+    "GrammarPoints": grammar_points,
+    "GrammarExamples": grammar_examples,
+    "Quizzes": quizzes,
+    "QuizQuestions": quiz_questions,
+    "QuizAnswers": quiz_answers,
 }
 for table, rows in records.items():
     write_csv(table, rows)
@@ -123,12 +183,12 @@ for table, rows in records.items():
 book.save(OUT / "curriculum_import_n4_tu_vung.xlsx")
 
 (OUT / "README.txt").write_text(
-    "BO TU VUNG N4 - 25 BAI\n"
-    "Co 25 bai (bai 26-50), moi bai co chu de, tu vung, cach doc kana, loai tu va nghia tieng Viet.\n"
-    "CSV theo schema curriculum_import_template.xlsx; import theo thu tu: Courses, Lessons, Topics, Vocabularies, VocabularyMeanings, TopicVocabularies. Cac bang grammar va quiz de trong vi bo nay tap trung vao tu vung.\n"
-    "Danh sach hoc tap tham khao, khong phai danh sach chinh thuc hay day du cho ky thi. JLPT khong cong bo danh muc tu vung/kanji/ngu phap co dinh theo cap; xem FAQ: https://www.jlpt.jp/e/faq/\n"
-    "Nguon muc tieu trinh do N4: https://www.jlpt.jp/e/about/levelsummary.html\n"
-    "Minna no Nihongo Shokyu II, tuong duong N4 va gom 25 bai: https://www.3anet.co.jp/np/en/books/1400/\n",
+    "GIÁO TRÌNH N4 - 25 BÀI (BÀI 26-50)\n"
+    "Mỗi bài có chủ đề, từ vựng, cách đọc kana, nghĩa tiếng Việt, 2 điểm ngữ pháp kèm ví dụ và 1 quiz gồm 2 câu.\n"
+    "CSV theo schema curriculum_import_template.xlsx; nhập theo thứ tự: Courses, Lessons, Topics, Vocabularies, VocabularyMeanings, TopicVocabularies, VocabularyExamples, GrammarPoints, GrammarExamples, Quizzes, QuizQuestions, QuizAnswers.\n"
+    "Đây là danh sách học tập tham khảo, không phải danh sách chính thức hay đầy đủ cho kỳ thi. JLPT không công bố danh mục từ vựng/kanji/ngữ pháp cố định theo cấp; xem FAQ: https://www.jlpt.jp/e/faq/\n"
+    "Mô tả mục tiêu trình độ N4: https://www.jlpt.jp/e/about/levelsummary.html\n"
+    "Minna no Nihongo Sơ cấp II được xếp tương đương N4 và gồm 25 bài: https://www.3anet.co.jp/np/en/books/1400/\n",
     encoding="utf-8",
 )
-print(f"Created {len(LESSONS)} lessons and {len(vocabularies)} unique vocabulary entries in {OUT}")
+print(f"Created {len(LESSONS)} lessons, {len(vocabularies)} unique vocabulary entries, {len(grammar_points)} grammar points, and {len(quiz_questions)} quiz questions in {OUT}")

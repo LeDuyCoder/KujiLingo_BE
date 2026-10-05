@@ -4,12 +4,127 @@ import { adminRepository } from "../admin/admin.repository.js";
 import { memoryCache } from "../../common/utils/cache.js";
 import type { CreateLessonBody, UpdateLessonBody } from "./lessons.types.js";
 import { hasActivePremium } from "../../common/utils/premium.js";
+import { buildLessonProgress } from "../../common/utils/lesson-progress.js";
+
+const LESSON_QUIZ_PASS_PERCENT = 70;
+
+function orderQuizQuestions<T extends { id: string; question: string | null }>(questions: T[]): T[] {
+    return [...questions].sort((a, b) => {
+        const aNumber = Number(a.question?.match(/^Câu\s+(\d+)\b/i)?.[1] ?? Number.MAX_SAFE_INTEGER);
+        const bNumber = Number(b.question?.match(/^Câu\s+(\d+)\b/i)?.[1] ?? Number.MAX_SAFE_INTEGER);
+        return aNumber - bNumber || a.id.localeCompare(b.id);
+    });
+}
+
+async function assertLessonUnlocked(id: string, userId?: string | null) {
+    const lesson = await lessonsRepository.findLessonProgression(id);
+    if (!lesson) throw new Error("LESSON_NOT_FOUND");
+    if (!lesson.course_id) return lesson;
+
+    const lessons = await lessonsRepository.findCourseProgressRows(lesson.course_id);
+    const lessonIds = lessons.map(item => item.id);
+    const completedIds = userId
+        ? await lessonsRepository.findCompletedLessonIds(userId, lessonIds)
+        : [];
+    const quizProgress = buildLessonProgress(
+        lessons.map(item => ({
+            id: item.id,
+            quiz_count: item.topics.reduce((count, topic) => count + topic.quizzes.length, 0)
+        })),
+        new Set(completedIds)
+    );
+
+    if (!quizProgress.find(item => item.id === id)?.is_unlocked) {
+        throw new Error("LESSON_LOCKED");
+    }
+    return lesson;
+}
 
 export const lessonsService = {
+    async assertLessonUnlocked(id: string, userId?: string | null) {
+        return assertLessonUnlocked(id, userId);
+    },
+
+    async getLessonQuiz(id: string, userId?: string) {
+        await assertLessonUnlocked(id, userId);
+        const lesson = await lessonsRepository.findLessonQuiz(id);
+        if (!lesson) throw new Error("LESSON_NOT_FOUND");
+
+        const jlptLevel = lesson.courses?.title?.match(/N([1-5])/i)?.[1];
+        if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+            throw new Error("PRO_REQUIRED");
+        }
+
+        const questions = lesson.topics.flatMap(topic => topic.quizzes.flatMap(quiz =>
+            orderQuizQuestions(quiz.quiz_questions).map(question => ({
+                id: question.id,
+                quiz_id: quiz.id,
+                quiz_title: quiz.title,
+                question: question.question,
+                audio: question.audio,
+                image: question.image,
+                answers: question.quiz_answers.map(({ id: answerId, answer }) => ({ id: answerId, answer }))
+            }))
+        ));
+        if (questions.length === 0) throw new Error("QUIZ_NOT_FOUND");
+
+        return { success: true, data: { lesson_id: lesson.id, lesson_title: lesson.title, questions } };
+    },
+
+    async submitLessonQuiz(id: string, userId: string | undefined, submitted: Array<{ question_id: string; answer_id: string }>) {
+        if (!userId) throw new Error("UNAUTHORIZED");
+        const progression = await assertLessonUnlocked(id, userId);
+        const lesson = await lessonsRepository.findLessonQuiz(id);
+        if (!lesson) throw new Error("LESSON_NOT_FOUND");
+
+        const jlptLevel = lesson.courses?.title?.match(/N([1-5])/i)?.[1];
+        if (jlptLevel && Number(jlptLevel) <= 3 && !(await hasActivePremium(userId))) {
+            throw new Error("PRO_REQUIRED");
+        }
+
+        const questions = lesson.topics.flatMap(topic => topic.quizzes.flatMap(quiz => quiz.quiz_questions));
+        if (questions.length === 0) throw new Error("QUIZ_NOT_FOUND");
+        const submittedIds = new Set(submitted.map(answer => answer.question_id));
+        if (submitted.length !== questions.length || submittedIds.size !== questions.length) {
+            throw new Error("INVALID_QUIZ_ANSWERS");
+        }
+
+        const results = submitted.map(submission => {
+            const question = questions.find(item => item.id === submission.question_id);
+            const selected = question?.quiz_answers.find(answer => answer.id === submission.answer_id);
+            const correct = question?.quiz_answers.find(answer => answer.is_correct === true);
+            if (!question || !selected || !correct) throw new Error("INVALID_QUIZ_ANSWERS");
+            return {
+                question_id: question.id,
+                selected_answer_id: selected.id,
+                correct_answer_id: correct.id,
+                is_correct: selected.id === correct.id
+            };
+        });
+        const score = results.filter(result => result.is_correct).length;
+        const passedThisAttempt = score * 100 >= questions.length * LESSON_QUIZ_PASS_PERCENT;
+        if (passedThisAttempt) {
+            await lessonsRepository.markLessonQuizCompleted(userId, id);
+        }
+        const lessonCompleted = passedThisAttempt || await lessonsRepository.hasPassedLessonQuiz(userId, id);
+        return {
+            success: true,
+            data: {
+                score,
+                total: questions.length,
+                percent: Math.round((score / questions.length) * 100),
+                results,
+                lesson_completed: lessonCompleted,
+                course_id: progression.course_id
+            }
+        };
+    },
+
     /**
      * Get details of a lesson (with ordered topics). Cache for 30 minutes.
      */
     async getLessonDetail(id: string, userId?: string) {
+        await assertLessonUnlocked(id, userId);
         const cacheKey = `lessons:detail:${id}`;
         const accessCacheKey = `lessons:detail:access:${id}`;
         const cached = memoryCache.get(cacheKey);
