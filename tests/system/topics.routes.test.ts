@@ -2,6 +2,7 @@ import { test, mock, beforeEach } from "node:test";
 import assert from "node:assert";
 import app from "../../src/app.js";
 import { topicsRepository } from "../../src/modules/topics/topics.repository.js";
+import { lessonsRepository } from "../../src/modules/lessons/lessons.repository.js";
 import { authRepository } from "../../src/modules/auth/auth.repository.js";
 import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 import { signToken } from "../../src/common/utils/jwt.js";
@@ -32,6 +33,7 @@ test("Topics Routes - System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/topics/:id - returns 200 with topic details (Public)", async () => {
+        mock.method(lessonsRepository, "findLessonProgression", async (id: string) => ({ id, course_id: null }));
         mock.method(topicsRepository, "findById", async () => ({
             id: "723b10b0-394e-4f7f-85db-e877de25272a",
             lesson_id: "10000000-0000-4000-8000-000000000001",

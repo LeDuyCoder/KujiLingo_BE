@@ -73,7 +73,7 @@ test("Courses Service - Unit Tests", async (t) => {
         };
 
         const mockLessons = [
-            { id: "lesson-1", title: "Greeting", description: "Hello", order_no: 1 },
+            { id: "lesson-1", title: "Greeting", description: "Hello", order_no: 1, topics: [] },
         ];
 
         const findByIdMock = mock.method(courseRepository, "findCourseById", async () => mockCourse);

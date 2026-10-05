@@ -32,6 +32,7 @@ test("Lessons Routes - System Tests", async (t) => {
     });
 
     await t.test("GET /api/v1/lessons/{id} - returns 200 with lesson details (Public)", async () => {
+        mock.method(lessonsRepository, "findLessonProgression", async (id: string) => ({ id, course_id: null }));
         mock.method(lessonsRepository, "findLessonDetail", async () => ({
             id: "723b10b0-394e-4f7f-85db-e877de25272a",
             course_id: "10000000-0000-4000-8000-000000000001",

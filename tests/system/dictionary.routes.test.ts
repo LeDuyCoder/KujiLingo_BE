@@ -1,4 +1,4 @@
-import { test, beforeEach, after } from "node:test";
+import { test, beforeEach, after, mock } from "node:test";
 import assert from "node:assert";
 import crypto from "node:crypto";
 import app from "../../src/app.js";
@@ -114,6 +114,15 @@ test("Dictionary API - Database Integration Tests", async (t) => {
     });
 
     await t.test("GET /dictionary/search - fallback to Jisho API on empty DB", async () => {
+        const fetchMock = mock.method(globalThis, "fetch", async () => new Response(JSON.stringify({
+            data: [{
+                japanese: [{ word: "食べる", reading: "たべる" }],
+                jlpt: ["jlpt-n5"],
+                senses: [{ parts_of_speech: ["Ichidan verb"], english_definitions: ["to eat"] }],
+                is_common: true
+            }]
+        }), { status: 200, headers: { "content-type": "application/json" } }));
+
         // Gọi API tìm kiếm với từ khóa "食べる" không có trong DB trống
         const res = await app.inject({
             method: "GET",
@@ -121,6 +130,7 @@ test("Dictionary API - Database Integration Tests", async (t) => {
         });
 
         assert.strictEqual(res.statusCode, 200);
+        assert.strictEqual(fetchMock.mock.callCount(), 1);
         const body = JSON.parse(res.body);
 
         assert.strictEqual(body.success, true);
