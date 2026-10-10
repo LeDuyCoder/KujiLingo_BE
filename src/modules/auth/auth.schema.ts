@@ -171,6 +171,7 @@ export const updateProfileSchema = z.object({
     display_name: z.string().trim().min(1).max(100),
     jlpt_target_level: z.enum(["N5", "N4", "N3", "N2", "N1"]),
     learning_goal_minutes: z.number().int().min(5).max(180),
+    preferred_language: z.enum(["vi", "en"]).default("vi"),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

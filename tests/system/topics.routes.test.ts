@@ -132,6 +132,7 @@ test("Topics Routes - System Tests", async (t) => {
         mock.method(topicsRepository, "checkVocabularyExists", async () => true);
         mock.method(topicsRepository, "checkTopicVocabularyExists", async () => false);
         mock.method(topicsRepository, "insertTopicVocabulary", async () => ({}));
+        mock.method(adminRepository, "createAuditLog", async () => ({}));
 
         const response = await app.inject({
             method: "POST",
@@ -146,7 +147,8 @@ test("Topics Routes - System Tests", async (t) => {
     });
 
     await t.test("DELETE /api/v1/admin/topics/:id/vocabularies/:vocabularyId - returns 200 (Admin)", async () => {
-        mock.method(topicsRepository, "deleteTopicVocabulary", async () => ({}));
+        mock.method(topicsRepository, "deleteTopicVocabulary", async () => ({ count: 1 }));
+        mock.method(adminRepository, "createAuditLog", async () => ({}));
 
         const response = await app.inject({
             method: "DELETE",

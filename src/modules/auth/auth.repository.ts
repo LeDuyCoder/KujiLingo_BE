@@ -306,6 +306,7 @@ export async function updateUserProfile(id: string, data: {
     display_name: string;
     jlpt_target_level: "N5" | "N4" | "N3" | "N2" | "N1";
     learning_goal_minutes: number;
+    preferred_language: "vi" | "en";
 }) {
     return prisma.users.update({
         where: { id },
@@ -313,6 +314,7 @@ export async function updateUserProfile(id: string, data: {
             display_name: data.display_name,
             jlpt_target_level: data.jlpt_target_level,
             learning_goal_minutes: data.learning_goal_minutes,
+            preferred_language: data.preferred_language,
             updated_at: new Date(),
         },
     });

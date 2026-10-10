@@ -15,6 +15,7 @@ import {
     updateUserStatusBodySchema,
     updateUserRoleBodySchema,
     listAuditLogsQuerySchema,
+    postgresUuidSchema,
 } from "./admin.schema.js";
 
 export async function adminRoutes(app: FastifyInstance) {
@@ -37,7 +38,7 @@ export async function adminRoutes(app: FastifyInstance) {
                         success: z.boolean(),
                         data: z.array(
                             z.object({
-                                id: z.string().uuid(),
+                                id: postgresUuidSchema,
                                 email: z.string().email().nullable(),
                                 display_name: z.string().nullable(),
                                 avatar: z.string().nullable(),
@@ -91,7 +92,7 @@ export async function adminRoutes(app: FastifyInstance) {
                     200: z.object({
                         success: z.boolean(),
                         data: z.object({
-                            id: z.string().uuid(),
+                            id: postgresUuidSchema,
                             email: z.string().email().nullable(),
                             display_name: z.string().nullable(),
                             avatar: z.string().nullable(),
@@ -146,7 +147,7 @@ export async function adminRoutes(app: FastifyInstance) {
                     200: z.object({
                         success: z.boolean(),
                         data: z.object({
-                            id: z.string().uuid(),
+                            id: postgresUuidSchema,
                             status: z.string(),
                         }),
                         message: z.string(),
@@ -195,7 +196,7 @@ export async function adminRoutes(app: FastifyInstance) {
                     200: z.object({
                         success: z.boolean(),
                         data: z.object({
-                            id: z.string().uuid(),
+                            id: postgresUuidSchema,
                             role: z.string(),
                         }),
                         message: z.string(),
@@ -244,8 +245,8 @@ export async function adminRoutes(app: FastifyInstance) {
                         success: z.boolean(),
                         data: z.array(
                             z.object({
-                                id: z.string().uuid(),
-                                admin_id: z.string().uuid(),
+                                id: postgresUuidSchema,
+                                admin_id: postgresUuidSchema,
                                 admin_name: z.string(),
                                 action: z.string(),
                                 entity_id: z.string().nullable(),

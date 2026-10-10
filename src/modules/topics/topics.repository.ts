@@ -236,12 +236,10 @@ export const topicsRepository = {
      * Detach a vocabulary item from a topic
      */
     async deleteTopicVocabulary(tx: TransactionClient, topicId: string, vocabId: string) {
-        return tx.topic_vocabularies.delete({
+        return tx.topic_vocabularies.deleteMany({
             where: {
-                topic_id_vocabulary_id: {
-                    topic_id: topicId,
-                    vocabulary_id: vocabId
-                }
+                topic_id: topicId,
+                vocabulary_id: vocabId
             }
         });
     }

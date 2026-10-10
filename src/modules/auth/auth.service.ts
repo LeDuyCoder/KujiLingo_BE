@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import { db } from "../../config/prisma.js";
 import { authRepository } from "./auth.repository.js";
+import { adminRepository } from "../admin/admin.repository.js";
 
 import { generateVerificationToken } from "../../common/utils/token.js";
 import type { RegisterInput, LoginInput, LogoutInput, ForgotPasswordInput, ResetPasswordInput, RefreshTokenInput, ChangePasswordInput, UpdateProfileInput } from "./auth.schema.js";
@@ -204,6 +205,14 @@ export async function login(
             userAgent: reqInfo.userAgent,
             expiresAt,
         });
+
+        if (role === "admin") {
+            await adminRepository.createAuditLog(tx, {
+                adminId: user.id,
+                action: "admin.login",
+                afterState: { role },
+            });
+        }
     });
 
     return {
@@ -218,6 +227,107 @@ export async function login(
             role,
             is_premium: isPremium,
             jlpt_target_level: user.jlpt_target_level,
+            preferred_language: user.preferred_language === "en" ? "en" : "vi",
+        },
+    };
+}
+
+/** Sign in an existing account or create one after verifying Google's ID token. */
+export async function loginWithGoogle(
+    identity: { email: string; displayName: string; avatar?: string },
+    reqInfo: { ipAddress: string; userAgent?: string; deviceId?: string; deviceName?: string },
+): Promise<LoginResponse["data"]> {
+    const email = identity.email.trim().toLowerCase();
+    let user = await db.prisma.users.findFirst({
+        where: { email, deleted_at: null },
+    });
+
+    if (!user) {
+        const deletedUser = await db.prisma.users.findUnique({ where: { email } });
+        if (deletedUser) throw new Error("GOOGLE_ACCOUNT_UNAVAILABLE");
+        try {
+            user = await db.prisma.users.create({
+                data: {
+                    id: crypto.randomUUID(),
+                    email,
+                    display_name: identity.displayName,
+                    avatar: identity.avatar ?? null,
+                    accepted_terms: true,
+                    status: "active",
+                    email_verified: true,
+                    email_verified_at: new Date(),
+                    level: 1,
+                    exp: 0,
+                    streak: 0,
+                    role: "user",
+                },
+            });
+        } catch (error) {
+            // Avoid creating duplicate accounts if two OAuth callbacks race.
+            const existingUser = await db.prisma.users.findFirst({ where: { email, deleted_at: null } });
+            if (!existingUser) throw error;
+            user = existingUser;
+        }
+    }
+
+    if (user.status === "suspended") {
+        throw new Error("ACCOUNT_SUSPENDED");
+    }
+    if (user.status === "banned") {
+        throw new Error("ACCOUNT_BANNED");
+    }
+    if (!user.email_verified || user.status === "pending_verification") {
+        user = await db.prisma.users.update({
+            where: { id: user.id },
+            data: {
+                email_verified: true,
+                email_verified_at: user.email_verified_at ?? new Date(),
+                status: "active",
+                updated_at: new Date(),
+            },
+        });
+    }
+
+    const role = user.role || "user";
+    const isPremium = isPremiumActive(user.role, user.premium_expires_at);
+    const accessToken = signToken({ sub: user.id, role, is_premium: isPremium });
+    const rawRefreshToken = crypto.randomBytes(16).toString("hex");
+    const refreshTokenHash = crypto.createHash("sha256").update(rawRefreshToken).digest("hex");
+
+    await db.prisma.$transaction(async (tx) => {
+        await authRepository.createSession(tx, {
+            userId: user!.id,
+            tokenHash: refreshTokenHash,
+            deviceId: reqInfo.deviceId,
+            deviceName: reqInfo.deviceName ?? "Google OAuth",
+            ipAddress: reqInfo.ipAddress,
+            userAgent: reqInfo.userAgent,
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        });
+
+        if (role === "admin") {
+            await adminRepository.createAuditLog(tx, {
+                adminId: user!.id,
+                action: "admin.login",
+                afterState: { role, provider: "google" },
+            });
+        }
+    });
+
+    return {
+        access_token: accessToken,
+        refresh_token: rawRefreshToken,
+        token_type: "Bearer",
+        expires_in: 900,
+        user: {
+            id: user.id,
+            email: user.email!,
+            display_name: user.display_name || identity.displayName,
+            role,
+            is_premium: isPremium,
+            jlpt_target_level: user.jlpt_target_level,
+            avatar_url: identity.avatar ?? user.avatar ?? null,
+            preferred_language: user.preferred_language === "en" ? "en" : "vi",
         },
     };
 }
@@ -452,11 +562,12 @@ export async function getCurrentUser(userId: string): Promise<CurrentUserRespons
         premium_expires_at: user.premium_expires_at?.toISOString() ?? null,
         jlpt_target_level: user.jlpt_target_level,
         learning_goal_minutes: user.learning_goal_minutes,
+        preferred_language: user.preferred_language === "en" ? "en" : "vi",
         status: user.status || "pending_verification",
         email_verified_at: user.email_verified_at ? user.email_verified_at.toISOString() : null,
         last_login_at: user.last_login_at ? user.last_login_at.toISOString() : null,
         timezone: "Asia/Ho_Chi_Minh",
-        locale: "vi-VN",
+        locale: user.preferred_language === "en" ? "en-US" : "vi-VN",
         created_at: user.created_at ? user.created_at.toISOString() : new Date().toISOString(),
     };
 }
@@ -469,6 +580,7 @@ export async function updateUserProfile(userId: string, data: UpdateProfileInput
         display_name: user.display_name || "",
         jlpt_target_level: user.jlpt_target_level,
         learning_goal_minutes: user.learning_goal_minutes,
+        preferred_language: user.preferred_language === "en" ? "en" : "vi",
     };
 }
 

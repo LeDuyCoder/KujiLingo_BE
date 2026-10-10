@@ -28,6 +28,8 @@ export const updateAchievementBodySchema = z.object({
     title: z.string().min(1).max(255).optional(),
     description: z.string().min(1).optional(),
     icon: z.string().min(1).optional(),
+    type: z.enum(["STREAK", "EXP", "VOCAB_MASTER", "QUIZ_PERFECT"]).optional(),
+    condition_value: z.number().int().positive().optional(),
     reward_exp: z.number().int().nonnegative().optional(),
 });
 

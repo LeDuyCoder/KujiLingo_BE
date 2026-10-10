@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { adminRepository } from "../admin/admin.repository.js";
 import { kanjiRepository } from "./kanji.repository.js";
 import type { CreateKanjiDto, ListKanjiQuery, UpdateKanjiDto } from "./kanji.types.js";
 
@@ -98,6 +99,7 @@ export const kanjiService = {
             id: newId,
             created_by: adminId,
         });
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "kanji.created", entityId: created.id, afterState: created });
 
         return {
             success: true,
@@ -138,6 +140,7 @@ export const kanjiService = {
         }
 
         const updated = await kanjiRepository.update(id, dto, adminId, existing);
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "kanji.updated", entityId: id, beforeState: existing, afterState: updated });
 
         return {
             success: true,
@@ -155,6 +158,7 @@ export const kanjiService = {
         }
 
         await kanjiRepository.softDelete(id, adminId);
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "kanji.deleted", entityId: id, beforeState: existing, afterState: { id, deleted_at: new Date().toISOString() } });
 
         return {
             success: true,

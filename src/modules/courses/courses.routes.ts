@@ -5,6 +5,7 @@ import { adminGuard } from "../../common/middlewares/admin.guard.js";
 import { authGuard } from "../../common/middlewares/auth.guard.js";
 import { verifyToken } from "../../common/utils/jwt.js";
 import { authRepository } from "../auth/auth.repository.js";
+import { prisma } from "../../config/prisma.js";
 import {
     listCoursesHandler,
     getCourseDetailHandler,
@@ -169,6 +170,15 @@ export async function coursesRoutes(app: FastifyInstance) {
 
     router.register(async (adminRouter) => {
         adminRouter.addHook("preHandler", adminGuard);
+
+        adminRouter.get("/api/v1/admin/courses/archived", async () => {
+            const data = await prisma.courses.findMany({
+                where: { deleted_at: { not: null } },
+                orderBy: [{ deleted_at: "desc" }, { order_no: "asc" }],
+                select: { id: true, title: true, description: true, image: true, order_no: true, deleted_at: true },
+            });
+            return { success: true, data };
+        });
 
         // 3. Create Course
         adminRouter.post(
