@@ -6,6 +6,7 @@ const envSchema = z.object({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     GOOGLE_REDIRECT_URI: z.string().url(),
+    GOOGLE_SIGNIN_REDIRECT_URI: z.string().url().optional(),
     GOOGLE_REFRESH_TOKEN: z.string().optional(),
     JWT_PRIVATE_KEY: z.string().optional(),
     JWT_PUBLIC_KEY: z.string().optional(),

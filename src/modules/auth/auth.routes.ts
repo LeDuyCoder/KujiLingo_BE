@@ -6,6 +6,9 @@ import {
     verifyEmailHandler,
     googleAuthHandler,
     googleAuthCallbackHandler,
+    googleSignInHandler,
+    googleSignInCallbackHandler,
+    googleSignInCredentialHandler,
     resendVerificationHandler,
     loginHandler,
     logoutHandler,
@@ -32,6 +35,23 @@ import { authGuard } from "../../common/middlewares/auth.guard.js";
 
 export async function authRoutes(app: FastifyInstance) {
     const router = app.withTypeProvider<ZodTypeProvider>();
+
+    router.get("/api/v1/auth/google/signin", googleSignInHandler);
+    router.get("/api/v1/auth/google/signin/callback", googleSignInCallbackHandler);
+    router.post(
+        "/api/v1/auth/google/signin/credential",
+        {
+            schema: {
+                tags: ["Auth"],
+                summary: "Verify a Google Identity Services credential and create a session",
+                body: z.object({
+                    credential: z.string().min(1),
+                    mode: z.enum(["login", "register"]),
+                }),
+            },
+        },
+        googleSignInCredentialHandler,
+    );
 
     router.post(
         "/api/v1/auth/register",
@@ -162,6 +182,7 @@ export async function authRoutes(app: FastifyInstance) {
                                 role: z.string(),
                                 is_premium: z.boolean(),
                                 jlpt_target_level: z.string().nullable(),
+                                preferred_language: z.enum(["vi", "en"]),
                             }),
                         }),
                     }),
@@ -320,6 +341,7 @@ export async function authRoutes(app: FastifyInstance) {
                             premium_expires_at: z.string().nullable(),
                             jlpt_target_level: z.string().nullable(),
                             learning_goal_minutes: z.number().nullable(),
+                            preferred_language: z.enum(["vi", "en"]),
                             status: z.string(),
                             email_verified_at: z.string().nullable(),
                             last_login_at: z.string().nullable(),
@@ -372,6 +394,7 @@ export async function authRoutes(app: FastifyInstance) {
                             display_name: z.string(),
                             jlpt_target_level: z.string().nullable(),
                             learning_goal_minutes: z.number().nullable(),
+                            preferred_language: z.enum(["vi", "en"]),
                         }),
                     }),
                 },

@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { prisma } from "../../config/prisma.js";
+import { Prisma } from "../../../generated/prisma/client.js";
 import { achievementsRepository } from "./achievements.repository.js";
 import type {
     GetCatalogQuery,
@@ -8,6 +9,10 @@ import type {
     UpdateAchievementBody,
     UpdateShowcaseBody
 } from "./achievements.types.js";
+
+function auditJson(value: unknown): Prisma.InputJsonValue {
+    return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+}
 
 export async function evaluateProgressAndUnlock(userId: string) {
     return prisma.$transaction(async (tx) => {
@@ -325,7 +330,7 @@ export const achievementsService = {
         };
     },
 
-    async createAchievement(data: CreateAchievementBody) {
+    async createAchievement(data: CreateAchievementBody, adminId: string) {
         // Check uniqueness
         const existing = await achievementsRepository.findByTitleTypeThreshold(
             data.title,
@@ -336,14 +341,22 @@ export const achievementsService = {
             throw new Error("DUPLICATE_ACHIEVEMENT");
         }
 
-        const created = await achievementsRepository.create({
-            id: crypto.randomUUID(),
-            title: data.title,
-            description: data.description,
-            icon: data.icon,
-            type: data.type,
-            condition_value: data.condition_value,
-            reward_exp: data.reward_exp ?? 0
+        const created = await prisma.$transaction(async (tx) => {
+            const achievement = await tx.achievements.create({
+                data: {
+                    id: crypto.randomUUID(),
+                    title: data.title,
+                    description: data.description,
+                    icon: data.icon,
+                    type: data.type,
+                    condition_value: data.condition_value,
+                    reward_exp: data.reward_exp ?? 0
+                }
+            });
+            await tx.admin_audit_logs.create({
+                data: { admin_id: adminId, action: "achievement.created", entity_id: achievement.id, after_state: auditJson(achievement) }
+            });
+            return achievement;
         });
 
         return {
@@ -361,30 +374,35 @@ export const achievementsService = {
         };
     },
 
-    async updateAchievement(id: string, data: UpdateAchievementBody) {
+    async updateAchievement(id: string, data: UpdateAchievementBody, adminId: string) {
         const existing = await achievementsRepository.findById(id);
         if (!existing) {
             throw new Error("ACHIEVEMENT_NOT_FOUND");
         }
 
-        if (data.title !== undefined) {
-            if (data.title !== existing.title) {
-                const dup = await achievementsRepository.findByTitleTypeThreshold(
-                    data.title,
-                    existing.type,
-                    existing.condition_value
-                );
-                if (dup) {
-                    throw new Error("DUPLICATE_ACHIEVEMENT");
-                }
-            }
+        const title = data.title ?? existing.title;
+        const type = data.type ?? existing.type;
+        const conditionValue = data.condition_value ?? existing.condition_value;
+        const duplicate = await achievementsRepository.findByTitleTypeThreshold(title, type, conditionValue);
+        if (duplicate && duplicate.id !== id) {
+            throw new Error("DUPLICATE_ACHIEVEMENT");
         }
 
-        const updated = await achievementsRepository.update(id, {
-            title: data.title,
-            description: data.description,
-            icon: data.icon,
-            reward_exp: data.reward_exp
+        const updated = await prisma.$transaction(async (tx) => {
+            const before = await tx.achievements.findUnique({ where: { id } });
+            if (!before) throw new Error("ACHIEVEMENT_NOT_FOUND");
+            const achievement = await tx.achievements.update({ where: { id }, data: {
+                ...(data.title !== undefined ? { title: data.title } : {}),
+                ...(data.description !== undefined ? { description: data.description } : {}),
+                ...(data.icon !== undefined ? { icon: data.icon } : {}),
+                ...(data.type !== undefined ? { type: data.type } : {}),
+                ...(data.condition_value !== undefined ? { condition_value: data.condition_value } : {}),
+                ...(data.reward_exp !== undefined ? { reward_exp: data.reward_exp } : {})
+            } });
+            await tx.admin_audit_logs.create({
+                data: { admin_id: adminId, action: "achievement.updated", entity_id: id, before_state: auditJson(before), after_state: auditJson(achievement) }
+            });
+            return achievement;
         });
 
         return {

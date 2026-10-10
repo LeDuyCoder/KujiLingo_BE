@@ -82,12 +82,16 @@ export const achievementsRepository = {
         title?: string | undefined;
         description?: string | undefined;
         icon?: string | undefined;
+        type?: "STREAK" | "EXP" | "VOCAB_MASTER" | "QUIZ_PERFECT" | undefined;
+        condition_value?: number | undefined;
         reward_exp?: number | undefined;
     }) {
         const updateData: any = {};
         if (data.title !== undefined) updateData.title = data.title;
         if (data.description !== undefined) updateData.description = data.description;
         if (data.icon !== undefined) updateData.icon = data.icon;
+        if (data.type !== undefined) updateData.type = data.type;
+        if (data.condition_value !== undefined) updateData.condition_value = data.condition_value;
         if (data.reward_exp !== undefined) updateData.reward_exp = data.reward_exp;
 
         return prisma.achievements.update({

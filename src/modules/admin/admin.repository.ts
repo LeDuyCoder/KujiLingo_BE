@@ -169,6 +169,26 @@ export async function createAuditLog(
     });
 }
 
+export async function createStandaloneAuditLog(data: {
+    adminId: string;
+    action: string;
+    entityId?: string | undefined;
+    beforeState?: unknown;
+    afterState?: unknown;
+}) {
+    const jsonSafe = (value: unknown) => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+    return prisma.admin_audit_logs.create({
+        data: {
+            id: crypto.randomUUID(),
+            admin_id: data.adminId,
+            action: data.action,
+            entity_id: data.entityId ?? null,
+            ...(data.beforeState !== undefined ? { before_state: jsonSafe(data.beforeState) } : {}),
+            ...(data.afterState !== undefined ? { after_state: jsonSafe(data.afterState) } : {}),
+        },
+    });
+}
+
 /**
  * Tìm kiếm danh sách log kiểm toán có lọc và phân trang
  */

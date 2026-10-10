@@ -1,5 +1,12 @@
 import z from "zod";
 
+// PostgreSQL's UUID type accepts every 128-bit value; Zod's uuid() also
+// enforces RFC version/variant bits, which rejects some valid stored UUIDs.
+export const postgresUuidSchema = z.string().regex(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+    "Invalid UUID",
+);
+
 export const listUsersQuerySchema = z.object({
     status: z
         .enum(["active", "suspended", "banned", "pending_verification"])
@@ -27,7 +34,7 @@ export const listUsersQuerySchema = z.object({
 export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
 
 export const userParamsSchema = z.object({
-    id: z.string().uuid(),
+    id: postgresUuidSchema,
 });
 
 export type UserParams = z.infer<typeof userParamsSchema>;
@@ -46,7 +53,7 @@ export const updateUserRoleBodySchema = z.object({
 export type UpdateUserRoleBody = z.infer<typeof updateUserRoleBodySchema>;
 
 export const listAuditLogsQuerySchema = z.object({
-    admin_id: z.string().uuid().optional(),
+    admin_id: postgresUuidSchema.optional(),
     action: z.string().max(100).optional(),
     start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid ISO 8601 YYYY-MM-DD date format").optional(),
     end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid ISO 8601 YYYY-MM-DD date format").optional(),

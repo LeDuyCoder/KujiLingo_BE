@@ -4,6 +4,7 @@ export interface UserResponse {
     email: string;
     display_name: string;
     jlpt_target_level: string | null;
+    preferred_language?: "vi" | "en";
     email_verified: boolean;
     created_at: Date;
 }
@@ -21,6 +22,7 @@ export interface LoginUserData {
     role: string;
     is_premium: boolean;
     jlpt_target_level: string | null;
+    avatar_url?: string | null;
 }
 
 export interface LoginResponse {
@@ -44,6 +46,7 @@ export interface CurrentUserResponse {
     premium_expires_at: string | null;
     jlpt_target_level: string | null;
     learning_goal_minutes: number | null;
+    preferred_language: "vi" | "en";
     status: string;
     email_verified_at: string | null;
     last_login_at: string | null;

@@ -1,6 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { authRoutes } from "../modules/auth/index.js";
 import { adminRoutes } from "../modules/admin/index.js";
+import { adminMonitoringRoutes } from "../modules/admin/monitoring.routes.js";
+import { adminCommerceRoutes } from "../modules/admin/admin-commerce.routes.js";
+import { adminLearningRoutes } from "../modules/admin/admin-learning.routes.js";
 import { coursesRoutes } from "../modules/courses/index.js";
 import { dashboardRoutes } from "../modules/dashboard/dashboard.routes.js";
 import { dictionaryRoutes } from "../modules/dictionary/dictionary.routes.js";
@@ -25,6 +28,9 @@ import { achievementsRoutes } from "../modules/achievements/index.js";
 export async function registerRoutes(app: FastifyInstance) {
     await app.register(authRoutes);
     await app.register(adminRoutes);
+    await app.register(adminMonitoringRoutes);
+    await app.register(adminCommerceRoutes);
+    await app.register(adminLearningRoutes);
     await app.register(coursesRoutes);
     await app.register(dashboardRoutes);
     await app.register(dictionaryRoutes);

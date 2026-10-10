@@ -91,7 +91,7 @@ export const achievementsController = {
     ) {
         try {
             const body = request.body as CreateAchievementBody;
-            const result = await achievementsService.createAchievement(body);
+            const result = await achievementsService.createAchievement(body, request.user!.id);
             return reply.code(201).send(result);
         } catch (error: any) {
             log.error(error);
@@ -121,7 +121,7 @@ export const achievementsController = {
         try {
             const { achievementId } = request.params as GetAchievementParams;
             const body = request.body as UpdateAchievementBody;
-            const result = await achievementsService.updateAchievement(achievementId, body);
+            const result = await achievementsService.updateAchievement(achievementId, body, request.user!.id);
             return reply.code(200).send(result);
         } catch (error: any) {
             log.error(error);

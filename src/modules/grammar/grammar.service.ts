@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { createStandaloneAuditLog } from "../admin/admin.repository.js";
 import { grammarRepository } from "./grammar.repository.js";
 import type { CreateGrammarDto, ListGrammarQuery, UpdateGrammarDto } from "./grammar.types.js";
 
@@ -95,6 +96,7 @@ export const grammarService = {
             id: newId,
             created_by: adminId,
         });
+        await createStandaloneAuditLog({ adminId, action: "grammar.created", entityId: created.id, afterState: created });
 
         return {
             success: true,
@@ -145,6 +147,7 @@ export const grammarService = {
         }
 
         const updated = await grammarRepository.update(id, dto, adminId, existing);
+        await createStandaloneAuditLog({ adminId, action: "grammar.updated", entityId: id, beforeState: existing, afterState: updated });
 
         return {
             success: true,
@@ -163,6 +166,7 @@ export const grammarService = {
         }
 
         await grammarRepository.softDelete(id, adminId);
+        await createStandaloneAuditLog({ adminId, action: "grammar.deleted", entityId: id, beforeState: existing, afterState: { id, deleted_at: new Date().toISOString() } });
 
         return {
             success: true,

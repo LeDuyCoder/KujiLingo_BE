@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import crypto from "node:crypto";
 import { google } from "googleapis";
 import { env } from "../../config/env.js";
 import * as authService from "./auth.service.js";
@@ -304,6 +305,149 @@ export async function loginHandler(
                 code: "INTERNAL_ERROR",
                 message: "An unexpected error occurred. Please try again later.",
             },
+        });
+    }
+}
+
+const GOOGLE_STATE_COOKIE = "kujilingo_google_oauth";
+
+function googleSigninRedirectUri() {
+    return env.GOOGLE_SIGNIN_REDIRECT_URI
+        ?? new URL("/api/v1/auth/google/signin/callback", env.GOOGLE_REDIRECT_URI).toString();
+}
+
+function googlePopupResult(reply: FastifyReply, payload: Record<string, unknown>) {
+    const targetOrigin = new URL(env.FRONTEND_URL).origin;
+    const safePayload = JSON.stringify({ type: "kujilingo:google-auth", ...payload }).replace(/</g, "\\u003c");
+    return reply
+        .type("text/html; charset=utf-8")
+        .header("Cache-Control", "no-store, max-age=0")
+        .header("Referrer-Policy", "no-referrer")
+        .send(`<!doctype html><html><head><meta charset="utf-8"><title>Google sign-in</title></head><body><p>Returning to KujiLingo…</p><script>if(window.opener){window.opener.postMessage(${safePayload},${JSON.stringify(targetOrigin)});window.close()}else{document.body.textContent="You can close this window."}</script></body></html>`);
+}
+
+export async function googleSignInHandler(
+    request: FastifyRequest<{ Querystring: { mode?: string } }>,
+    reply: FastifyReply,
+) {
+    const state = crypto.randomBytes(32).toString("hex");
+    const cookieOptions = [
+        `${GOOGLE_STATE_COOKIE}=${state}`,
+        "HttpOnly",
+        "Path=/api/v1/auth/google/signin/callback",
+        "Max-Age=600",
+        "SameSite=Lax",
+    ];
+    if (process.env.NODE_ENV === "production") cookieOptions.push("Secure");
+    reply.header("Set-Cookie", cookieOptions.join("; "));
+
+    const oauth2Client = new google.auth.OAuth2(
+        env.GOOGLE_CLIENT_ID,
+        env.GOOGLE_CLIENT_SECRET,
+        googleSigninRedirectUri(),
+    );
+    const authorizationUrl = oauth2Client.generateAuthUrl({
+        access_type: "online",
+        scope: ["openid", "email", "profile"],
+        state,
+        prompt: "select_account",
+    });
+    return reply.redirect(authorizationUrl);
+}
+
+export async function googleSignInCallbackHandler(
+    request: FastifyRequest<{ Querystring: { code?: string; state?: string; error?: string } }>,
+    reply: FastifyReply,
+) {
+    const clearCookie = `${GOOGLE_STATE_COOKIE}=; HttpOnly; Path=/api/v1/auth/google/signin/callback; Max-Age=0; SameSite=Lax${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
+    const cookies = request.headers.cookie ?? "";
+    const cookieValue = cookies.split(";").map((part) => part.trim())
+        .find((part) => part.startsWith(`${GOOGLE_STATE_COOKIE}=`))?.slice(GOOGLE_STATE_COOKIE.length + 1);
+    const cookieState = cookieValue;
+
+    reply.header("Set-Cookie", clearCookie);
+    if (request.query.error || !request.query.code || !request.query.state ||
+        !/^[a-f0-9]{64}$/.test(request.query.state) || !cookieState ||
+        request.query.state.length !== cookieState.length ||
+        !crypto.timingSafeEqual(Buffer.from(request.query.state), Buffer.from(cookieState))) {
+        return googlePopupResult(reply, { error: "Google sign-in was cancelled or expired. Please try again." });
+    }
+
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            env.GOOGLE_CLIENT_ID,
+            env.GOOGLE_CLIENT_SECRET,
+            googleSigninRedirectUri(),
+        );
+        const { tokens } = await oauth2Client.getToken(request.query.code);
+        if (!tokens.id_token) throw new Error("GOOGLE_ID_TOKEN_MISSING");
+        const ticket = await oauth2Client.verifyIdToken({ idToken: tokens.id_token, audience: env.GOOGLE_CLIENT_ID });
+        const profile = ticket.getPayload();
+        if (!profile?.email || profile.email_verified !== true) throw new Error("GOOGLE_EMAIL_NOT_VERIFIED");
+
+        const session = await authService.loginWithGoogle({
+            email: profile.email,
+            displayName: profile.name?.trim() || profile.email.split("@")[0],
+            avatar: profile.picture,
+        }, {
+            ipAddress: request.ip ?? "unknown",
+            userAgent: request.headers["user-agent"],
+            deviceId: request.headers["x-device-id"] as string | undefined,
+        });
+        return googlePopupResult(reply, { session });
+    } catch (error: any) {
+        log.error("[Auth] Google sign-in failed:", error);
+        const message = error.message === "ACCOUNT_SUSPENDED"
+            ? "Your account has been temporarily suspended."
+            : error.message === "ACCOUNT_BANNED"
+                ? "Your account has been permanently banned."
+                : "Google sign-in failed. Please try again.";
+        return googlePopupResult(reply, { error: message });
+    }
+}
+
+export async function googleSignInCredentialHandler(
+    request: FastifyRequest<{ Body: { credential: string; mode: "login" | "register" } }>,
+    reply: FastifyReply,
+) {
+    try {
+        const oauth2Client = new google.auth.OAuth2(env.GOOGLE_CLIENT_ID);
+        const ticket = await oauth2Client.verifyIdToken({
+            idToken: request.body.credential,
+            audience: env.GOOGLE_CLIENT_ID,
+        });
+        const profile = ticket.getPayload();
+        if (!profile?.email || profile.email_verified !== true) {
+            return reply.code(401).send({
+                success: false,
+                error: { code: "GOOGLE_EMAIL_NOT_VERIFIED", message: "Google could not verify this email address." },
+            });
+        }
+
+        const session = await authService.loginWithGoogle({
+            email: profile.email,
+            displayName: profile.name?.trim() || profile.email.split("@")[0],
+            avatar: profile.picture,
+        }, {
+            ipAddress: request.ip ?? "unknown",
+            userAgent: request.headers["user-agent"],
+            deviceId: request.headers["x-device-id"] as string | undefined,
+        });
+
+        return reply.code(200).send({ success: true, data: session });
+    } catch (error: any) {
+        log.error("[Auth] Google credential sign-in failed:", error);
+        const status = error.message === "ACCOUNT_SUSPENDED" || error.message === "ACCOUNT_BANNED"
+            ? 403
+            : 401;
+        const message = error.message === "ACCOUNT_SUSPENDED"
+            ? "Your account has been temporarily suspended."
+            : error.message === "ACCOUNT_BANNED"
+                ? "Your account has been permanently banned."
+                : "Google sign-in failed. Please try again.";
+        return reply.code(status).send({
+            success: false,
+            error: { code: error.message || "GOOGLE_SIGNIN_FAILED", message },
         });
     }
 }

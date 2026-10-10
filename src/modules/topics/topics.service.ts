@@ -317,6 +317,12 @@ export const topicsService = {
             }
 
             await topicsRepository.insertTopicVocabulary(tx, topicId, data.vocabulary_id);
+            await adminRepository.createAuditLog(tx, {
+                adminId,
+                action: "topic.vocabulary_added",
+                entityId: topicId,
+                afterState: { topic_id: topicId, vocabulary_id: data.vocabulary_id }
+            });
         });
 
         // Invalidate detail cache
@@ -333,11 +339,17 @@ export const topicsService = {
      */
     async removeVocabulary(adminId: string, topicId: string, vocabularyId: string) {
         await db.prisma.$transaction(async (tx) => {
-            try {
-                await topicsRepository.deleteTopicVocabulary(tx, topicId, vocabularyId);
-            } catch (e) {
-                // Idempotent unlink safely skips missing records
-            }
+            const link = await tx.topic_vocabularies.findUnique({
+                where: { topic_id_vocabulary_id: { topic_id: topicId, vocabulary_id: vocabularyId } }
+            });
+            if (!link) return;
+            await topicsRepository.deleteTopicVocabulary(tx, topicId, vocabularyId);
+            await adminRepository.createAuditLog(tx, {
+                adminId,
+                action: "topic.vocabulary_removed",
+                entityId: topicId,
+                beforeState: { topic_id: topicId, vocabulary_id: vocabularyId }
+            });
         });
 
         // Invalidate cache

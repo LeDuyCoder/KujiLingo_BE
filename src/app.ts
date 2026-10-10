@@ -4,6 +4,7 @@ import Fastify from "fastify";
 import { validatorCompiler, serializerCompiler } from "fastify-type-provider-zod";
 import { registerSwagger } from "./config/swagger.js";
 import { registerRoutes } from "./routes/index.js";
+import { recordAdminMonitoringResponse, startAdminMonitoringRequest } from "./common/services/admin-monitoring.js";
 
 const app = Fastify({
     logger: process.env.NODE_ENV !== "test",
@@ -19,6 +20,13 @@ await app.register(cors, {
 });
 
 app.get("/health", async () => ({ status: "ok" }));
+
+app.addHook("onRequest", async (request) => {
+    startAdminMonitoringRequest(request);
+});
+app.addHook("onResponse", async (request, reply) => {
+    recordAdminMonitoringResponse(request, reply.statusCode);
+});
 
 // Register global error handler before registering routes so it is correctly inherited
 app.setErrorHandler((error: any, request, reply) => {
