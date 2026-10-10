@@ -149,6 +149,7 @@ test("Topics Service - Unit Tests", async (t) => {
         mock.method(topicsRepository, "checkVocabularyExists", async () => true);
         mock.method(topicsRepository, "checkTopicVocabularyExists", async () => false);
         const insertJoinMock = mock.method(topicsRepository, "insertTopicVocabulary", async () => ({}));
+        mock.method(adminRepository, "createAuditLog", async () => ({}));
 
         const result = await topicsService.addVocabulary("admin-1", "topic-1", {
             vocabulary_id: "vocab-1"
@@ -173,9 +174,7 @@ test("Topics Service - Unit Tests", async (t) => {
     });
 
     await t.test("removeVocabulary - detach idempotent skip if missing", async () => {
-        const deleteJoinMock = mock.method(topicsRepository, "deleteTopicVocabulary", async () => {
-            throw new Error("Record to delete does not exist");
-        });
+        const deleteJoinMock = mock.method(topicsRepository, "deleteTopicVocabulary", async () => ({ count: 0 }));
 
         const result = await topicsService.removeVocabulary("admin-1", "topic-1", "vocab-1");
         assert.strictEqual(result.success, true); // should safely pass (idempotent unlink)

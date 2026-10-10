@@ -2,10 +2,12 @@ import { test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
 import { vocabulariesService } from "../../src/modules/vocabularies/vocabularies.service.js";
 import { vocabulariesRepository } from "../../src/modules/vocabularies/vocabularies.repository.js";
+import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 
 test("Platform Vocabulary Service - Unit Tests", async (t) => {
     beforeEach(() => {
         mock.restoreAll();
+        mock.method(adminRepository, "createStandaloneAuditLog", async () => ({}));
     });
 
     afterEach(() => {

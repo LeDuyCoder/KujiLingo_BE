@@ -2,10 +2,12 @@ import { test, mock, beforeEach } from "node:test";
 import assert from "node:assert";
 import { grammarService } from "../../src/modules/grammar/grammar.service.js";
 import { grammarRepository } from "../../src/modules/grammar/grammar.repository.js";
+import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 
 test("Grammar Service - Unit Tests", async (t) => {
     beforeEach(() => {
         mock.restoreAll();
+        mock.method(adminRepository, "createStandaloneAuditLog", async () => ({}));
     });
 
     await t.test("listGrammarPoints - success and pagination meta", async () => {

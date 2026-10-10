@@ -1,5 +1,5 @@
 import { vocabulariesRepository } from "./vocabularies.repository.js";
-import { createStandaloneAuditLog } from "../admin/admin.repository.js";
+import { adminRepository } from "../admin/admin.repository.js";
 
 export const vocabulariesService = {
     async list(userId: string | undefined, filters: {
@@ -118,7 +118,7 @@ export const vocabulariesService = {
         }
 
         const created = await vocabulariesRepository.insert(dto, adminId);
-        await createStandaloneAuditLog({ adminId, action: "vocabulary.created", entityId: created.id, afterState: created });
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "vocabulary.created", entityId: created.id, afterState: created });
 
         return {
             success: true,
@@ -182,7 +182,7 @@ export const vocabulariesService = {
         }
 
         const updated = await vocabulariesRepository.update(id, dto, adminId, current);
-        await createStandaloneAuditLog({ adminId, action: "vocabulary.updated", entityId: id, beforeState: current, afterState: updated });
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "vocabulary.updated", entityId: id, beforeState: current, afterState: updated });
 
         return {
             success: true,
@@ -201,7 +201,7 @@ export const vocabulariesService = {
         }
 
         await vocabulariesRepository.softDelete(id, adminId, current);
-        await createStandaloneAuditLog({ adminId, action: "vocabulary.deleted", entityId: id, beforeState: current, afterState: { id, deleted_at: new Date().toISOString() } });
+        await adminRepository.createStandaloneAuditLog({ adminId, action: "vocabulary.deleted", entityId: id, beforeState: current, afterState: { id, deleted_at: new Date().toISOString() } });
 
         return {
             success: true,

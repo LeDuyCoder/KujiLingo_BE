@@ -287,6 +287,7 @@ export const adminRepository = {
     updateUserStatus,
     revokeAllSessions,
     createAuditLog,
+    createStandaloneAuditLog,
     findAuditLogs,
     countAuditLogs,
 };

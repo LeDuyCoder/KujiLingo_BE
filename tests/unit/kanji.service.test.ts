@@ -3,12 +3,14 @@ import assert from "node:assert";
 import { kanjiService } from "../../src/modules/kanji/kanji.service.js";
 import { kanjiRepository } from "../../src/modules/kanji/kanji.repository.js";
 import { db } from "../../src/config/prisma.js";
+import { adminRepository } from "../../src/modules/admin/admin.repository.js";
 
 const originalPrisma = db.prisma;
 
 test("Kanji Service - Unit Tests", async (t) => {
     beforeEach(() => {
         mock.restoreAll();
+        mock.method(adminRepository, "createStandaloneAuditLog", async () => ({}));
         
         db.prisma = {
             kanjis: originalPrisma.kanjis,

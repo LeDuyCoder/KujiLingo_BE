@@ -339,11 +339,8 @@ export const topicsService = {
      */
     async removeVocabulary(adminId: string, topicId: string, vocabularyId: string) {
         await db.prisma.$transaction(async (tx) => {
-            const link = await tx.topic_vocabularies.findUnique({
-                where: { topic_id_vocabulary_id: { topic_id: topicId, vocabulary_id: vocabularyId } }
-            });
-            if (!link) return;
-            await topicsRepository.deleteTopicVocabulary(tx, topicId, vocabularyId);
+            const result = await topicsRepository.deleteTopicVocabulary(tx, topicId, vocabularyId);
+            if (result.count === 0) return;
             await adminRepository.createAuditLog(tx, {
                 adminId,
                 action: "topic.vocabulary_removed",
