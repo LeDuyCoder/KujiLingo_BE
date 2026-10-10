@@ -22,6 +22,7 @@ export interface LoginUserData {
     role: string;
     is_premium: boolean;
     jlpt_target_level: string | null;
+    preferred_language: "vi" | "en";
     avatar_url?: string | null;
 }
 

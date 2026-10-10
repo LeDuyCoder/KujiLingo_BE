@@ -383,16 +383,17 @@ export async function googleSignInCallbackHandler(
         if (!tokens.id_token) throw new Error("GOOGLE_ID_TOKEN_MISSING");
         const ticket = await oauth2Client.verifyIdToken({ idToken: tokens.id_token, audience: env.GOOGLE_CLIENT_ID });
         const profile = ticket.getPayload();
-        if (!profile?.email || profile.email_verified !== true) throw new Error("GOOGLE_EMAIL_NOT_VERIFIED");
+        const email = profile?.email;
+        if (!email || profile?.email_verified !== true) throw new Error("GOOGLE_EMAIL_NOT_VERIFIED");
 
         const session = await authService.loginWithGoogle({
-            email: profile.email,
-            displayName: profile.name?.trim() || profile.email.split("@")[0],
-            avatar: profile.picture,
+            email,
+            displayName: profile.name?.trim() || email.split("@")[0] || email,
+            ...(profile.picture ? { avatar: profile.picture } : {}),
         }, {
             ipAddress: request.ip ?? "unknown",
-            userAgent: request.headers["user-agent"],
-            deviceId: request.headers["x-device-id"] as string | undefined,
+            ...(request.headers["user-agent"] ? { userAgent: request.headers["user-agent"] } : {}),
+            ...(typeof request.headers["x-device-id"] === "string" ? { deviceId: request.headers["x-device-id"] } : {}),
         });
         return googlePopupResult(reply, { session });
     } catch (error: any) {
@@ -417,7 +418,8 @@ export async function googleSignInCredentialHandler(
             audience: env.GOOGLE_CLIENT_ID,
         });
         const profile = ticket.getPayload();
-        if (!profile?.email || profile.email_verified !== true) {
+        const email = profile?.email;
+        if (!email || profile?.email_verified !== true) {
             return reply.code(401).send({
                 success: false,
                 error: { code: "GOOGLE_EMAIL_NOT_VERIFIED", message: "Google could not verify this email address." },
@@ -425,13 +427,13 @@ export async function googleSignInCredentialHandler(
         }
 
         const session = await authService.loginWithGoogle({
-            email: profile.email,
-            displayName: profile.name?.trim() || profile.email.split("@")[0],
-            avatar: profile.picture,
+            email,
+            displayName: profile.name?.trim() || email.split("@")[0] || email,
+            ...(profile.picture ? { avatar: profile.picture } : {}),
         }, {
             ipAddress: request.ip ?? "unknown",
-            userAgent: request.headers["user-agent"],
-            deviceId: request.headers["x-device-id"] as string | undefined,
+            ...(request.headers["user-agent"] ? { userAgent: request.headers["user-agent"] } : {}),
+            ...(typeof request.headers["x-device-id"] === "string" ? { deviceId: request.headers["x-device-id"] } : {}),
         });
 
         return reply.code(200).send({ success: true, data: session });
