@@ -98,9 +98,10 @@ export const learningProgressController = {
             }
 
             const body = request.body as SubmitVocabularyReviewBody;
-            const reviewParams: { vocabulary_id: string; correct: boolean; duration?: number } = {
-                vocabulary_id: body.vocabulary_id,
-                correct: body.correct
+            const reviewParams: SubmitVocabularyReviewBody = {
+                correct: body.correct,
+                ...(body.vocabulary_id ? { vocabulary_id: body.vocabulary_id } : {}),
+                ...(body.user_vocabulary_id ? { user_vocabulary_id: body.user_vocabulary_id } : {})
             };
             if (body.duration !== undefined) {
                 reviewParams.duration = body.duration;

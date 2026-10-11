@@ -100,10 +100,11 @@ export const learningProgressService = {
 
             return {
                 progress_id: item.id,
-                vocabulary_id: item.vocabulary_id || "",
-                kanji: item.vocabularies?.kanji || null,
-                hiragana: item.vocabularies?.hiragana || null,
-                meaning,
+                vocabulary_id: item.vocabulary_id,
+                user_vocabulary_id: item.user_vocabulary_id,
+                kanji: item.vocabularies?.kanji || item.user_vocabularies?.kanji || null,
+                hiragana: item.vocabularies?.hiragana || item.user_vocabularies?.hiragana || null,
+                meaning: meaning || item.user_vocabularies?.meaning || null,
                 jlpt: (item.vocabularies?.jlpt || "N5") as any,
                 status: (item.status || "NEW") as any,
                 mastery: item.mastery ?? 0.0,
@@ -125,17 +126,21 @@ export const learningProgressService = {
     /**
      * Submit review result and update learning progress using SM-2
      */
-    async submitReview(userId: string, body: { vocabulary_id: string; correct: boolean; duration?: number }) {
-        const { vocabulary_id, correct, duration } = body;
+    async submitReview(userId: string, body: { vocabulary_id?: string; user_vocabulary_id?: string; correct: boolean; duration?: number }) {
+        const { vocabulary_id, user_vocabulary_id, correct, duration } = body;
 
-        // Verify if vocabulary exists
-        const exists = await learningProgressRepository.checkVocabularyExists(vocabulary_id);
+        // Ensure the submitted vocabulary exists and user-created words belong to the caller.
+        const exists = vocabulary_id
+            ? await learningProgressRepository.checkVocabularyExists(vocabulary_id)
+            : user_vocabulary_id
+                ? await learningProgressRepository.checkUserVocabularyExists(user_vocabulary_id, userId)
+                : false;
         if (!exists) {
             throw new Error("INVALID_VOCABULARY_REFERENCE");
         }
 
         // Get current progress
-        const currentProgress = await learningProgressRepository.findProgress(userId, vocabulary_id);
+        const currentProgress = await learningProgressRepository.findProgress(userId, vocabulary_id, user_vocabulary_id);
 
         let correctCount = currentProgress?.correct_count ?? 0;
         let wrongCount = currentProgress?.wrong_count ?? 0;
@@ -199,6 +204,7 @@ export const learningProgressService = {
         const updatedProgress = await learningProgressRepository.saveReviewResult(
             userId,
             vocabulary_id,
+            user_vocabulary_id,
             {
                 status: newStatus as any,
                 mastery: newMastery,
@@ -215,7 +221,8 @@ export const learningProgressService = {
         return {
             success: true,
             data: {
-                vocabulary_id: updatedProgress.vocabulary_id || "",
+                ...(updatedProgress.vocabulary_id ? { vocabulary_id: updatedProgress.vocabulary_id } : {}),
+                ...(updatedProgress.user_vocabulary_id ? { user_vocabulary_id: updatedProgress.user_vocabulary_id } : {}),
                 correct,
                 new_status: updatedProgress.status || "NEW",
                 new_mastery: updatedProgress.mastery ?? 0.0,

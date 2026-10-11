@@ -36,15 +36,27 @@ export const learningProgressRepository = {
         return count > 0;
     },
 
+    async checkUserVocabularyExists(vocabId: string, userId: string): Promise<boolean> {
+        const count = await prisma.user_vocabularies.count({
+            where: { id: vocabId, user_id: userId }
+        });
+        return count > 0;
+    },
+
     /**
      * Find a user's progress for a single vocabulary
      */
-    async findProgress(userId: string, vocabularyId: string) {
+    async findProgress(userId: string, vocabularyId?: string, userVocabularyId?: string) {
         return prisma.learning_progress.findUnique({
-            where: {
+            where: vocabularyId ? {
                 user_id_vocabulary_id: {
                     user_id: userId,
                     vocabulary_id: vocabularyId
+                }
+            } : {
+                user_id_user_vocabulary_id: {
+                    user_id: userId,
+                    user_vocabulary_id: userVocabularyId!
                 }
             }
         });
@@ -81,6 +93,9 @@ export const learningProgressRepository = {
                             orderBy: { display_order: "asc" }
                         }
                     }
+                },
+                user_vocabularies: {
+                    select: { kanji: true, hiragana: true, meaning: true, note: true }
                 }
             }
         });
@@ -113,7 +128,8 @@ export const learningProgressRepository = {
      */
     async saveReviewResult(
         userId: string,
-        vocabularyId: string,
+        vocabularyId: string | undefined,
+        userVocabularyId: string | undefined,
         progressData: {
             status: "NEW" | "LEARNING" | "REVIEWING" | "MASTERED";
             mastery: number;
@@ -128,17 +144,26 @@ export const learningProgressRepository = {
         }
     ) {
         return prisma.$transaction(async (tx) => {
-            const lp = await tx.learning_progress.upsert({
-                where: {
+            const where = vocabularyId
+                ? {
                     user_id_vocabulary_id: {
                         user_id: userId,
                         vocabulary_id: vocabularyId
                     }
-                },
+                }
+                : {
+                    user_id_user_vocabulary_id: {
+                        user_id: userId,
+                        user_vocabulary_id: userVocabularyId!
+                    }
+                };
+            const lp = await tx.learning_progress.upsert({
+                where,
                 create: {
                     id: crypto.randomUUID(),
                     user_id: userId,
-                    vocabulary_id: vocabularyId,
+                    vocabulary_id: vocabularyId ?? null,
+                    user_vocabulary_id: userVocabularyId ?? null,
                     status: progressData.status as any,
                     mastery: progressData.mastery,
                     correct_count: progressData.correct_count,
@@ -160,7 +185,8 @@ export const learningProgressRepository = {
                 data: {
                     id: crypto.randomUUID(),
                     user_id: userId,
-                    vocabulary_id: vocabularyId,
+                    vocabulary_id: vocabularyId ?? null,
+                    user_vocabulary_id: userVocabularyId ?? null,
                     reviewed_at: progressData.last_review,
                     correct: historyData.correct,
                     duration: historyData.duration !== undefined ? historyData.duration : null
