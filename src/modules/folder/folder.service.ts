@@ -1,5 +1,6 @@
 import { folderRepository } from "./folder.repository.js";
 import type { FolderContentsDTO, FolderDTO } from "./folder.types.js";
+import { translateVocabularyTexts } from "../../common/services/translation.service.js";
 
 /**
  * Service orchestrator containing business logic for Folders.
@@ -100,18 +101,33 @@ export const folderService = {
             folderRepository.getUserVocabulariesInFolder(id)
         ]);
 
-        const formattedSystem = systemItems.map(item => {
+        const systemMeanings = systemItems.map(item => {
             const vocab = item.vocabularies;
-            const meaning = vocab.vocabulary_meanings?.find(m => m.language === preferredLang)?.meaning
+            const override = preferredLang === "vi" ? item.meaning_vi_override : item.meaning_en_override;
+            if (override) return override;
+            return vocab.vocabulary_meanings?.find(m => m.language === preferredLang)?.meaning
                 || vocab.vocabulary_meanings?.find(m => m.language === "vi")?.meaning
+                || vocab.vocabulary_meanings?.find(m => m.language === "en")?.meaning
                 || vocab.vocabulary_meanings?.[0]?.meaning
                 || null;
+        });
+        const preferredMeanings = systemItems.map((item, index) => {
+            const override = preferredLang === "vi" ? item.meaning_vi_override : item.meaning_en_override;
+            const preferredMeaning = item.vocabularies.vocabulary_meanings?.find(m => m.language === preferredLang)?.meaning;
+            return override || preferredMeaning ? null : systemMeanings[index];
+        });
+        const translatedMeanings = await translateVocabularyTexts(preferredMeanings, preferredLang as "vi" | "en");
+        const formattedSystem = systemItems.map((item, index) => {
+            const vocab = item.vocabularies;
+            const override = preferredLang === "vi" ? item.meaning_vi_override : item.meaning_en_override;
+            const preferredMeaning = vocab.vocabulary_meanings?.find(m => m.language === preferredLang)?.meaning;
+            const meaning = override || preferredMeaning || translatedMeanings[index] || systemMeanings[index];
 
             return {
                 id: vocab.id,
                 kanji: vocab.kanji,
                 hiragana: vocab.hiragana,
-                meaning,
+                meaning: meaning ?? null,
                 jlpt: vocab.jlpt || null
             };
         });
@@ -161,6 +177,14 @@ export const folderService = {
         await folderRepository.addSystemVocab(folderId, vocabId);
     },
 
+    async updateSystemVocabMeaning(folderId: string, userId: string, vocabId: string, language: "vi" | "en", meaning: string) {
+        const folder = await folderRepository.findByIdAndUser(folderId, userId);
+        if (!folder) throw new Error("FOLDER_NOT_FOUND");
+        const exists = await folderRepository.isSystemVocabInFolder(folderId, vocabId);
+        if (!exists) throw new Error("VOCABULARY_NOT_IN_FOLDER");
+        await folderRepository.updateSystemVocabMeaning(folderId, vocabId, language, meaning);
+    },
+
     /**
      * Removes a platform vocabulary item from a folder.
      * @param folderId Folder UUID
@@ -203,6 +227,18 @@ export const folderService = {
             throw new Error("ALREADY_IN_FOLDER");
         }
         await folderRepository.addUserVocab(folderId, userVocabId);
+    },
+
+    async importUserVocabularies(folderId: string, userId: string, entries: Array<{
+        kanji: string;
+        hiragana?: string | undefined;
+        romaji?: string | undefined;
+        meaning: string;
+        note?: string | undefined;
+    }>) {
+        const folder = await folderRepository.findByIdAndUser(folderId, userId);
+        if (!folder) throw new Error("FOLDER_NOT_FOUND");
+        return folderRepository.importUserVocabularies(folderId, userId, entries);
     },
 
     /**

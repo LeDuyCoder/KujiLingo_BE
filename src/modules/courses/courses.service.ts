@@ -6,13 +6,16 @@ import type { ListCoursesQuery, CreateCourseBody, UpdateCourseBody } from "./cou
 import type { CourseDTO, CourseDetailDTO, LessonEmbeddedDTO } from "./courses.types.js";
 import { hasActivePremium } from "../../common/utils/premium.js";
 import { buildLessonProgress } from "../../common/utils/lesson-progress.js";
+import { translateDisplayTexts } from "../../common/services/translation.service.js";
+
+type DisplayLanguage = "vi" | "en";
 
 /**
  * Lấy danh sách khóa học có phân trang (Public)
  * Tích hợp Cache 30 phút
  */
-export async function listCourses(query: ListCoursesQuery) {
-    const cacheKey = `courses:list:${query.page}:${query.limit}`;
+export async function listCourses(query: ListCoursesQuery, displayLanguage: DisplayLanguage = "vi") {
+    const cacheKey = `courses:list:${displayLanguage}:${query.page}:${query.limit}`;
     const cachedData = memoryCache.get(cacheKey);
 
     if (cachedData) {
@@ -33,13 +36,20 @@ export async function listCourses(query: ListCoursesQuery) {
         }
     });
 
-    const data: CourseDTO[] = courses.map(course => ({
+    const sourceData: CourseDTO[] = courses.map(course => ({
         id: course.id,
         title: course.title,
         description: course.description,
         image: course.image,
         order_no: course.order_no,
         lesson_count: countsMap.get(course.id) || 0,
+    }));
+    const sourceTexts = sourceData.flatMap(course => [course.title, course.description]);
+    const translatedTexts = await translateDisplayTexts(sourceTexts, displayLanguage);
+    const data: CourseDTO[] = sourceData.map((course, index) => ({
+        ...course,
+        title: translatedTexts[index * 2] as string | null,
+        description: translatedTexts[index * 2 + 1] as string | null,
     }));
 
     const totalPages = Math.ceil(total / query.limit);
@@ -64,8 +74,8 @@ export async function listCourses(query: ListCoursesQuery) {
  * Lấy thông tin chi tiết một khóa học (Public)
  * Tích hợp Cache 30 phút
  */
-export async function getCourseDetail(courseId: string, userId?: string) {
-    const cacheKey = `courses:detail:${courseId}`;
+export async function getCourseDetail(courseId: string, userId?: string, displayLanguage: DisplayLanguage = "vi") {
+    const cacheKey = `courses:detail:${courseId}:${displayLanguage}`;
     const accessCacheKey = `courses:detail:access:${courseId}`;
     const cachedData = memoryCache.get(cacheKey);
     let courseTitle = memoryCache.get(accessCacheKey) as string | null;
@@ -111,6 +121,16 @@ export async function getCourseDetail(courseId: string, userId?: string) {
         })),
     };
 
+    const sourceTexts = [data.title, data.description, ...data.lessons.flatMap(lesson => [lesson.title, lesson.description])];
+    const translatedTexts = await translateDisplayTexts(sourceTexts, displayLanguage);
+    data.title = translatedTexts[0] as string | null;
+    data.description = translatedTexts[1] as string | null;
+    data.lessons = data.lessons.map((lesson, index) => ({
+        ...lesson,
+        title: translatedTexts[2 + index * 2] as string | null,
+        description: translatedTexts[3 + index * 2] as string | null,
+    }));
+
     const result = {
         success: true,
         data,
@@ -123,8 +143,8 @@ export async function getCourseDetail(courseId: string, userId?: string) {
     return result;
 }
 
-export async function getCourseLessonProgress(courseId: string, userId: string) {
-    const course = await getCourseDetail(courseId, userId);
+export async function getCourseLessonProgress(courseId: string, userId: string, displayLanguage: DisplayLanguage = "vi") {
+    const course = await getCourseDetail(courseId, userId, displayLanguage);
     const lessons: LessonEmbeddedDTO[] = course.data.lessons;
     const lessonIds = lessons.map(lesson => lesson.id);
     const completedIds = await courseRepository.findCompletedLessonIds(userId, lessonIds);
@@ -211,7 +231,7 @@ export async function updateCourse(adminId: string, courseId: string, data: Upda
 
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
-    memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:${courseId}:*`);
     memoryCache.deletePattern(`courses:detail:access:${courseId}`);
     memoryCache.deletePattern("lessons:detail:access:*");
 
@@ -259,7 +279,7 @@ export async function deleteCourse(adminId: string, courseId: string) {
 
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
-    memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:${courseId}:*`);
     memoryCache.deletePattern(`courses:detail:access:${courseId}`);
 
     return {
@@ -292,7 +312,7 @@ export async function restoreCourse(adminId: string, courseId: string) {
 
     // Invalidate cache
     memoryCache.deletePattern("courses:list:*");
-    memoryCache.delete(`courses:detail:${courseId}`);
+    memoryCache.deletePattern(`courses:detail:${courseId}:*`);
     memoryCache.deletePattern(`courses:detail:access:${courseId}`);
 
     return {

@@ -82,9 +82,10 @@ test("Lessons Service - Unit Tests", async (t) => {
         assert.strictEqual(auditMock.mock.callCount(), 1);
 
         // Verify cache invalidations
-        assert.strictEqual(cacheDeletePatternMock.mock.callCount(), 1);
-        assert.strictEqual(cacheDeleteMock.mock.callCount(), 1);
-        assert.strictEqual(cacheDeleteMock.mock.calls[0].arguments[0], "courses:detail:course-1");
+        assert.strictEqual(cacheDeletePatternMock.mock.callCount(), 2);
+        assert.strictEqual(cacheDeletePatternMock.mock.calls[0].arguments[0], "courses:list:*");
+        assert.strictEqual(cacheDeletePatternMock.mock.calls[1].arguments[0], "courses:detail:course-1:*");
+        assert.strictEqual(cacheDeleteMock.mock.callCount(), 0);
     });
 
     await t.test("createLesson - throws INVALID_COURSE_REFERENCE if parent course missing", async () => {

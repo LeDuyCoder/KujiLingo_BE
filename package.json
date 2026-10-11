@@ -36,7 +36,10 @@
     "test:vocabularies": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/vocabularies.service.test.ts tests/system/vocabularies.routes.test.ts",
     "test:pvp": "node --import tsx --import ./tests/setup.ts --test-concurrency=1 --test tests/unit/pvp.service.test.ts tests/system/pvp.routes.test.ts",
     "mail:test": "node --import tsx scripts/test-mail.ts",
-    "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts"
+    "seed:leaderboard": "node --import tsx scripts/seed-leaderboard.ts",
+    "seed:dev-logins": "node --import tsx scripts/seed-dev-quick-logins.ts",
+    "seed:courses": "node --import tsx scripts/seed-courses.ts",
+    "seed:test": "npm run seed:dev-logins && npm run seed:courses"
   },
   "keywords": [],
   "author": "",

@@ -57,7 +57,8 @@ export const lessonsController = {
     async getLessonDetail(request: FastifyRequest, reply: FastifyReply) {
         try {
             const { id } = request.params as { id: string };
-            const result = await lessonsService.getLessonDetail(id, request.user?.id);
+            const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
+            const result = await lessonsService.getLessonDetail(id, request.user?.id, displayLanguage);
             return reply.status(200).send(result);
         } catch (error: any) {
             if (error.message === "LESSON_NOT_FOUND") {

@@ -1,0 +1,296 @@
+﻿id,vocabulary_id,language,meaning,display_order
+e6a65837-103c-4708-a0cc-2f9627688bf7,186c377b-c436-429c-880b-73c01cb69a40,vi,đến muộn,1
+41699aa7-dd6c-4b3a-90e8-15cf2a242c5f,4d20c9a8-80d0-4743-b834-e9f2c12aafab,vi,"bị lạc, phân vân",1
+6b0e1e2c-5984-421c-941a-50eb5fb8e56f,d0a11617-ee06-477e-bdcd-667d561be746,vi,sự hỏng hóc,1
+f6658cde-a408-43b5-b5bc-4446d61ab362,67204dcf-3977-40d0-bb53-65b0df77ed57,vi,tai nạn,1
+6568b005-bb7a-41cc-83bb-9bf71f040f0b,6cd1333b-48bb-4440-a5ee-a03a6f4371fd,vi,tắc đường,1
+43ff13de-2aa5-42b6-aedc-511dd5870ea4,349146d6-dfb5-4003-ba7a-b1fb24d1d24b,vi,lý do,1
+510f4e30-1f48-4c50-909d-d0430897f760,7ec67ac6-90d8-4b2d-bfba-a4f44e4381fc,vi,sự giải thích,1
+01aca572-b9c2-474f-89af-013e1f8fd183,a9af4a1a-7a20-454e-abd7-31773bfcd174,vi,liên lạc,1
+9b3a061f-855c-4e4d-bb6c-d2596b09dcc9,fd2c7c27-b1a4-49d3-9bd9-391651eb439f,vi,"vội, nhanh lên",1
+416b0193-2e4a-4332-8251-e263618e23e0,33367a75-1103-4073-86dc-0b2f208ed688,vi,kịp giờ,1
+9b622493-40ab-4be6-a223-f391ea21f8cd,61dc46bf-a840-42b8-bd66-b878df43ebeb,vi,"đón, chào đón",1
+38a5865c-c123-40aa-a021-777822221909,3a71cc24-8bf1-4851-8066-792e0bcc4c29,vi,gặp khó khăn,1
+2d192afb-94e6-483a-9137-d60c231c7301,dd977726-9d82-42ab-bedc-99be6bfb695e,vi,xây dựng,1
+1ca65ad6-be01-4d3f-a328-26fc6cfd73e1,e32218ba-2f9a-49e2-a1fe-5434d6fb0dce,vi,sửa chữa,1
+64a1ffee-64bb-4c4c-a209-9130c3874e03,ab0591a0-c217-4e13-b7b7-6114b5012576,vi,làm hỏng,1
+9e5d9c5f-40eb-4b47-b4e1-1da4894ab6da,22ce53ac-4451-45c4-b31b-db6e5173f34f,vi,bị hỏng,1
+84b83fd8-b909-41be-a889-591e9984ad06,47de0827-a4da-47b6-9360-1125ef8c098b,vi,"chuyển động, hoạt động",1
+ae55be0f-bc9a-4295-bd8f-a27aabf75bdb,cfaa7b4b-8b71-48d0-bb03-aada94f4903c,vi,lái xe,1
+1a1e01b5-361a-4617-9370-3bb0fe097f4a,a03b9225-1806-4e8d-bf5d-ca1a560f6663,vi,kỹ thuật,1
+3114c910-30b5-45bf-8bcd-dea5021d65e7,1700715f-5b78-43fa-bb4b-8673767e2d5d,vi,dụng cụ,1
+8cfa91ac-8660-49ce-8d8f-4005759333b3,667914e3-b6ae-48a3-b9b6-21a72393a40f,vi,máy móc,1
+4de30af2-468f-43c0-a9cb-1406023fdb7d,e1067743-0c91-498f-b884-b9819711fef7,vi,nhà máy,1
+26592563-bb79-4931-b2d8-075c6d7682df,55175358-56b7-430a-9467-402e144294f1,vi,chuyên môn,1
+72539409-e685-458a-9b26-c64a62f0460f,9558c13c-6631-47e6-a292-281be70963ec,vi,pin,1
+de69555b-e025-458a-989c-1eebf8240787,73d9a0fa-7a91-401c-b8af-83140d979ebe,vi,làm việc tại (công ty),1
+d877443a-a67a-4ea1-a5be-b13ae7827d25,8640928c-ddfc-4697-85ea-ac8638b73ca4,vi,giờ nghỉ,1
+f0b621b2-1e84-4feb-b714-7afa0ea0ad50,228ca4ac-ea75-4134-b434-f0f7e60e8763,vi,làm thêm giờ,1
+79c0b727-6859-493b-81cb-b99741f7a9db,64cd942e-454c-44ca-8106-d7e2b0125cfb,vi,tiếp tục,1
+92ef10ca-7b8e-4b1a-a5cc-44ce867577cd,f77e9e1b-29a2-4b31-8cf2-3ade444d0aea,vi,"dọn dẹp, sắp xếp",1
+53ead584-89d4-4149-870b-c6cd48f9f0f7,b54bccc1-57bb-40fb-a718-52d55d04144a,vi,"thu thập, tập hợp",1
+57dd68de-9bbd-4167-a1ad-88f7cb4d9a02,1165db81-e92a-4181-a863-8f05ddf4ad17,vi,"sự trao đổi, tư vấn",1
+f9e630ae-8ec5-4ef9-8085-77edbad39c0c,cf9d4a43-a1b4-4006-93dc-920ad79b8bd3,vi,sự tham gia,1
+c5b173c7-3dbb-4442-886e-070cfe57d41c,0195c8de-0687-4f80-b5d5-b054caff355e,vi,"một lúc, một thời gian",1
+c88d8922-04bf-49a2-8248-705349fa5d53,c8064156-d291-4d7f-9c6e-4f5fefaf43bb,vi,"đàng hoàng, đúng cách",1
+c15fe3a1-90fe-4ba3-8303-0474e9544ab0,44fd4886-27f9-449c-afe6-b81c002b6c09,vi,"hầu hết, gần như",1
+98888e6d-c01f-4e7c-8ce9-7cf7e4f401b4,1a228954-7be3-41d5-8572-7544a909e3af,vi,"việc bận, công việc cần làm",1
+4212ce71-bfbb-499b-8610-5a75de6e22f6,4c5329d9-09a0-428d-aad1-2eafe9f30466,vi,đau đầu,1
+bc99f898-4c75-41aa-861b-d86c5cbfd799,91959b3a-d657-4d99-b7cb-1a5521aeb785,vi,"sốt, nhiệt độ",1
+cedc3d1b-3c09-44a0-a0b8-65e0eb8c63a3,68d8d652-867e-4df7-b812-55d737224a65,vi,ho,1
+fd6a2671-b8a1-48be-8fb5-39e16b0d1424,28ae09e4-8cbb-4dc9-b103-461fc27828cd,vi,cổ họng,1
+d911d8fe-d082-4364-b8e6-4eb97d997ae4,50fcbe5e-58d8-4848-8fb7-c8e94e1592a9,vi,"vết thương, bị thương",1
+5b2a9707-5a2d-43ee-993e-8f7fa926ca31,b35f4b67-c5dd-4abf-93ed-f91105fb86ef,vi,sự khám bệnh,1
+b286925d-6483-4d6b-ba55-bb0891da02e0,72498e6a-e9ac-4fb3-bb61-b94b34d1bf62,vi,"tiêm, mũi tiêm",1
+60cd7be9-1a38-4eb8-85a6-48242f9d4eff,5d6e9ac5-e25f-48dc-8e06-19fef88f3527,vi,"khỏi bệnh, lành",1
+0eed61c4-2bc6-4911-9fbd-8b6ef53245c3,ecf28429-0788-412b-b6c7-0bd378dc2d59,vi,sức khỏe,1
+353c9186-5019-4f20-92db-0919f1049d25,3a036292-ff33-495c-aa6b-40580b10c083,vi,hiệu thuốc,1
+ff00b639-fd01-489b-af77-c58ff48de702,2296d952-2dee-49f7-854b-ff2bf9af4d22,vi,thân nhiệt,1
+85f06156-77a2-4663-a526-1a008abcccbf,43838215-163a-4588-b79e-d58ebd4725a0,vi,cơn đau,1
+82898893-dfd9-477f-aa08-31962d0f2548,ad6df55d-92a1-407b-a6ff-2b3be550b556,vi,sự chuẩn bị,1
+c0aff6f5-b580-4dd8-80c4-ec2e1ae2b9f4,7ee5fe67-de38-4279-8e1f-78861e50f75b,vi,"sự chuẩn bị, sắp sẵn",1
+39a1acdb-8cca-4bc0-acee-4b925e0af266,075f599b-f9e3-4199-b2c4-7c6bd2b39e02,vi,"sự xác nhận, kiểm tra",1
+72bf4cef-040f-4d94-b313-766215954799,6fe0f083-95d1-4d07-ab7e-ea92bb0ed640,vi,đặt trước,1
+cb350189-1fc6-498a-9b18-ec67122641a7,4bdcb1ce-c3fd-412d-94b9-99d7cf309871,vi,cần thiết,1
+7ab6221b-5400-497a-8c6c-d145326e4a93,61f534cf-ad74-4f45-9c9a-7f000814b351,vi,tủ lạnh,1
+64a97a46-b2fb-4ae1-9b00-a12de24470b7,664dc790-9a6d-4d32-9750-42c467811120,vi,lò vi sóng,1
+1bdd5729-cc30-4e14-978a-fb7fbf36d00e,fa6087c5-5a5c-4e0c-8772-ad42cce663f1,vi,kệ,1
+db811280-c6e4-4188-b03e-09e683d2a0a0,75c23ecb-fb9b-4b74-bfe0-646e14978eef,vi,ngăn kéo,1
+5d3165e3-c873-40d5-9f6e-de73837c8867,d27422d5-e16d-4751-bce3-8143421c065d,vi,lối vào nhà,1
+f79e00b2-67c1-4197-887f-d7601fca676d,301d51e2-0262-4dc4-937d-a04239959cfa,vi,vắng nhà,1
+eed3372e-eeb1-43e7-8aad-53dd5dffd643,862e8420-bef7-4495-a205-8bcceded3d99,vi,chìa khóa,1
+6e38909a-9d6c-4a63-b531-f44edfe1de25,586256ba-5f04-40f8-ac08-35a92e036ac7,vi,kế hoạch,1
+a50f3f2f-f005-4fc6-a3b5-21f59273b33a,fe0e38f2-2645-420c-bce1-b2c83d959750,vi,sự khởi hành,1
+50416dd9-99f1-4504-b146-3e76945ad1f2,ad975b1a-9842-4193-b259-41515d3d0b84,vi,sự đến nơi,1
+0adc2d6e-c1b2-4563-87a2-2f6671a25778,c8d066e3-6246-4202-8be0-58f7bdf44878,vi,đăng ký,1
+5ca589c1-d5ea-4a5c-b68a-ef51ae04c398,257b9bda-520f-4159-ad9e-84f7e86ec7a8,vi,quyết định,1
+443d75ab-1d75-4ef4-8830-fc0f83912472,282812de-0123-4922-8bc3-ddfb231013ae,vi,thay đổi,1
+58c27ab2-6ae5-4396-9c22-ee52b29253b5,1a07e9c2-d4aa-44d7-ab56-a88d01e3f6b8,vi,"sự mời, lời mời",1
+06ec72fd-2b26-4a8f-8b0a-a21b90c32e8b,1a827d39-8f3a-40dd-9f66-436a213dc1d2,vi,sự tập hợp,1
+70228c2f-4191-429c-8f5b-a8f29abf1a53,13fd19e9-fde7-44b7-b645-fa85182e5fc6,vi,"sự thuận tiện, lịch trình",1
+1db00de7-bdd8-4f31-9016-f1a084255a39,09da366f-670a-4b4f-8c67-cc67a678757a,vi,"dự định, kế hoạch",1
+533a5962-7e64-48c1-832a-6211828b4567,8fe68f31-b69d-40b1-a03a-c88309ca8188,vi,"khoảng thời gian, trong khi",1
+26069336-a896-4eb0-bd89-7eefeed8f90f,f0b21a11-6421-440c-a1fb-a7eda17f5134,vi,"điều mong đợi, niềm vui",1
+d6f4d7eb-e8af-446e-a76d-d4e8d6a8bad4,31346a2e-5645-4cec-929a-f7f5cd882750,vi,"vận động, tập thể dục",1
+4eab8070-06f9-4cac-a7a7-bdd893dfbb4f,5d0a78e4-de36-48bd-a057-254f587b1e3d,vi,giấc ngủ,1
+e4b7973e-7538-4276-9641-8d2b61cb9e7d,e7f8e782-8542-4581-b07c-c37fdd482c79,vi,"bữa ăn, việc ăn uống",1
+64850ac1-c398-4362-807b-2e1f836066a5,0d5911b2-da63-4b65-9fd5-ff13a867588e,vi,dinh dưỡng,1
+49c01de3-0941-4a90-8156-7f41473700a9,85e79f14-f39b-4c69-882c-43279f68d028,vi,tình trạng sức khỏe,1
+dab1b533-1916-4b5b-abc6-22b09b4deff6,b7bfae5e-25da-44b1-82cb-8400f9df5359,vi,"quá sức, không thể",1
+303d55f6-5dc6-45fa-979f-797c7967006f,8bd36918-eba5-4d32-89b6-fc544b938494,vi,lo lắng,1
+dba81075-c4a2-47aa-b9f8-f23c0480413f,04f51b6d-f8aa-443d-a93b-875be0f3208a,vi,sự nghỉ ngơi,1
+d9c7d8ef-65f9-49c6-8e41-a7b73c6ca386,8218fd31-5223-43d6-93c4-f30efcef17d6,vi,hết sức có thể,1
+e72bef7e-9175-4a46-afec-a967fad67aec,22d47e69-1b6a-4ecb-ba7a-d210aed07402,vi,có lẽ,1
+c3aef171-119d-4ea3-b31e-67133cf881c8,0db463c0-796a-49ad-9c80-f1a6792bbd20,vi,chắc hẳn,1
+a830791e-f247-4d55-9821-8cc381fa50d3,08d0e1f6-2481-4c09-8b85-d2dc1c85e819,vi,"đầy đủ, đủ",1
+5fc4d7a5-2559-4d28-ad58-e4ec0ed6b05f,277b519e-7ad7-40a8-80fc-2cdde4897cd9,vi,quy định,1
+c3291c1c-5f9c-4799-8beb-a28c9f99cdef,3dd3a56b-c5d9-4711-827b-bfe4c1d2c8e1,vi,cấm,1
+246b05f6-163a-4eb1-86c5-3609473723a7,4557d7ea-eabb-4722-aed2-a3b40c4072bd,vi,"chú ý, cảnh báo",1
+06b2f255-87a0-475f-bd8a-ca6a26bfd819,8f34cd99-0eec-4f95-927f-39b3b2e331b4,vi,sách hướng dẫn,1
+21d434fe-1914-47e3-bd2c-fd936af35782,1399f5ba-ecca-480b-8c3f-ead38134435d,vi,ý nghĩa,1
+6267adbd-dc21-4cd4-a741-5490596313a3,3f57d43b-d865-43cf-9231-2dd04cfa9712,vi,"bản dịch, dịch thuật",1
+9f25602c-608e-49b4-bc0a-1f9b392f69bd,558ad4db-24f2-4835-b9ee-b57bde8f5891,vi,"tra cứu, điều tra",1
+bcd4e77c-3588-481f-a8a0-0fe9625e971c,08f44e6a-03d0-4591-9cc8-b6d4a8e3fca0,vi,"giấy tờ, tài liệu",1
+2a307f22-ae6d-4fdf-9597-4beaf5924328,65d3d978-82f5-4373-9f4f-59b0ab4253a4,vi,quầy tiếp nhận,1
+f608f3cd-c7ec-4c8a-96f2-ce78b5c5a41d,87e737a3-45e8-4f55-b58e-6717a6e75d93,vi,người phụ trách,1
+4f8d2b27-8209-4729-9a3e-b882def7646f,044d165b-268e-4df4-9e3e-877b70e4756d,vi,việc điền thông tin,1
+344c0f1c-f30e-4911-a4dc-dd3fa0f8252e,03b66fff-3939-4f56-80a0-322eac8b57f9,vi,việc nộp,1
+18b33681-66e3-4e24-b556-2f764357796e,b8558e67-1a7a-4024-99ef-9191709ea99c,vi,trộn,1
+79503ee6-693e-40ca-a1b9-d7e5b175c4cd,bb9e76eb-19e5-4502-b4a8-f88d44f85784,vi,"nướng, rán",1
+f2a6fc59-ffa9-4a1d-9f44-341a62a88700,1800ec5b-5adc-4951-bb9a-ac2cd263bc82,vi,"nấu, hầm",1
+a98e3fce-88b9-4ff1-ae92-6c13cd14103c,510af840-4e7e-4e26-b44b-9438f629377d,vi,cắt,1
+8c7bb4c8-d213-4abc-af75-03677c797a39,e3092680-40be-4ee4-94a5-f9a2365d6240,vi,cho vào,1
+695f0531-0e35-4aeb-827a-a009454dc695,55d75a22-965d-44a7-9d82-8e4f718adc6b,vi,lấy ra,1
+f8695800-6e8c-4bba-8487-5862f0d9651d,d47d89bc-7349-4c0d-9503-e819c908f606,vi,nguyên liệu,1
+48429d9f-d208-450f-a933-5991fe68528b,95141ddf-c153-4e0e-b97a-2216602882d7,vi,"vị, hương vị",1
+905c4e66-b79b-4638-a5ee-3fe4c5cb43fb,8d5fe9bb-a13e-495b-af48-26c5023d0016,vi,đường,1
+91567877-cc75-43ce-a10b-2de8fcc8f8ee,3d5d376b-d16e-4b75-9e62-b7db945158af,vi,muối,1
+c9dbad7d-07b4-4000-929b-1ac9dafe841b,64e2f5fc-4d5e-4c19-8415-5855ae757185,vi,nước tương,1
+5e0d3214-94a5-4299-95c6-1b00f5cf7990,5e0bb53f-6b66-41fd-8d68-9f1548ad8e02,vi,"trình tự, các bước",1
+6d5c980a-2589-46a5-a6bd-8cb69dd8c7c9,3ba988dd-42eb-47a5-9579-f390f960874f,vi,mùa,1
+b333654c-e146-4885-b0ad-aeb002b80219,77185b9e-00b8-41f1-819e-5c35ab1fa74f,vi,mùa xuân,1
+4bb8fb5f-bb0b-4107-bfc4-45649d973820,04c20e5f-ec87-49b4-9569-d3525e47602c,vi,mùa hè,1
+13c20475-c0de-455b-8147-9fe938b7b9b5,3889613c-bfa7-42ff-b829-d76dbb21c8c5,vi,mùa thu,1
+c4be9c0d-ca9f-48e1-91c8-1c19d450bdaf,609a8a08-43ea-4872-b9d6-9196b38beed3,vi,mùa đông,1
+7113e819-f603-44a3-9102-234e84b37021,33f2f738-b8ae-4c46-ada9-e3005715871b,vi,hoa anh đào,1
+aba1afe6-80ca-4d77-a566-3671afc6c8aa,4d40b9da-0019-4425-96cc-688622a0f628,vi,lá đổi màu mùa thu,1
+cf53bd31-ce6d-4691-aeea-f9e39262a6d1,03630637-8630-447b-8442-114baa0da570,vi,phong cảnh,1
+34a189c4-9d8e-4a2a-a30a-63d663457801,a1d60bf3-adcf-4166-be7b-95fd07065fd0,vi,hồ,1
+a52a3b33-4853-43d4-ab94-dcc0956e4c43,72a49f64-e86b-4b4a-9641-852563eafdfd,vi,hòn đảo,1
+7ae2de7c-b2e9-4a44-a666-102ca1677958,faa00ccd-d199-47d8-93df-4e78aea4227c,vi,mây,1
+7d9d8520-0139-4681-b01c-bbd1bfdaf6f3,259b3777-48fd-44e6-8aed-8ff54848bb9e,vi,gió,1
+0458b4cb-71b2-4e31-9c41-ef1055501d8a,34e4c3c3-f487-4e6d-a387-5c46acdf8e45,vi,mục tiêu,1
+d8798716-6585-4478-95dd-5d1f99b6977d,8beeed6a-37e8-4086-9b82-f99f14e5a88e,vi,tương lai,1
+a05aa035-4e48-4923-b434-cf99fb98d6c0,97c74248-dc88-46a3-aa48-9535d3f03d2b,vi,ước mơ,1
+e7e3892b-65b0-429d-b0ec-8e86e0ac3e35,2611ac4d-bcf4-42dc-8e6a-960b11933ee6,vi,sự nỗ lực,1
+0412773c-725c-4b07-a43f-eabcbf63aaad,30896124-1e69-4045-ac97-98cb5905f505,vi,luyện tập,1
+6681c9b6-4a85-48df-892d-7faa445537df,abe218b4-a0d2-4aaa-a380-91eff0b069cd,vi,"sự tiến bộ, thành thạo",1
+e9849ea3-8869-4680-baa1-602e3e2b6e21,67dab098-749f-4187-8fd2-4f763b9d1f80,vi,thói quen,1
+535f49d5-c5b1-4b78-8703-c395d64ca0bc,404c52a7-58c7-4fd2-a3ce-55050c423d5a,vi,sự thử thách,1
+f892d163-f453-4c49-9b3e-93aa1c3401c8,e4670800-173c-4cca-9630-0819d3e54f6f,vi,"học được, trang bị cho mình",1
+3a39684d-2659-479d-b57b-c11b39ac023e,aa6fd52f-781a-4616-997a-eae9505fe677,vi,tăng lên,1
+e6fa7d49-4aa0-4776-9b9a-b56716e1f6eb,52223f84-c3ce-4073-80db-e6d4e4ed4240,vi,giảm đi,1
+edafd83e-23f1-43b6-a92a-c4eb87378f75,b0b8ebc8-d557-4f20-b341-ed853c88138a,vi,thành công,1
+d3691812-3f04-4d9e-9492-077684616104,8247bc0c-1b33-4bc2-b765-f48703065a99,vi,vô địch,1
+9f6aa5cb-c764-43f6-a46d-2b2250e2a092,a80e387b-35b0-4529-ace0-5e631e0936d1,vi,trận đấu,1
+c794cc58-2f6d-45f7-b9ce-3898ae150624,f508a6a8-0120-4c0d-9f51-21c5a02d3a21,vi,tuyển thủ,1
+2f1216d6-12fd-4516-a84c-59dce9a1a042,a8ae9827-20e3-4c86-8dfe-8edead9fae3d,vi,cổ vũ,1
+d22daa66-5826-4252-a616-a8601ab7d2fe,030399fb-c52e-41b7-bb54-c0b08caa800b,vi,thắng,1
+bf65c7cb-8c28-42b9-bcc0-d5ac7ed8b789,5a31d002-8aa8-4158-9d6e-a718a1045117,vi,thua,1
+22c4f14c-b6d7-4e45-a6f8-3dbb86fa7e05,1d645a76-e00a-4c0a-bd58-41ee8315943e,vi,kết quả,1
+c9aad3d6-1d7a-4a6f-8cdb-57f61c9957a8,145dd3cd-ce5e-4a3f-9629-688e76bdc94f,vi,"thành tích, điểm số",1
+58c39622-04bc-4d8a-abb1-6b134a027e2d,7d4c2a87-6396-44cb-b7f0-e44ec870babf,vi,đại diện,1
+5d665b92-f8b6-4955-b2ee-e0f1d8ec5461,0a48ba10-2ec3-40a5-b9ce-288b0e84073d,vi,lựa chọn,1
+3f164e3c-cc20-4f1f-a780-cefb5281d4e5,2998645f-6a3f-447f-8e9a-b0da9f3c7a17,vi,"bảng, biểu",1
+3923bfcb-fe8c-4c47-8607-e37b06603ce6,d65b9d79-3991-4e9a-99c3-814089870310,vi,đáng tiếc,1
+be8ec026-0c18-42a2-a53f-2dfd72cafaed,cebbcad8-e8f0-41cb-b4d2-e77a51c0b1ce,vi,kinh nghiệm,1
+2adec1c4-d836-490b-86e9-a8a7e8e12cf0,f2fcfa01-9d99-4fa3-92ae-93db30e95b69,vi,ý kiến,1
+ebaff96b-cd6b-4435-8879-429d12560e9b,974b232e-bb7a-4e9c-b483-9f4e914fcab7,vi,"tâm trạng, cảm giác",1
+00285150-0494-40b1-9a8d-db4a1685eb2f,9f922cf7-56de-459e-834c-fb20621bf8eb,vi,suy nghĩ,1
+3636f5b4-7d4d-47fb-82dd-77e90b5c0d23,39b76371-8ef1-40fd-be0c-b4fd2c7f37ec,vi,văn hóa,1
+225c90a3-019a-4255-8c6e-39d08d17009c,9e34d6dd-b164-456e-988b-668dbfbb34be,vi,"cuộc sống, sinh hoạt",1
+420ef860-e731-4b9e-84d4-606627752e6e,da188639-23a7-45c6-bb41-8c0f35489468,vi,xã hội,1
+05dd34bb-ad14-4d2f-883d-8bd18e1ae01c,59386410-d91e-487a-80c9-70a4476bf422,vi,trường hợp,1
+b2557a4d-4017-431a-93a8-29a801cbb928,af0b4925-421c-49ad-b0bb-680374b84016,vi,ví dụ,1
+05cb1384-eace-42a6-96fa-f1bf0ba63386,ac67ce20-bc2c-49d5-a73c-377897636132,vi,đặc biệt,1
+17bb06ef-5099-4537-9fd1-251a8a7c8aad,6ec14f3c-adcd-4b4c-af40-d9528f8e2cf0,vi,bình thường,1
+3d431e30-55a5-4e01-ad28-859c19543b00,86d458fb-e541-44e7-96ff-d2ff4b1218b7,vi,tự do,1
+45a12ae9-1dfe-4c68-92d7-4cbd5265e9df,3b678c56-d1ea-427e-bcc2-23a62a42b899,vi,ông (của mình),1
+b208dec5-5b6c-4e40-90ce-263a69d365e5,735d456d-a9c4-4ceb-81ab-3f702748fcf0,vi,bà (của mình),1
+4794c36e-b184-407d-a368-55693bc15439,18afb557-4fff-4912-b9e3-e8bc4b9d19ad,vi,cháu,1
+ca9b80b9-65ee-43a2-8025-77d410538455,bdef1ce2-2721-4d78-b0ed-4c10bd31fffc,vi,họ hàng,1
+846ea1d8-bbd0-4233-81a0-14f8587e3925,511e67b9-8354-4436-8d1d-e8be74e9bd56,vi,chồng (của mình),1
+a562716a-59d0-4973-8e72-30f8e05c284c,9e125fc8-64fb-4330-9ab2-bd77e2cfc577,vi,vợ (của mình),1
+b066889e-bdb4-4e60-9c19-9f5a973dd1e9,46abf42e-5291-4001-8c33-94728375fa45,vi,con trai,1
+630f08bf-e159-4e5a-a51a-dbacb332c0aa,495e4bd3-aac8-40fe-8294-92ebfc842529,vi,con gái,1
+c0ffad9f-8d68-4d6c-bf76-73088364588c,0ef1254e-5702-4c8a-b3a9-54e78a65c739,vi,nuôi dạy,1
+209f6b6a-e932-4106-96dc-5aa424261789,1f2fd48a-7abf-4f97-8c93-e997bd21b7a1,vi,được sinh ra,1
+3b55e659-073b-475a-9bf9-cb208f3d512a,9ac3687e-7674-4177-a8e4-c2b3950b460c,vi,lớn lên,1
+9552bd38-4705-4d53-aeb6-fb2617a1e3ca,ee656f64-0636-43cf-abae-8622c1b8c716,vi,"quan trọng, quý giá",1
+c5f16fdf-a0f1-47eb-906a-c5cac7fbe075,95a99dfa-e5fa-4e08-97d7-a67a79223028,vi,tham quan,1
+501f1cdc-fa1f-4792-b3b5-aa9c0eadd77e,558ae4a3-6a39-4f59-9208-1d836a1150d8,vi,nhà trọ kiểu Nhật,1
+c88a906c-eff5-4155-a736-9e530f30411f,d81c7349-7aba-4b9b-9e1c-6bddcc0e400a,vi,lưu trú,1
+6d0103e9-a82c-4a8e-89ee-914844b46a68,2145cb7d-f513-4080-acbc-ba9e6b26eea5,vi,"chi phí, giá cước",1
+c5c71a2f-5e3e-4fca-8044-c99e074988c7,2f5f50f4-0f07-4846-9ce4-dc715fa02cb8,vi,hành lý,1
+f54e3c94-843d-4963-899c-9bdcbefed88c,74e75491-20ca-4deb-b982-e9024f103742,vi,sân bay,1
+5f50b605-0f37-48b2-9772-16ae8170562d,ba98383c-6d9c-44f3-8694-889abbe0333c,vi,máy bay,1
+bad1ca34-8b3a-4358-99f1-22e2b3b10268,8291bcb6-824b-4127-8800-8b26aa501684,vi,"đổi tuyến, chuyển tàu",1
+7a99e1f6-5a06-4bad-9ee1-0089e8b402a2,29f4e2a5-4a5b-4434-a821-c7428af7d99b,vi,một chiều,1
+fdbde9d6-99b0-4261-bd2f-8a94125edba2,0c530c74-75f7-45b1-982d-1676e184a304,vi,khứ hồi,1
+47d36c05-9796-4442-9cac-3a4e80a874b2,89fc0ecc-c58b-46b6-9878-224071df94b0,vi,khu vực lân cận,1
+52d3ad87-4996-4586-9655-f9b109287d1b,c3d9749b-d59c-477b-b7e0-cb852c3b480e,vi,hướng dẫn,1
+0a5a3419-f3c2-4e72-84e9-10f361a6a505,d5a16f0b-b89a-4b96-add2-e254eb99250f,vi,quà tặng,1
+332b40d8-8f61-4b10-a5a0-7efdeb7a042e,463ee7f1-b350-4292-91ed-07cf8bf1fed9,vi,"lời chúc mừng, quà mừng",1
+5629f0e7-4579-4cfa-b78f-91d4a83eab20,595afb2f-a28b-4f35-9051-d3c1b423baf8,vi,"lời cảm ơn, quà cảm ơn",1
+40ab43a3-cca6-4acb-81cb-245fce609508,bd4c4245-ede4-4a2c-9b69-a54905928bc3,vi,thăm người bệnh,1
+020a124d-2bc8-44f4-9281-857a8efcf235,f5d9bf3f-bece-434a-9c5e-23fb74de9091,vi,đến thăm,1
+61324474-c32f-45a9-a559-e4ddb193cadc,481bebe3-850d-46a7-8bf0-d84ddf42a00a,vi,"giao, chuyển đến",1
+7cc57736-ba28-4acc-8542-d06c8d4ea97e,4a971301-d9f3-4646-9230-1ebf2cd738bc,vi,"sự giúp đỡ, chăm sóc",1
+e6acfdbd-615a-474b-9555-691bbcda0f7d,bc1705e9-173e-454d-8beb-540d4392b29c,vi,"tốt bụng, tử tế",1
+dc17f942-f8e4-4986-8928-6ba90e5e057c,7c088846-2a1a-4dd8-898f-4ab7cdca9fd0,vi,"sự khách sáo, ngại",1
+41d0996c-0f8a-459a-93d6-856b945fbb90,c9eb6786-248d-497c-91e7-5733d5ca0d47,vi,"xin lỗi, áy náy",1
+fc7df71d-4d6b-4fbc-b7d1-410c38150083,12ff03a1-e094-44d6-9344-10dd7547acc3,vi,"xin mời, xin cứ tự nhiên",1
+d1442a96-a6ee-44a1-87e5-83f120ad2a16,f6382e84-a8bd-4209-a202-abd348afb5cb,vi,"mong được giúp đỡ, xin gửi lời",1
+84d5dc89-d717-4e5c-945e-e01e9b639ef0,8fb1206a-47bc-4a6b-9d9a-b1dd7bd1bca0,vi,tiền lương,1
+2cd8192a-5d4a-4edd-bbd9-359c72c8d256,f51d7316-adfb-450d-97fc-daf65d8941eb,vi,phỏng vấn,1
+82df7be5-4b11-492b-acdd-c58239d1dccb,3f200ec3-9755-4d41-bd86-f131635842b2,vi,cuộc họp,1
+04b23c63-e1ed-468e-83c4-21072309b690,c87af968-7cd1-406e-bf2d-a57aa2d8d58f,vi,tài liệu,1
+b61b64b0-8c0a-4ed3-9012-083e25fa55c3,a118f974-e04e-45a2-8ee6-cb3556656fce,vi,in ấn,1
+29c07fa3-a13a-42dd-b31f-f452d27a88b0,5e4e7647-47a2-44aa-a76a-0007558c0cae,vi,chuyến công tác,1
+5e46d690-95c7-4fd0-8e9e-ed4bda0c594f,d0737b65-06e8-4a92-9d1a-6625d71781a6,vi,kỳ nghỉ phép,1
+03141849-e02a-4277-a4ee-56ab616f5df1,1bc2dff9-67f7-4ea2-9ed7-e421913facc2,vi,phụ trách,1
+0703afbf-ba73-4666-a7dc-9b507ae58f59,1a1237c9-f909-48d8-a81f-993f9b96eb49,vi,tuyển dụng,1
+acbdcd8a-fc47-4074-b812-f21c7bc0132e,ac53de23-98a6-4149-8959-b5745d14cb0f,vi,thông tin liên lạc,1
+124ec0d7-df8a-4ece-bf48-d6fe0acc9d7d,74b548f2-4298-4e03-84fb-5987edafe1f0,vi,buổi trao đổi công việc,1
+e96a4a67-1ed6-436c-ac38-f3d073cd570b,708ed949-12cb-4fba-b99a-2047f7fafcb1,vi,hình dạng,1
+57309598-ca2e-49ad-93dc-891019390d39,4acdcc41-d27b-444a-bc61-f9913f3c72fe,vi,màu sắc,1
+80bc9fe4-3145-45eb-9417-91a47cecea58,768eeedd-9577-4cd9-beb4-a305c1b43c11,vi,mùi,1
+46c648d6-1cad-440c-b070-f7338a95cbd6,d7591843-432f-48f8-b296-755507ad1db6,vi,âm thanh,1
+e4f3afdf-9838-4f39-a5f5-698ba8c134c3,14280009-e5b5-4966-b286-a24bac9d7b18,vi,"hợp, hợp với",1
+0881e812-9539-48e2-aecf-310e9324c5cb,4e192602-a8ad-4df7-a388-b93f561c033b,vi,thay quần áo,1
+a7736cac-da49-46ab-afbc-1dfac05cbc2b,7e446c00-87b7-4faa-9f7f-a4ca416e0b6d,vi,thay đổi,1
+3c2b1949-c5b3-4219-95e0-efe144d8c98c,64c8e911-c561-42b8-8c6f-8f76a720232b,vi,được dọn gọn,1
+415cd7cb-107c-4382-91b8-2e77b8090f98,5a8815c4-fe32-4299-b727-adcfd15ded7d,vi,bị bẩn,1
+b166ba92-7da5-4e08-a607-2d3e7f21e808,84169fc5-5e73-4089-ab45-b5e14e5e13c1,vi,"xếp hàng, được bày",1
+f87ae1aa-f05b-426e-93fb-aa7a78748839,73d63fad-42c9-4507-8e13-f1f42fc9e7f4,vi,"lịch sự, cẩn thận",1
+260f08fb-5355-41ea-9e24-18066d1d3200,3d871fe7-42f5-4384-9b91-89d3d5b1a345,vi,phức tạp,1
+6e2eed93-4cb2-4b3d-b08d-18d8c9d57eef,57a1b206-348b-45b2-bbc5-14b6eb31a632,vi,"quá, vượt quá",1
+2ed8316b-ce3a-46db-87fa-62ecaed854bd,59091f81-7b75-46ee-90e8-0996701884ed,vi,đủ,1
+afc14ba4-29a0-461d-8eb2-e2e211012b67,6eb3b869-16a7-46e9-bc9b-855d0776ca44,vi,đơn giản,1
+c5baec4e-d6c8-4a99-85a2-8511bf1ac996,c02c2f51-fc56-41f3-baaa-01132d4a402a,vi,"không giỏi, không thích",1
+2948d426-a1ad-4ad4-913d-44927faba729,c7c9105b-b1a7-4fc9-9032-f14d7fa96fb7,vi,"giỏi, sở trường",1
+920fc917-e202-4629-ada6-c0cc0669ddee,5bf4662c-f1e0-4283-8d2e-b56e29c47959,vi,"khá, tương đối",1
+5fee7b38-306d-4499-b5d2-11316c5cc19d,5e4f6231-74e5-4e4a-8fd5-71e9fe6b2f70,vi,đặc biệt là,1
+13e4ed90-bb4d-415b-83b8-4ea2850b6c57,076825be-a141-46bb-8df4-1d320946a2a5,vi,"suốt, hơn hẳn",1
+df7f3432-1f17-4eb6-9994-bbcccf4c5ce8,d1b2314a-4ad4-40be-9a80-71acb73c41bb,vi,dần dần,1
+4740696f-811b-4d18-b82e-08e5ea00740a,04e68424-fdfb-442e-b255-a1b258930bad,vi,so sánh,1
+b9c5254a-c775-4e86-8b9e-090e4f5781af,286ada55-6d13-46ce-a35b-bccb9b473cdc,vi,sự lựa chọn,1
+47ff0982-07b0-4102-b560-d7df6d733c03,023f9018-863d-4d67-b458-c42076745785,vi,hỏa hoạn,1
+1f29ecb7-cfbc-47d4-80f0-aa0b5153e563,dc2a9cb7-6764-4fb9-987b-5b6982621f7b,vi,mưa lớn,1
+58e198eb-f8cc-4e1d-b108-5549aeda7f9d,154446fc-79e7-4fd6-8d37-ed35ea2bfd1f,vi,động đất,1
+b5218cf3-6b88-4832-92cd-4b1826a98e7e,07b93e3b-fd60-4bf3-8ba3-2ef438fd4ae8,vi,bão,1
+3a234929-e888-4284-a650-f996da1c8cf4,e04f6a58-34e6-49de-a146-1a2b3ae9e85b,vi,"chạy trốn, sơ tán",1
+a834c526-5a21-4a36-be91-9445f42c4457,83ffc654-9051-4452-875a-59f73d612276,vi,"giúp, cứu",1
+14865fe6-dcaf-4cf3-a7a6-1302bda11b15,1dff98af-8933-4f67-87f1-51e3e7984ff5,vi,nguy hiểm,1
+26f0e116-ea46-4918-96bb-3ccd2cee10a2,8b186e06-7a37-451c-9973-a654d7d835aa,vi,an toàn,1
+c79a80b2-234c-4357-a355-da1dff63c096,2c2e3b0d-d380-476f-9ab3-a046dc732dda,vi,lối thoát hiểm,1
+60ef66e9-f0dc-4bf9-b438-498427e75785,65a1dc49-4918-4778-a3ff-9e4c91bd5f61,vi,sơ tán,1
+d0e46029-1859-498f-8362-8d78a31061c6,040ea146-1e4b-46f3-a2d1-2f8e7ba46ad3,vi,nếu,1
+5019e66b-51d6-4bc8-bfcf-7e69de6938c8,d2cc06a4-4eda-4b13-853c-7f29e3091b93,vi,dù vậy,1
+298e9a49-b236-4517-964b-4abfd3b995c5,65034398-4749-4551-bb94-487f058d8f52,vi,lúc nãy,1
+d937f73a-54e7-4435-9cb1-7670f1122ca6,5d70cd7e-dd6a-402f-b076-b06c85fa4703,vi,vừa mới đây,1
+1985d6ae-88c6-4c04-b1e1-ff2b8f24a9b0,0e35f416-e769-4ae6-b1b7-cbfdec3c142c,vi,chẳng bao lâu nữa,1
+da37de59-5554-4a4f-9a0b-8340efdd569f,2fa8da33-1a6e-4737-bca4-811c08cd62fe,vi,sắp sửa,1
+cf096a98-fcaf-4ea2-8f3c-e1fb510d2875,80f72e4e-7421-47be-af1f-bbd7185d81dc,vi,từ bây giờ,1
+722bce11-e3af-43c7-bd64-f1516029996d,d7a9063b-042c-4d6c-ba2e-23401f8eea33,vi,vừa nãy (lịch sự),1
+0f9708d2-4919-4dca-843b-810088a02862,da65d083-7e84-4764-8f69-84e301c14385,vi,ngay lập tức,1
+ba89fae7-0076-4520-a767-a3f6150c0551,ab57670c-7a9c-46d6-876f-33ad85f53a9c,vi,"vẫn còn, chưa",1
+b58daae5-f3cd-420d-be1c-0727c475eac3,257eb782-1de5-49e5-a6fe-cbe53161bd2d,vi,cuối cùng thì,1
+d0fce89a-6aaf-4bc0-a254-e38514193de4,42b8a5ff-0e32-4259-b46d-a2f085789f7c,vi,sự đi muộn,1
+2ce6bb24-0fed-4223-92ed-90ab189ac211,97be4c48-48b5-4132-b5a0-db846d7a8095,vi,thời hạn,1
+1083d6cd-1ef1-47b3-a0bf-7bee595daafc,bd82f05a-2482-4c92-a7a2-d5c1209b955f,vi,"trong lúc, trong khoảng",1
+41ac2f7b-5d57-4a81-8c65-240cd441ee85,3372be34-a341-4d9b-b68a-d8dd59c6bced,vi,tin tức,1
+1b85a70d-0c25-4de7-bbd6-2ad0d9391135,49fef6a2-6c27-4e12-b226-2a973cfd058c,vi,bài báo,1
+9c9f3775-01bf-4c8e-84b9-cd840105d6e2,9a236c99-ba98-4608-9e86-5d648568fcc2,vi,báo,1
+09bf1a25-9308-46f0-b73b-4fdf28d262ac,30dce0ec-1ac5-4250-8c39-f39497ac13be,vi,chương trình phát sóng,1
+09d08085-ad5c-46ae-b804-b6d4f5ee42c6,36a2f622-bca2-4203-8474-62c213fcf405,vi,"sự công bố, thuyết trình",1
+d9d6bd02-794e-41ec-826e-b60cf6f453f2,0d174d20-f39c-49d1-9bd7-3cc5a3f04163,vi,"chủ đề, chuyện đang được nói đến",1
+6de881d6-3a5e-4e45-8a61-9a6023ce964f,acb1e31b-a778-4652-bdeb-1f0ccd00ac44,vi,tin đồn,1
+26a47ac9-7e23-4d02-b57a-9573cdbe8ffd,3db2cc24-b274-4da0-9619-9d7ba85cf9a1,vi,"tin báo, thông báo",1
+082904bb-8514-4299-a3ec-92110e83c483,9d549bbb-0c3f-4337-8abe-491e5409df32,vi,thông tin,1
+ea92f7c7-20ba-4551-8018-58c83671a821,193b9553-a1c4-4feb-87dc-3849d8c94e9c,vi,nhận,1
+d8f3b330-8896-4acc-bb90-d23bfb098113,44a1e9c9-0b75-43a3-8e11-85c55ac95e54,vi,truyền đạt,1
+48aff242-3142-45c9-a5c0-92060a22d1e0,48f21e8b-4cf2-403b-9ea8-2af4d6a2b78d,vi,báo cáo,1
+3a63dda6-9622-458b-9534-7e1018e12861,c08ca917-e635-4731-a7bf-d7494c32b058,vi,trách nhiệm,1
+feff431c-b739-41e6-8168-317e27fe25d5,7fb380e4-d498-438d-9c5f-c2b24e70405f,vi,giao phó,1
+76cd67ca-5393-4d49-bfa4-1fd9a8afbb68,babafaec-1fc6-41dc-8c20-1b8199329dfd,vi,"người trực, phiên trực",1
+d14a9d95-4176-46f0-b84a-8da1450419ac,f4cb1d2c-c9f3-4a0a-bd16-5c92c86078bc,vi,sự có mặt,1
+1c8e9f61-e8e4-472d-9b62-dda9fb3a33fd,af72948a-2385-40f2-8247-c5e448905e11,vi,sự vắng mặt,1
+3c23581c-0b2d-403c-8be5-47d1535d3c07,af706f91-8dc2-46ce-a59c-906f8da47c22,vi,giúp đỡ,1
+55586064-edd7-4895-8fb1-3649f5a5cd04,a6a40c95-cb08-4642-8c75-b1946e1257a9,vi,chăm sóc,1
+a3f2a853-20b3-4f8b-94e9-c53de8778435,3af1ca13-8380-490d-8c4e-81b27e0bdb3f,vi,nhân viên phụ trách,1
+37d956be-e979-4610-96a4-a9b1cd2e33a3,799cf803-67a8-4ec2-b48a-440108a8746d,vi,"nhờ, yêu cầu",1
+fe96fa36-26cc-4e30-b5f8-d488408443df,cd878d77-4807-44a6-ad1d-8acc7369f580,vi,"sự thay thế, thay cho",1
+5e066859-9404-465e-a1f3-3b483cab4fa3,537195ce-1b28-4c36-93bf-8abc080896cc,vi,nói (khiêm nhường),1
+38597600-e38c-47d4-9ac1-24b53e3ece22,88c7793d-b39a-442d-9963-02c3d20752d3,vi,"hỏi, thăm (khiêm nhường)",1
+88c18ccb-2ed6-4418-be01-d3f3f512d26d,9a12417c-0650-47a1-82b7-68ca4de1c9fa,vi,"đi, đến (khiêm nhường)",1
+71a914af-5508-40b3-8f7b-495dd083994d,d0256df4-0542-456f-964f-659eaa459edc,vi,"nhận, ăn/uống (khiêm nhường)",1
+3ebcedda-3933-4662-8ebf-811138d96358,c665bea3-6dca-4a4e-b48a-7c50bf27081f,vi,xem (khiêm nhường),1
+52d5e869-029e-4bbd-8ab2-2a18ebbb0b35,62673c29-ead2-4596-8b08-43e1b616fa45,vi,biết (khiêm nhường),1
+1ac1c22e-4d21-4953-8a88-a1f7c0e31e64,18c47320-5710-43eb-8239-9e23015b85cd,vi,sự thăm viếng,1
+e86c7787-10d2-4b82-a24e-ab83a635c1ed,f1271ef5-250b-4a87-a6bc-b354ba2877f2,vi,bận (cách nói lịch sự),1
+2c342910-ea94-4fc9-9d93-40255a74726b,37cf83a3-1ba4-4230-9260-2629c386bcd5,vi,"thất lễ, xin phép",1
+7216a2b6-cc94-434b-931d-6f12ca0df294,85687ebf-05f4-40c9-8220-e4b56360d424,vi,"sự hiểu, chấp thuận",1
+1d273904-07fd-46b6-a47b-0389e1fe912d,da4fad93-d3d6-4bd4-b288-753a7914315a,vi,một chút (lịch sự),1
+a2074df0-a8af-4f5c-b23c-0f1110918676,5a8fa42b-686b-4f9b-b065-cd1add86684f,vi,lòng biết ơn,1
+ffeea2af-5cf1-4756-ab84-19ecb7def1c2,7e4dfd9d-1f41-4cea-a327-b52d7fd0e79b,vi,"nhờ có, nhờ vào",1
+fb1c8b01-8653-4dc5-bbdd-2247766265db,f7a30342-cd71-4232-83fc-63f5b0a7fd8e,vi,"trái tim, tấm lòng",1
+ae769fb0-8b02-44c4-98b8-4b59c66a6e94,4ea38a02-3b38-4491-a7a5-19e8a61dc085,vi,"quý vị, mọi người",1
+3b94f569-1140-4acf-b096-448cb09a09d2,3abd1674-f058-47f3-9507-48eae3faf38b,vi,"phiền toái, làm phiền",1
+c122a683-2512-403c-8a2a-6e1f50338f3d,68c193b0-5d5c-497a-9dbc-1daf29794928,vi,từ nay về sau,1
+74bac614-1904-49ba-929d-002014a79b7d,def407e4-f4c2-4d2c-a067-1e9ba403b4d2,vi,"một lần nữa, dịp khác",1
+58a31a73-e17a-4e3a-bfe6-5d538810597d,7bfaa80f-93c1-43f2-9fbb-7f2d90f72f4d,vi,thật sự,1
+d0841863-ae8b-4ca3-a4c1-66835a5dab71,4e4b69c3-d120-4a0e-9d12-ed757d49507e,vi,cảm ơn/nhiều (tùy ngữ cảnh),1
+af5616de-ff5c-4273-b961-5d62b9ddaa32,eb1dca2b-fdfb-442f-86bf-640f15e85493,vi,chúc mạnh khỏe,1
+f36af391-6aa6-41aa-8c3f-dfc16497b836,3f8ea47f-160a-4cf3-9fe5-9e0b42502842,vi,mong được giúp đỡ,1
+9e68dcb1-4538-4391-a27d-84985ee617e0,8dcaf034-2cb3-4dff-aca4-da750319a77b,vi,xin phép (ra về/kết thúc),1

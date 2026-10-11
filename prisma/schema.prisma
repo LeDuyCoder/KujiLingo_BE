@@ -34,6 +34,23 @@ model courses {
   @@index([order_no])
 }
 
+model translation_cache {
+  id              String   @id @db.Uuid
+  content_hash    String   @db.Char(64)
+  target_language String   @db.VarChar(2)
+  source_language String?  @db.VarChar(16)
+  source_text     String
+  translated_text String
+  created_at      DateTime @default(now()) @db.Timestamp(6)
+
+  @@unique([content_hash, target_language])
+}
+
+model translation_monthly_usage {
+  month           String @id @db.VarChar(7)
+  character_count Int    @default(0)
+}
+
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model example_sentences {
   id            String        @id @db.Uuid
@@ -59,10 +76,12 @@ model favorite_vocabularies {
 
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model folder_system_vocabularies {
-  folder_id     String       @db.Uuid
-  vocabulary_id String       @db.Uuid
-  folders       folders      @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  vocabularies  vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  folder_id           String       @db.Uuid
+  vocabulary_id       String       @db.Uuid
+  meaning_vi_override String?
+  meaning_en_override String?
+  folders             folders      @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocabularies        vocabularies @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([folder_id, vocabulary_id])
   @@index([vocabulary_id])
@@ -889,4 +908,3 @@ model user_achievement_showcase {
   @@unique([user_id, slot])
   @@index([user_id, is_public])
 }
-

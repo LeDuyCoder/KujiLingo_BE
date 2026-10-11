@@ -1,0 +1,801 @@
+﻿id,question_id,answer,is_correct
+6c23ec3e-b159-440d-b5c7-6ec0cda36c22,605b2fca-2f7e-4f9b-866a-bd4bf551b0ef,Sao bạn đến muộn vậy? Vì tàu bị trễ.,TRUE
+491251fc-0c11-427f-8540-b02dc2877570,605b2fca-2f7e-4f9b-866a-bd4bf551b0ef,Tôi đã mở cửa sổ.,FALSE
+c1179282-f2c5-4987-b916-38065338c158,605b2fca-2f7e-4f9b-866a-bd4bf551b0ef,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+5f90d827-c55f-47f7-b03c-95c490d8faa4,605b2fca-2f7e-4f9b-866a-bd4bf551b0ef,Tôi sẽ mua vé trước chuyến đi.,FALSE
+41f58422-8687-4652-b72e-87d3f78071a3,844a7fa5-ada7-4402-8e71-771a1a3a80e4,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,TRUE
+3c066c94-4eba-4c3c-8cae-e88274005775,844a7fa5-ada7-4402-8e71-771a1a3a80e4,Nguy hiểm nên đừng vào đó.,FALSE
+c3a48f3c-5a70-4fc4-a4ee-6da7a95e4920,844a7fa5-ada7-4402-8e71-771a1a3a80e4,Kanji này đọc là “deguchi” (lối ra).,FALSE
+f9bde28d-c1bc-4d76-a9c2-4ae85737d408,844a7fa5-ada7-4402-8e71-771a1a3a80e4,Xin hãy lắp theo đúng như hướng dẫn viết trong sách.,FALSE
+db74215d-6b1e-4ac5-8629-ac68d4a8468f,1f0ea012-d05a-492c-8433-a8e2ec5a33e8,dù vậy,FALSE
+4b242216-9b7e-475e-8a7b-9adf1b0121f7,1f0ea012-d05a-492c-8433-a8e2ec5a33e8,"sự mời, lời mời",FALSE
+c2372328-a58a-44ce-baa7-acad1e992da2,1f0ea012-d05a-492c-8433-a8e2ec5a33e8,đến muộn,TRUE
+698922e4-b9e4-4b49-83ac-8dedf0991672,1f0ea012-d05a-492c-8433-a8e2ec5a33e8,"đón, chào đón",FALSE
+91214022-863d-4a1c-9bac-ada5175f1cc6,f2146132-c24d-4c01-8bd5-535f5c75a58c,so sánh,FALSE
+d2611937-afff-41e2-93a8-b0ff4409f4f6,f2146132-c24d-4c01-8bd5-535f5c75a58c,ước mơ,FALSE
+8eb95ac4-d0e4-42e0-ac7d-0c931ba5e3fe,f2146132-c24d-4c01-8bd5-535f5c75a58c,"bị lạc, phân vân",TRUE
+d1514c56-6b6f-4162-9000-c371eb9d8f0c,f2146132-c24d-4c01-8bd5-535f5c75a58c,"quá sức, không thể",FALSE
+ac0e3d2a-c3f9-40f0-88d2-59a2d93db982,ed8b9f91-78a0-42ff-9986-0f02c71ac44b,gặp khó khăn,FALSE
+3c2f7e05-d5ac-40a3-af06-0718f4321df8,ed8b9f91-78a0-42ff-9986-0f02c71ac44b,sự hỏng hóc,TRUE
+03098838-e05a-40d9-b22f-5dc884b97f08,ed8b9f91-78a0-42ff-9986-0f02c71ac44b,sự nghỉ ngơi,FALSE
+dc8659ee-3264-4b27-bd9c-de8ec7eade9b,ed8b9f91-78a0-42ff-9986-0f02c71ac44b,sân bay,FALSE
+ea1697d2-ee8a-4565-a787-de10cbc3c696,05724055-f2d0-4335-99f2-51e90de22721,Ấn nút này thì cửa mở.,TRUE
+20e8b5ca-005d-4495-8e91-d361feccd631,05724055-f2d0-4335-99f2-51e90de22721,Hôm nay trời nóng.,FALSE
+f15cb17d-3eae-4c92-acce-09f2e2b2982d,05724055-f2d0-4335-99f2-51e90de22721,Bạn đã tặng tôi quà lưu niệm.,FALSE
+ff6f79bd-4773-4fb8-8e17-893bfafa54ba,05724055-f2d0-4335-99f2-51e90de22721,Cùng xem phim nhé?,FALSE
+0a0d1456-e66d-4d27-a3d5-86046ebcbb3a,ae7d934d-d617-43f1-a699-d8ef7ccb9b79,Để tôi mang tài liệu ạ.,FALSE
+80d40593-0c48-48d9-9892-a606730a2dc9,ae7d934d-d617-43f1-a699-d8ef7ccb9b79,Tôi được thầy/cô dạy tiếng Nhật.,TRUE
+efe3ac23-8a8a-439a-b3c5-c531df338c5b,ae7d934d-d617-43f1-a699-d8ef7ccb9b79,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+48006623-0e70-4e7e-9e16-77270b8a86ba,ae7d934d-d617-43f1-a699-d8ef7ccb9b79,Ngày mai bạn không cần đến sớm.,FALSE
+5856405e-3a62-4353-b2b0-7f47e1d37f67,e5ec3bb4-2f36-4d64-81c4-dd49a4c95e82,Từ đây có thể nhìn thấy biển.,FALSE
+7ac0eff7-2e45-4082-a5b9-37af80441303,e5ec3bb4-2f36-4d64-81c4-dd49a4c95e82,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",FALSE
+5cbc3976-5fa3-441b-bc5e-560735ff2c39,e5ec3bb4-2f36-4d64-81c4-dd49a4c95e82,Thầy/cô nói ngày mai có bài kiểm tra.,FALSE
+42f544b6-fb38-4678-a21a-bad1da06b0ba,e5ec3bb4-2f36-4d64-81c4-dd49a4c95e82,"Dù trời mưa, tôi vẫn đi học.",TRUE
+a92524ee-ce27-41cf-85ac-d8257cf88e01,b24d5062-197f-4397-8f28-2a8667c1e213,Tôi có thể đọc được một ít kanji.,TRUE
+c876dc70-b3e0-49c3-ba89-5fbf6d3fa363,b24d5062-197f-4397-8f28-2a8667c1e213,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",FALSE
+8f6412ca-7678-4d33-a31a-02ae8f1cffc7,b24d5062-197f-4397-8f28-2a8667c1e213,Tôi được thầy/cô khen.,FALSE
+a808411a-f6eb-4ed8-a91b-bb35e643eb79,b24d5062-197f-4397-8f28-2a8667c1e213,Tôi bị em trai ăn mất bánh.,FALSE
+45486b5a-a5c2-454c-8a79-59cb59e50c86,33044345-b36f-4486-8f2c-902d2f32de90,Từ đây có thể nhìn thấy biển.,TRUE
+020936f5-22f3-4d8a-839a-8d1fb746beb3,33044345-b36f-4486-8f2c-902d2f32de90,Xin hãy chỉ cho tôi cách đi đến nhà ga.,FALSE
+8dc93dbc-5de8-451c-8bd5-ac6c7ba295f6,33044345-b36f-4486-8f2c-902d2f32de90,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+084ba3f4-e191-4e9c-bb99-8590e86fff92,33044345-b36f-4486-8f2c-902d2f32de90,Giám đốc đã về rồi.,FALSE
+458bfc1a-2469-412f-930f-7d94c5b61488,16f52c23-a50b-47db-b1c0-b3904f23cd0f,một chiều,FALSE
+a3030680-dee4-4af4-82f1-bd7d1caa34e2,16f52c23-a50b-47db-b1c0-b3904f23cd0f,kinh nghiệm,FALSE
+b35b85f3-90d0-40a3-8e35-cf29b5fda830,16f52c23-a50b-47db-b1c0-b3904f23cd0f,xây dựng,TRUE
+f70303bd-bd34-4e0a-98a2-8e294764444e,16f52c23-a50b-47db-b1c0-b3904f23cd0f,"nhận, ăn/uống (khiêm nhường)",FALSE
+93874435-7267-486c-a053-c6cbb4826768,c541a048-417c-4600-8257-e1fb202bc3e8,quầy tiếp nhận,FALSE
+7bd5df29-c51f-4ff6-a6aa-286b9c24c96e,c541a048-417c-4600-8257-e1fb202bc3e8,sửa chữa,TRUE
+a53d762f-6ff5-45c8-96d6-7c041ae63ed5,c541a048-417c-4600-8257-e1fb202bc3e8,giao phó,FALSE
+83d82a82-815c-4385-9d24-73615f10ff10,c541a048-417c-4600-8257-e1fb202bc3e8,phụ trách,FALSE
+0db25558-0308-432d-8eff-9292b389acbd,f791e1b4-dbca-492f-92ba-dd5694960f1f,làm hỏng,TRUE
+a64e598a-80f1-4f32-b103-433bf675595d,f791e1b4-dbca-492f-92ba-dd5694960f1f,"nướng, rán",FALSE
+db614b0f-0f5a-4e72-ab2f-19050286e007,f791e1b4-dbca-492f-92ba-dd5694960f1f,"vị, hương vị",FALSE
+3f0cea08-f7b2-4108-bcff-966604656762,f791e1b4-dbca-492f-92ba-dd5694960f1f,sự vắng mặt,FALSE
+e74736ae-f1f5-42a6-8cfd-80ab72a836e6,cce5ac4d-08ea-49e1-b19e-da41dd503976,Tôi muốn có đôi giày mới.,FALSE
+3b876372-e88f-4801-8a71-ac9b363c8a0b,cce5ac4d-08ea-49e1-b19e-da41dd503976,Tôi được thầy/cô dạy tiếng Nhật.,TRUE
+3ad7a222-4f0b-467e-b4ae-3f36399b9194,cce5ac4d-08ea-49e1-b19e-da41dd503976,Có quyển sách ở trên bàn.,FALSE
+1add2748-5c0d-4e7b-ba61-22d4cb02fe79,cce5ac4d-08ea-49e1-b19e-da41dd503976,Tôi phải uống thuốc.,FALSE
+41fe408b-03ca-4972-b14f-621e6b3e14d0,c3119c49-ea42-4c2d-bc55-49de4421f1d8,Trông có vẻ sắp mưa.,FALSE
+cb27b700-8529-42d5-8beb-4f464acaceda,c3119c49-ea42-4c2d-bc55-49de4421f1d8,Tôi chụp ảnh ở đây có được không?,FALSE
+ed00e5e2-d42c-4ed1-a8e4-277f6bfcf253,c3119c49-ea42-4c2d-bc55-49de4421f1d8,"Dù trời mưa, tôi vẫn đi học.",TRUE
+a7b070ff-1669-4a5f-b628-09b6add7cf49,c3119c49-ea42-4c2d-bc55-49de4421f1d8,Sao bạn đến muộn vậy? Vì tàu bị trễ.,FALSE
+9b492cba-cd2b-4733-bc6c-ec0d660635ab,e6366498-8d00-4b2e-a8ae-256706b5daa8,Xin hãy viết tên vào đây.,FALSE
+494d5c99-d82d-4a36-82d1-f6ed48a3861d,e6366498-8d00-4b2e-a8ae-256706b5daa8,Vì hiểu một chút tiếng Nhật nên tôi thấy vui.,FALSE
+784dfb77-30b2-45b7-b57a-6b1a68f17a07,e6366498-8d00-4b2e-a8ae-256706b5daa8,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,TRUE
+7af9f2c2-8842-4270-a5ad-7fd8c5c35d82,e6366498-8d00-4b2e-a8ae-256706b5daa8,Ấn nút này thì cửa mở.,FALSE
+aa9f6e61-156a-4a2a-a208-7736f512613b,72a042ab-206d-4f17-941f-71f7e04bfa17,Tôi vừa nghe nhạc vừa học.,TRUE
+544d786f-9535-4cbe-96b0-fe69db5af1b4,72a042ab-206d-4f17-941f-71f7e04bfa17,Cái bánh này trông có vẻ ngon.,FALSE
+d6c31716-37a5-4504-9fa2-3f4fdf81ea3b,72a042ab-206d-4f17-941f-71f7e04bfa17,Hôm qua tôi đã ăn quá nhiều.,FALSE
+76ba95e8-869c-4fa6-8d4c-53bed6e6bce3,72a042ab-206d-4f17-941f-71f7e04bfa17,Cây bút này dễ viết.,FALSE
+8ce3ea5a-1449-4eb4-83af-a8dbe641ee51,e38d0b4e-e6e9-4bab-aa3e-817abca49ca0,Quán này vừa rẻ vừa ngon nên tôi thường đến.,TRUE
+83778c7a-ab75-4ae9-89b4-f3128230c28d,e38d0b4e-e6e9-4bab-aa3e-817abca49ca0,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",FALSE
+1db48dd6-5a7a-4165-beb8-8a904317baa7,e38d0b4e-e6e9-4bab-aa3e-817abca49ca0,Đèn đã tắt. Có vẻ như không còn ai ở đó.,FALSE
+69da051a-7e95-42e9-a58d-eb00650730f3,e38d0b4e-e6e9-4bab-aa3e-817abca49ca0,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+3646ea2b-b084-4970-ac86-fa77266025b3,049d02f6-c5f0-4498-b9a6-12ed08198e4b,"thu thập, tập hợp",FALSE
+e8dfd38e-9d8a-478d-8b1d-724e8d6eafa0,049d02f6-c5f0-4498-b9a6-12ed08198e4b,làm việc tại (công ty),TRUE
+82f6a5e0-7744-426f-b8be-f38c9c6cbe92,049d02f6-c5f0-4498-b9a6-12ed08198e4b,xin phép (ra về/kết thúc),FALSE
+f4895776-bfc0-4baf-a424-92b5d67ecd7e,049d02f6-c5f0-4498-b9a6-12ed08198e4b,"hợp, hợp với",FALSE
+2161b4b5-0bad-4b02-8727-c75d22fd67ba,47265c77-0dfb-4cbd-9ac7-870a047a489a,giờ nghỉ,TRUE
+da7a0f00-f213-40c9-939c-511b3b1ae0b3,47265c77-0dfb-4cbd-9ac7-870a047a489a,cắt,FALSE
+d3e07597-51ab-4cc2-8a6c-0c4b6b8ee77c,47265c77-0dfb-4cbd-9ac7-870a047a489a,tài liệu,FALSE
+a6d33aec-0d9c-40b4-b5bc-c686e8f663fb,47265c77-0dfb-4cbd-9ac7-870a047a489a,"thu thập, tập hợp",FALSE
+858d6d82-44a4-416e-9a3f-e8742289c6ff,b3fc8e7b-41cb-433a-bbdc-4fed3232b599,in ấn,FALSE
+a9b0410d-7688-48c8-b8fb-76d1f53e72ad,b3fc8e7b-41cb-433a-bbdc-4fed3232b599,làm thêm giờ,TRUE
+9a150111-787d-465c-b2d2-c57133403d2e,b3fc8e7b-41cb-433a-bbdc-4fed3232b599,xin phép (ra về/kết thúc),FALSE
+8d2cd49b-ab0e-4b4d-bbf4-a0fc3894ff76,b3fc8e7b-41cb-433a-bbdc-4fed3232b599,liên lạc,FALSE
+fee232fe-461e-496c-b1b8-89c5248c2852,c75dd904-83d7-42e6-8419-46172eb140d2,"Trước khi ngủ, tôi đọc sách.",FALSE
+036e71bd-32e9-4ebf-a8ce-5c3af993c576,c75dd904-83d7-42e6-8419-46172eb140d2,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+eee8e03f-dc54-4ff0-9833-f8f9fef39790,c75dd904-83d7-42e6-8419-46172eb140d2,"Dù trời mưa, tôi vẫn đi học.",TRUE
+1de126c9-d7ef-4816-bec7-42b882eca2da,c75dd904-83d7-42e6-8419-46172eb140d2,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+72bd54bd-bdd1-4a2c-97ef-088e68084384,c50944d8-e265-4f47-8791-c863590f404e,Tôi chụp ảnh ở đây có được không?,FALSE
+ecff4bbe-4b07-4cce-8f48-a4a7e424378a,c50944d8-e265-4f47-8791-c863590f404e,Tôi muốn đến Nhật ngắm hoa anh đào.,FALSE
+4f1ed936-5f16-457e-92c0-6dbd88a763f9,c50944d8-e265-4f47-8791-c863590f404e,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,TRUE
+3b50e033-4be7-4f84-ab65-171cafa79942,c50944d8-e265-4f47-8791-c863590f404e,Bạn đã tặng tôi quà lưu niệm.,FALSE
+581efdb7-2946-482c-98a3-7fdc3e1069f3,95e17326-b391-4b9c-b272-c7b35eb26b04,Sao bạn đến muộn vậy? Vì tàu bị trễ.,FALSE
+a17d8404-2007-4aa9-a619-15e94a87b45b,95e17326-b391-4b9c-b272-c7b35eb26b04,Cây bút này dễ viết.,FALSE
+424c7898-1eb5-4dfe-91c6-42690b9b9672,95e17326-b391-4b9c-b272-c7b35eb26b04,Tôi chụp ảnh ở đây có được không?,FALSE
+259f38ff-eb46-494b-be8d-d00573f740b7,95e17326-b391-4b9c-b272-c7b35eb26b04,Từ đây có thể nhìn thấy biển.,TRUE
+b5654434-a16b-4fc3-8717-43e829feb734,9ddc24e3-edac-4cfb-ae84-bffafd1f7607,Cửa sổ đang mở.,TRUE
+04edd14c-b3ae-4f73-a177-4afdc4230d42,9ddc24e3-edac-4cfb-ae84-bffafd1f7607,Đây là quầy tiếp tân ạ.,FALSE
+54dc3774-43c8-436b-a735-47daeb2e58aa,9ddc24e3-edac-4cfb-ae84-bffafd1f7607,Sao bạn đến muộn vậy? Vì tàu bị trễ.,FALSE
+047c5a24-913d-40ac-b3b3-11c2605a167f,9ddc24e3-edac-4cfb-ae84-bffafd1f7607,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,FALSE
+35fcb159-44c7-4756-a65f-37e21470a2c2,3e9c9ad4-abc3-42cd-89ba-d59e34ef35bf,Tôi đã mở cửa sổ.,TRUE
+8366b4be-b55c-485a-ac87-f9431ee698f1,3e9c9ad4-abc3-42cd-89ba-d59e34ef35bf,Cửa sổ đang mở.,FALSE
+5275cdc7-abf9-4db9-943a-fe69042b1840,3e9c9ad4-abc3-42cd-89ba-d59e34ef35bf,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+84d30094-ca0b-480d-87b8-5dba92dd6413,3e9c9ad4-abc3-42cd-89ba-d59e34ef35bf,Tôi sẽ mua vé trước chuyến đi.,FALSE
+8cf53268-d6a9-4d2a-ba49-8b67e11f8f77,08ba3894-45ad-49d1-aa04-1ee45bcb4910,đau đầu,TRUE
+3302bd95-6f1a-4104-9e4e-dcabf748e1ac,08ba3894-45ad-49d1-aa04-1ee45bcb4910,họ hàng,FALSE
+dc1704b2-7e1f-4981-a004-dbf00ef1e253,08ba3894-45ad-49d1-aa04-1ee45bcb4910,sự khởi hành,FALSE
+fd671b7b-bc62-47a1-a393-862be5acb636,08ba3894-45ad-49d1-aa04-1ee45bcb4910,được sinh ra,FALSE
+d494311c-aef6-4be8-b6ef-7710c8feece8,b6145c58-4fd1-4ade-bc68-c629732125e1,vừa nãy (lịch sự),FALSE
+762af0b9-3019-4805-97d4-ae44562cdc75,b6145c58-4fd1-4ade-bc68-c629732125e1,"sốt, nhiệt độ",TRUE
+02638693-f389-4189-8525-2f6de420e6c6,b6145c58-4fd1-4ade-bc68-c629732125e1,ví dụ,FALSE
+e78c3c32-8b30-4510-990c-5df6535fad49,b6145c58-4fd1-4ade-bc68-c629732125e1,an toàn,FALSE
+262a7507-870e-4e7a-99b6-d656e080eb5e,759d94eb-2421-4c85-8fbe-71cfc2090a9b,cổ vũ,FALSE
+2ccde3bf-0ee2-4c86-a06c-eb1792b4995a,759d94eb-2421-4c85-8fbe-71cfc2090a9b,kinh nghiệm,FALSE
+3553b41e-ba6e-443c-b6c7-bfadb360150b,759d94eb-2421-4c85-8fbe-71cfc2090a9b,trường hợp,FALSE
+cb59cf78-f69f-4280-a69e-b92862672301,759d94eb-2421-4c85-8fbe-71cfc2090a9b,ho,TRUE
+54896b0f-9987-4342-b1cf-a53050ce347c,0ebce99a-0315-482d-9a30-c2ea6c1b882e,Nguy hiểm nên đừng vào đó.,FALSE
+21383bef-cb4a-469b-9e09-4a63f3aafd0e,0ebce99a-0315-482d-9a30-c2ea6c1b882e,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,TRUE
+b803b63c-c435-4b7e-ad2a-f30812d8f301,0ebce99a-0315-482d-9a30-c2ea6c1b882e,Tôi nghĩ ngày mai trời sẽ mưa.,FALSE
+02e960eb-e732-459c-b454-bb2c729ba13c,0ebce99a-0315-482d-9a30-c2ea6c1b882e,Cái bánh này trông có vẻ ngon.,FALSE
+9f0ebf6e-5012-4e3c-98a6-e781308971a5,ab7d7b5b-c8d1-4c91-848d-7ca49cf69f7e,Cây bút này dễ viết.,FALSE
+b9f88c82-2d72-4e1a-a224-5195c929cad0,ab7d7b5b-c8d1-4c91-848d-7ca49cf69f7e,Máy này được dùng để in ảnh.,FALSE
+348639bf-d4fe-45af-ab06-715ef19a56be,ab7d7b5b-c8d1-4c91-848d-7ca49cf69f7e,Từ đây có thể nhìn thấy biển.,TRUE
+5840c21f-063e-44f5-9522-050d9ca4ad33,ab7d7b5b-c8d1-4c91-848d-7ca49cf69f7e,Quán này vừa rẻ vừa ngon nên tôi thường đến.,FALSE
+ade5e093-219b-4e4c-83ea-b51e09cf6c6e,7f153211-26bc-478a-a20b-1964c0df87ec,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+e913ccb2-bd67-40f7-bcb3-68a50736895c,7f153211-26bc-478a-a20b-1964c0df87ec,Xin hãy chỉ cho tôi cách đi đến nhà ga.,FALSE
+7f14ccfc-a3c0-41ee-a4f0-aaf3eb8199cd,7f153211-26bc-478a-a20b-1964c0df87ec,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+689a56e7-9751-4df0-97e5-0497e6a9f2a2,7f153211-26bc-478a-a20b-1964c0df87ec,Quán này vừa rẻ vừa ngon nên tôi thường đến.,TRUE
+aa0016a1-7d72-4f37-8c84-cf71c8780a40,65223a0d-4cb3-4c27-8a99-dd0c0f9e73cb,Ghế đã được xếp sẵn trong phòng họp.,TRUE
+8d06be65-4b01-4ad9-8fdb-a64ccceac196,65223a0d-4cb3-4c27-8a99-dd0c0f9e73cb,Có thể từ buổi chiều trời sẽ mưa.,FALSE
+52a96703-64b3-4cb9-869a-ce7e5c49c157,65223a0d-4cb3-4c27-8a99-dd0c0f9e73cb,Nguy hiểm nên đừng vào đó.,FALSE
+26955991-aa5c-4884-aba1-70bd99743a8c,65223a0d-4cb3-4c27-8a99-dd0c0f9e73cb,Kanji này đọc là “deguchi” (lối ra).,FALSE
+3498fe96-6545-444e-963f-6ffdb4eec8ca,b38bc54b-c583-4961-8bb1-a19087b7563e,Tôi sẽ mua vé trước chuyến đi.,TRUE
+93484576-7b15-40fc-b3d8-c06c2d086ec7,b38bc54b-c583-4961-8bb1-a19087b7563e,Hãy ghi chú để khỏi quên.,FALSE
+7582538d-f280-4ba2-a51c-fb1212b1d057,b38bc54b-c583-4961-8bb1-a19087b7563e,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",FALSE
+4d02ea02-b46e-47b3-8a4e-1d76abbfbbfc,b38bc54b-c583-4961-8bb1-a19087b7563e,Tôi được thầy/cô khen.,FALSE
+5cf91116-c323-4cd5-afa4-f2703073bd02,d91f3f1a-4d1f-4a22-bbf3-81dffa49cffa,sự chuẩn bị,TRUE
+35ad1d0e-9829-4401-94c6-58ee9aaaef38,d91f3f1a-4d1f-4a22-bbf3-81dffa49cffa,xem (khiêm nhường),FALSE
+3d090a19-a0c5-4d4f-a51e-d3dad2d90166,d91f3f1a-4d1f-4a22-bbf3-81dffa49cffa,làm thêm giờ,FALSE
+d434e040-5602-47a0-bc4b-591cfe8e3186,d91f3f1a-4d1f-4a22-bbf3-81dffa49cffa,cảm ơn/nhiều (tùy ngữ cảnh),FALSE
+cdc3b0b9-cb62-4518-90a9-e01ecce5ba74,e9aea6f4-e321-40b7-9f35-abd771747347,máy móc,FALSE
+8b73e258-128e-497b-9ae6-ef3f0c5740a3,e9aea6f4-e321-40b7-9f35-abd771747347,sự tham gia,FALSE
+a7fe1865-d715-41f9-81a8-c9f29f625a44,e9aea6f4-e321-40b7-9f35-abd771747347,nguy hiểm,FALSE
+4a16006b-d193-442a-b5bc-95042c1b1579,e9aea6f4-e321-40b7-9f35-abd771747347,"sự chuẩn bị, sắp sẵn",TRUE
+0159a2e5-6fca-415d-ac05-a73897757160,4d9d2a4b-7237-427e-adca-0278a7a56606,"sự xác nhận, kiểm tra",TRUE
+4f449133-ab9f-48a8-9bc4-b1c2c1d9b508,4d9d2a4b-7237-427e-adca-0278a7a56606,cháu,FALSE
+42443134-1652-4bf5-9ec4-9596ee92f15f,4d9d2a4b-7237-427e-adca-0278a7a56606,mùa,FALSE
+e0d074ef-7ad5-4d70-9b70-4af04b1465f7,4d9d2a4b-7237-427e-adca-0278a7a56606,so sánh,FALSE
+c3b840ec-71d8-4495-8c21-f806d2b748b2,898c6e4b-2675-4c1f-8c97-584e7ac8b55a,"Khi qua đường, tôi nhìn bên phải.",FALSE
+7d54c408-6aac-4517-b66f-800ee4e137ed,898c6e4b-2675-4c1f-8c97-584e7ac8b55a,Tôi ăn sáng rồi đi học.,FALSE
+e58abaed-f820-40d8-8548-12f8c03fa793,898c6e4b-2675-4c1f-8c97-584e7ac8b55a,Từ đây có thể nhìn thấy biển.,TRUE
+97eab447-dd8b-49aa-a8ce-a927c6adb194,898c6e4b-2675-4c1f-8c97-584e7ac8b55a,Có thể từ buổi chiều trời sẽ mưa.,FALSE
+123d31fe-2725-436b-b610-6df84621b8f2,56bd6772-5de4-49ad-af2d-a6030c925ce7,Trông có vẻ sắp mưa.,FALSE
+ea20eb0a-547f-40fc-b851-e8d600536ae1,56bd6772-5de4-49ad-af2d-a6030c925ce7,Ngày mai bạn không cần đến sớm.,FALSE
+6a310866-2723-424c-806d-02dc7e19fc95,56bd6772-5de4-49ad-af2d-a6030c925ce7,Cái kéo này được dùng để cắt giấy.,FALSE
+154c0129-124f-4ba7-9b05-82ff48261aa8,56bd6772-5de4-49ad-af2d-a6030c925ce7,Quán này vừa rẻ vừa ngon nên tôi thường đến.,TRUE
+87f3106f-6945-4ce8-883c-d5f837860025,61e318bd-4a5d-4ea1-a186-d979f8ec4aaa,Tôi cùng bạn về từ nhà ga.,FALSE
+bd20775d-6cef-4d86-814f-6901bcfe5096,61e318bd-4a5d-4ea1-a186-d979f8ec4aaa,Tôi sẽ mua vé trước chuyến đi.,FALSE
+ecd3843c-3f0d-4240-8450-137fb3a8e97f,61e318bd-4a5d-4ea1-a186-d979f8ec4aaa,Hôm nay xin hãy cho phép tôi về sớm.,FALSE
+f32e8e5b-9416-4afa-bc5d-5a86d72809e5,61e318bd-4a5d-4ea1-a186-d979f8ec4aaa,Tôi đã mở cửa sổ.,TRUE
+0ee87741-c795-4de7-a9f1-ea6be0793987,a95bb858-6466-4edf-8075-67e4563ba84d,Nghỉ một chút nhé.,TRUE
+245be5a1-d799-463d-9774-146165a04011,a95bb858-6466-4edf-8075-67e4563ba84d,Tôi rất vui vì đã thi đỗ.,FALSE
+905c29ee-8a04-40ea-9108-eb21305c92f6,a95bb858-6466-4edf-8075-67e4563ba84d,Xin hãy chỉ cho tôi cách đi đến nhà ga.,FALSE
+2ac470fd-d873-423c-9a27-5e1f003056a5,a95bb858-6466-4edf-8075-67e4563ba84d,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+cc2b128b-7108-410d-bbbd-0e70b8ca9008,19272ce0-1eca-49e1-bb32-5babd6bb1233,Tôi đang định năm sau đi du học Nhật Bản.,TRUE
+09a1193e-83fa-496f-88c2-2a47172ed398,19272ce0-1eca-49e1-bb32-5babd6bb1233,Trông có vẻ sắp mưa.,FALSE
+bbcfb053-f164-4e0d-9d02-11a2bd30b1a7,19272ce0-1eca-49e1-bb32-5babd6bb1233,Cái bánh này trông có vẻ ngon.,FALSE
+d190e3cb-95dd-4ba6-a7ee-7d54c6dbb48d,19272ce0-1eca-49e1-bb32-5babd6bb1233,Hôm qua tôi đã ăn quá nhiều.,FALSE
+b0234d38-513c-4078-8941-fbe81c6ca568,18dac8e1-aa64-4fc9-a617-cda78c527b38,"đầy đủ, đủ",FALSE
+1faf52de-542b-4fa1-bd11-a9cc366572a8,18dac8e1-aa64-4fc9-a617-cda78c527b38,vừa mới đây,FALSE
+bbb93533-1dfc-47fc-813b-63a1b4df47ea,18dac8e1-aa64-4fc9-a617-cda78c527b38,sự nghỉ ngơi,FALSE
+26e983d5-00ae-46fb-93c3-ba7508585690,18dac8e1-aa64-4fc9-a617-cda78c527b38,kế hoạch,TRUE
+b77e475b-b6e8-4cc2-acf5-36c272d14681,de5c36c7-9129-4e3b-964b-f6cbb2181441,sự khởi hành,TRUE
+090ff410-e1f1-420f-93f9-be92296526f3,de5c36c7-9129-4e3b-964b-f6cbb2181441,thăm người bệnh,FALSE
+c431ce21-3416-403a-9884-784d5bda7244,de5c36c7-9129-4e3b-964b-f6cbb2181441,nhà trọ kiểu Nhật,FALSE
+686e0310-b130-440f-b35c-78d0472dab43,de5c36c7-9129-4e3b-964b-f6cbb2181441,ông (của mình),FALSE
+2831a645-782a-438c-9751-a7b732b1eebd,a47a47d4-e72c-4f4f-a8aa-9ef4c1db95e0,"sự mời, lời mời",FALSE
+babaf700-a96b-41db-b5e1-e5e6ce64f2b3,a47a47d4-e72c-4f4f-a8aa-9ef4c1db95e0,lựa chọn,FALSE
+b5261633-1561-4702-a1ab-8da6ca470efa,a47a47d4-e72c-4f4f-a8aa-9ef4c1db95e0,sự đến nơi,TRUE
+81769649-08de-493f-b9ae-346394dc416b,a47a47d4-e72c-4f4f-a8aa-9ef4c1db95e0,quà tặng,FALSE
+261baad8-e306-45d4-aced-f31d59b131fe,5d928bf5-05d8-4f29-8997-3eace0fe6af7,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+257440d4-9dee-4a31-9d6c-781f57a15267,5d928bf5-05d8-4f29-8997-3eace0fe6af7,Quán này vừa rẻ vừa ngon nên tôi thường đến.,TRUE
+a3448422-9370-48d9-8a5a-038f5d814bb2,5d928bf5-05d8-4f29-8997-3eace0fe6af7,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+27b2bdfb-6897-47e9-8a79-eeb25a6fcb5e,5d928bf5-05d8-4f29-8997-3eace0fe6af7,Tôi uống cà phê ở quán.,FALSE
+ab6fea99-3c48-4319-8123-f61244e04083,653ff46d-7323-4709-995b-ea90959412f0,Tôi đã mở cửa sổ.,TRUE
+82a12046-3c49-48c1-a24d-236a74f03ae2,653ff46d-7323-4709-995b-ea90959412f0,Tôi vừa nghe nhạc vừa học.,FALSE
+da909287-4f4b-40c6-a134-539b44c9b199,653ff46d-7323-4709-995b-ea90959412f0,Tôi đang sống ở Osaka.,FALSE
+9425b983-11c9-4aaf-b55e-b80a00416fe4,653ff46d-7323-4709-995b-ea90959412f0,Có quyển sách ở trên bàn.,FALSE
+944174d6-c1ef-4352-8ea7-c528cd344588,2d7b7aec-7f17-4c0e-a118-748c8054e918,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+fa1a930e-c1a0-451a-824f-47d443d3743a,2d7b7aec-7f17-4c0e-a118-748c8054e918,Tôi sẽ mua vé trước chuyến đi.,TRUE
+f9fed9ff-b218-48c7-82f1-1ffb8e9767ee,2d7b7aec-7f17-4c0e-a118-748c8054e918,Hôm nay trời nóng.,FALSE
+51f8f94c-84e7-45a4-9bf7-2a9180c34b9d,2d7b7aec-7f17-4c0e-a118-748c8054e918,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,FALSE
+3b1e207c-1853-433f-8bab-7c72696294cd,2985d3c1-52b0-4f81-a448-94bebe94353e,Vì bị sốt nên hôm nay bạn nên nghỉ.,TRUE
+5f47030f-af8b-4074-9c04-0ff7e7ca37cc,2985d3c1-52b0-4f81-a448-94bebe94353e,Chắc anh ấy đã đến nhà ga rồi.,FALSE
+5909f2e6-de40-4604-8dbf-8950a963fe5d,2985d3c1-52b0-4f81-a448-94bebe94353e,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",FALSE
+62503d3f-bb26-4099-b61a-ebbe52300c6f,2985d3c1-52b0-4f81-a448-94bebe94353e,Đèn đã tắt. Có vẻ như không còn ai ở đó.,FALSE
+b1fd53f0-3e7e-45c0-a69b-8d32b258242f,72a34a53-97ad-4741-86a1-ee76209a51ed,Có thể từ buổi chiều trời sẽ mưa.,TRUE
+4a64492a-6692-4fba-b259-6e59c2ca336d,72a34a53-97ad-4741-86a1-ee76209a51ed,Để tôi mang tài liệu ạ.,FALSE
+e30b8ca0-d869-4a8a-8f0a-44a6c801fc33,72a34a53-97ad-4741-86a1-ee76209a51ed,Đây là quầy tiếp tân ạ.,FALSE
+f992466b-04bd-4ab9-bea0-ca8b8eb6b2c4,72a34a53-97ad-4741-86a1-ee76209a51ed,Sao bạn đến muộn vậy? Vì tàu bị trễ.,FALSE
+227bbfc8-3c9f-4a95-8eed-addca9269f7b,8f63f5e1-c9c5-4c1f-91b2-d82ec3389546,"vận động, tập thể dục",TRUE
+0858da30-8ad1-42c0-89bf-392cd93d7305,8f63f5e1-c9c5-4c1f-91b2-d82ec3389546,khứ hồi,FALSE
+92ddb2e1-cc9f-4b89-a29f-95eac0d757c1,8f63f5e1-c9c5-4c1f-91b2-d82ec3389546,xin phép (ra về/kết thúc),FALSE
+1db8ac19-3e3e-4aa3-9888-43ece986b225,8f63f5e1-c9c5-4c1f-91b2-d82ec3389546,hỏa hoạn,FALSE
+bf4c865f-bbde-4ec4-ad48-0a2318b2215e,efa2a463-f044-4135-895d-dca6f2ad878c,dinh dưỡng,FALSE
+c328ce39-4b9b-42eb-ad89-40ccfaacb8b0,efa2a463-f044-4135-895d-dca6f2ad878c,hình dạng,FALSE
+75727143-8e1e-4cea-808d-c66acf19b45c,efa2a463-f044-4135-895d-dca6f2ad878c,tin tức,FALSE
+ce501865-598e-49f0-89ec-794c8bf15af5,efa2a463-f044-4135-895d-dca6f2ad878c,giấc ngủ,TRUE
+635e221d-f889-4c75-8c1e-fad8b558b794,02644f2b-25e5-4bed-bf71-29c4926f58df,"quá, vượt quá",FALSE
+4fae17bf-7690-4b0f-b3cb-7060be770763,02644f2b-25e5-4bed-bf71-29c4926f58df,chúc mạnh khỏe,FALSE
+9148f05c-0ba9-4631-bce0-4d0991f053d5,02644f2b-25e5-4bed-bf71-29c4926f58df,được sinh ra,FALSE
+19f6b8bb-2e72-498b-a1b0-73c3b2acc4ca,02644f2b-25e5-4bed-bf71-29c4926f58df,"bữa ăn, việc ăn uống",TRUE
+5a33c781-18b1-4eeb-b962-7de5e7e3e80f,5da5f4d6-88b2-49d0-ae34-530b3462937c,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,FALSE
+1f78ae3e-005d-4820-8648-c49aad8f60fd,5da5f4d6-88b2-49d0-ae34-530b3462937c,Kanji này đọc là “deguchi” (lối ra).,FALSE
+705ea7cd-94a4-423a-bbc6-d3b8e84d409a,5da5f4d6-88b2-49d0-ae34-530b3462937c,Từ đây có thể nhìn thấy biển.,FALSE
+63ada407-9611-4e7a-a557-43fd046e8b7a,5da5f4d6-88b2-49d0-ae34-530b3462937c,Tôi đã mở cửa sổ.,TRUE
+e54c7b69-f374-4bfb-95cf-b33ef60ba8b1,62f66630-51b5-4f56-b7d3-86b85b6730c5,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+91f77c8e-e0e7-4082-a2cb-6e0fd72010f7,62f66630-51b5-4f56-b7d3-86b85b6730c5,Tôi sẽ mua vé trước chuyến đi.,TRUE
+403bc178-1f5e-40e2-9678-cbfd9e41689b,62f66630-51b5-4f56-b7d3-86b85b6730c5,Vì tàu trễ nên tôi đã đến cuộc họp muộn.,FALSE
+687c2d9c-f130-4915-9513-6ec18c2fdb03,62f66630-51b5-4f56-b7d3-86b85b6730c5,Tôi đã từng leo núi Phú Sĩ.,FALSE
+bb222cc4-41fa-434c-b853-1cc92f3a09b4,2c330af3-79c6-4777-9cd7-9caeee1a57c7,Xin hãy viết tên vào đây.,FALSE
+752a4d44-2315-4659-a0ee-5b95e6d4884b,2c330af3-79c6-4777-9cd7-9caeee1a57c7,Tôi đang định năm sau đi du học Nhật Bản.,TRUE
+b9d3a525-9ab6-48d7-b19b-d8b1609da37d,2c330af3-79c6-4777-9cd7-9caeee1a57c7,Thầy/cô nói ngày mai có bài kiểm tra.,FALSE
+16a854dc-d028-4148-baca-f80784e89e59,2c330af3-79c6-4777-9cd7-9caeee1a57c7,Đây là ô của tôi.,FALSE
+9db24b25-50f8-41a6-95bc-1242336f5c62,683f7088-cdfd-46a9-80b0-cdcf15181425,Nguy hiểm nên đừng vào đó.,TRUE
+2dee00e4-bd20-4a0a-a3c8-ff74be2dff66,683f7088-cdfd-46a9-80b0-cdcf15181425,Quán này vừa rẻ vừa ngon nên tôi thường đến.,FALSE
+3a45319a-f639-4a8b-98d8-77b22c9202a1,683f7088-cdfd-46a9-80b0-cdcf15181425,Cửa sổ đang mở.,FALSE
+9ec5fc6b-2787-4605-b8a6-a3683dad3e12,683f7088-cdfd-46a9-80b0-cdcf15181425,Tôi đã mở cửa sổ.,FALSE
+88b55053-a0c7-4a1d-95dd-0243cc1927eb,a397c38c-984b-4b8c-b5aa-87425345dddf,Kanji này đọc là “deguchi” (lối ra).,TRUE
+37f20e28-0885-4ec5-bf5c-0a0cb8b71965,a397c38c-984b-4b8c-b5aa-87425345dddf,Vì bị sốt nên hôm nay bạn nên nghỉ.,FALSE
+f4838fc7-2d38-4a93-8160-bdc1ba7ba727,a397c38c-984b-4b8c-b5aa-87425345dddf,Có thể từ buổi chiều trời sẽ mưa.,FALSE
+203f943c-daad-4260-a583-48bf7f5f0ac9,a397c38c-984b-4b8c-b5aa-87425345dddf,Nguy hiểm nên đừng vào đó.,FALSE
+5e663752-657d-461b-9fcd-21068387e918,aec7d778-fa14-4ebd-8875-7e710a8d4bed,bài báo,FALSE
+92c75fc1-2541-4a98-84cf-641f5dbdfa1d,aec7d778-fa14-4ebd-8875-7e710a8d4bed,sách hướng dẫn,FALSE
+07369fd3-3a9b-4250-9c43-44a89e65a599,aec7d778-fa14-4ebd-8875-7e710a8d4bed,mây,FALSE
+d466e741-4ef4-4443-9fbe-9e9734ae1cf3,aec7d778-fa14-4ebd-8875-7e710a8d4bed,quy định,TRUE
+4bdaed2a-a029-49d4-b892-b3b4974b92d8,faf9565a-bcb4-4abd-adce-dd02a8570f2d,được dọn gọn,FALSE
+3576a336-9bf4-47c6-b695-b9d659203fe3,faf9565a-bcb4-4abd-adce-dd02a8570f2d,chuyến công tác,FALSE
+d3801ce8-0eef-4895-a0ae-5b2862524f2e,faf9565a-bcb4-4abd-adce-dd02a8570f2d,cấm,TRUE
+f83b381c-4ae9-4bba-b636-e39b7cc35d0a,faf9565a-bcb4-4abd-adce-dd02a8570f2d,lưu trú,FALSE
+6bca2cd4-644a-4767-b5ad-630ece365e28,004b2627-b12b-4f16-90af-d5cc876ed847,lái xe,FALSE
+e63956c5-3677-47c2-acfe-0a52b502f93a,004b2627-b12b-4f16-90af-d5cc876ed847,mây,FALSE
+b0f345cf-cd3e-4b6b-a340-7e4892d0c022,004b2627-b12b-4f16-90af-d5cc876ed847,khu vực lân cận,FALSE
+c76df3ad-acef-4547-a8e7-8719e41c4a4c,004b2627-b12b-4f16-90af-d5cc876ed847,"chú ý, cảnh báo",TRUE
+a0ec6c5c-766c-4458-b1fd-876501452b0b,b05f9330-d0d6-4e0d-b0c1-75ac5c5d2baa,Tôi sẽ mua vé trước chuyến đi.,TRUE
+d2b1dbe0-7717-4f5e-ad86-e5476222899e,b05f9330-d0d6-4e0d-b0c1-75ac5c5d2baa,Cái bánh này trông có vẻ ngon.,FALSE
+c042ac30-77bb-427d-a244-54f0a98b28c1,b05f9330-d0d6-4e0d-b0c1-75ac5c5d2baa,Đây là ô của tôi.,FALSE
+6321a0d4-d62b-4409-9c71-44bbbe719040,b05f9330-d0d6-4e0d-b0c1-75ac5c5d2baa,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+d8b6c4a4-a388-4d83-a243-7833595b65be,3b6fb425-b182-48b5-838d-c974826253b0,Kanji này đọc là “deguchi” (lối ra).,FALSE
+2149a4f2-bf16-4dc1-a786-b4b9ad0be8ef,3b6fb425-b182-48b5-838d-c974826253b0,Tôi đang định năm sau đi du học Nhật Bản.,TRUE
+e94fa402-08b7-42b4-bf77-4ecf6f3392f6,3b6fb425-b182-48b5-838d-c974826253b0,Tôi vừa nghe nhạc vừa học.,FALSE
+abf7324b-1357-49a2-9199-22a8994408b5,3b6fb425-b182-48b5-838d-c974826253b0,Đó là người đang sống ở Osaka.,FALSE
+993246d8-5389-434a-91ec-97a90e4e79a6,54983a84-f863-4123-8eba-6aff735a4a7e,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+e85f2e21-4ecc-4d73-bb69-e8dab5aa9c23,54983a84-f863-4123-8eba-6aff735a4a7e,Hôm qua tôi đã xem phim.,FALSE
+03939720-2e9d-45fd-a31a-d19911032e5e,54983a84-f863-4123-8eba-6aff735a4a7e,Thành phố này yên tĩnh và tiện lợi.,FALSE
+766762ae-05fe-4f5d-b1eb-40ffb7ce32ff,54983a84-f863-4123-8eba-6aff735a4a7e,Có thể từ buổi chiều trời sẽ mưa.,TRUE
+f95b76db-75c6-4490-82ed-5991576a7de3,9f0f7c5f-d4cb-4821-ab80-a31a973d3fd1,Xin hãy lắp theo đúng như hướng dẫn viết trong sách.,TRUE
+5c17f883-3554-49b7-ac97-c1dd342aeae6,9f0f7c5f-d4cb-4821-ab80-a31a973d3fd1,Nếu đi Kyoto thì mùa thu đẹp đấy.,FALSE
+69f6c3ee-8e52-4c0a-94f6-7a9fab3f067c,9f0f7c5f-d4cb-4821-ab80-a31a973d3fd1,Hãy ghi chú để khỏi quên.,FALSE
+f797177c-85c7-4a60-bde1-b2be09c5a13f,9f0f7c5f-d4cb-4821-ab80-a31a973d3fd1,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",FALSE
+d9b92b83-3c08-42f3-9f0d-730252f8c533,54c68a62-1177-4558-8572-57bdd0eefde1,"Sau khi làm bài tập, tôi xem ti vi.",TRUE
+1c9c9800-e3d8-47f9-9357-741ab2a73fcd,54c68a62-1177-4558-8572-57bdd0eefde1,Vì tàu trễ nên tôi đã đến cuộc họp muộn.,FALSE
+9a8e9bd8-048a-4d39-b357-4d5260696b39,54c68a62-1177-4558-8572-57bdd0eefde1,Tôi rất vui vì đã thi đỗ.,FALSE
+ee2740df-26ea-4113-818b-5039659aa5c6,54c68a62-1177-4558-8572-57bdd0eefde1,Xin hãy chỉ cho tôi cách đi đến nhà ga.,FALSE
+4ce4efc7-c47c-45fd-9bd1-5ab1a9eed340,48e640d1-e45f-4bb2-a7c2-ebfe747b1d5e,hỏa hoạn,FALSE
+6f1becec-1b21-47bd-9c03-13914914b887,48e640d1-e45f-4bb2-a7c2-ebfe747b1d5e,mùa xuân,FALSE
+71ba4125-52ce-4dab-b51c-aea9d47e8134,48e640d1-e45f-4bb2-a7c2-ebfe747b1d5e,tuyển dụng,FALSE
+53f20360-0881-47ca-bb07-f79a8c49df68,48e640d1-e45f-4bb2-a7c2-ebfe747b1d5e,trộn,TRUE
+7f2b45a4-6e1d-4df6-bc7e-cc48522ab223,6c26fa8b-dcb1-4b5a-9697-991fd1f49ed8,"nướng, rán",TRUE
+e703c638-1704-45e5-8a58-39ba231d3fe5,6c26fa8b-dcb1-4b5a-9697-991fd1f49ed8,kết quả,FALSE
+ade2b82a-a1c4-44aa-bd71-57e1ee8ec52f,6c26fa8b-dcb1-4b5a-9697-991fd1f49ed8,bị hỏng,FALSE
+8b28c57c-e27f-4fb2-9c16-4cbe968d0124,6c26fa8b-dcb1-4b5a-9697-991fd1f49ed8,mùi,FALSE
+f8b9d22f-45b0-46f4-bb8f-ce239f6d00b5,9d74a337-1728-4ecf-a264-f90e7f5526d7,lo lắng,FALSE
+afb8c853-1ef1-439f-aef2-c44107872040,9d74a337-1728-4ecf-a264-f90e7f5526d7,mưa lớn,FALSE
+db5bcb35-40eb-4211-8243-9c9e06981560,9d74a337-1728-4ecf-a264-f90e7f5526d7,"nấu, hầm",TRUE
+601efcbe-cd47-433e-99a7-e81391e3cc31,9d74a337-1728-4ecf-a264-f90e7f5526d7,"nhận, ăn/uống (khiêm nhường)",FALSE
+7f52d5c8-6086-4ae5-9170-afc223b19610,d3148825-524f-47ab-9b95-fa0770d75153,Xin hãy viết tên vào đây.,FALSE
+35e91745-28a4-4274-bf68-65a919dd00ed,d3148825-524f-47ab-9b95-fa0770d75153,Ấn nút này thì cửa mở.,FALSE
+61c4fa20-ee8d-4607-89e7-5a1b039116c0,d3148825-524f-47ab-9b95-fa0770d75153,Tôi đang định năm sau đi du học Nhật Bản.,TRUE
+15fcf7c7-ba33-47c7-82a4-a6deff4f9ada,d3148825-524f-47ab-9b95-fa0770d75153,Chắc anh ấy đã đến nhà ga rồi.,FALSE
+0c516519-f65e-41b0-a9ab-3ee07a38cdc2,240b3a26-014d-4cf2-8e91-fa6bb3f27656,Có thể từ buổi chiều trời sẽ mưa.,TRUE
+d35497aa-5c9e-42f8-9830-8cabe3ae6c8c,240b3a26-014d-4cf2-8e91-fa6bb3f27656,Máy này được dùng để in ảnh.,FALSE
+eb575ce5-2e41-4651-b5a4-baee6b5f8a0a,240b3a26-014d-4cf2-8e91-fa6bb3f27656,Tôi muốn có đôi giày mới.,FALSE
+4aa0a6f6-bd03-4db1-ba65-2dcd5fef5762,240b3a26-014d-4cf2-8e91-fa6bb3f27656,Mỗi sáng tôi thức dậy lúc 6 giờ.,FALSE
+2371d32b-3b8f-44c1-8fb9-26e0e3707d3f,f0ad5529-fd9c-4854-8dde-873972894f4f,Kanji này đọc là “deguchi” (lối ra).,TRUE
+aa6389d2-5474-4fdb-9d27-9d999de06189,f0ad5529-fd9c-4854-8dde-873972894f4f,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+9860fbaf-329e-40a8-9efe-c1bb269df2e2,f0ad5529-fd9c-4854-8dde-873972894f4f,Thầy/cô nói ngày mai có bài kiểm tra.,FALSE
+fa1257e6-6da7-45a1-8460-4adb921e8a0f,f0ad5529-fd9c-4854-8dde-873972894f4f,Đó là người đang sống ở Osaka.,FALSE
+fe3d741e-bd07-4db8-9123-1caa2e40fdfb,624863a3-ff40-4a20-969b-fef133590208,"Nếu có thời gian, tôi sẽ giúp.",TRUE
+43a7e269-be51-476a-bc3e-1018accc22a5,624863a3-ff40-4a20-969b-fef133590208,Máy này được dùng để in ảnh.,FALSE
+6bcc36a0-c706-48d2-9084-e60be94a51a4,624863a3-ff40-4a20-969b-fef133590208,Trông có vẻ sắp mưa.,FALSE
+55c087fe-d727-462d-bd81-c62dbd2fc9dc,624863a3-ff40-4a20-969b-fef133590208,Cái bánh này trông có vẻ ngon.,FALSE
+84d580f3-bebe-45b1-8433-6c5ee9a1367e,49a81f30-4b93-420f-9e82-daef8f8c0338,Nếu đi Kyoto thì mùa thu đẹp đấy.,TRUE
+29e4c386-6343-42c9-b16d-edd8b908ca5d,49a81f30-4b93-420f-9e82-daef8f8c0338,Bây giờ tôi sắp ra ngoài.,FALSE
+bc006456-a754-4048-bf9b-6ebfe324f27d,49a81f30-4b93-420f-9e82-daef8f8c0338,Chắc anh ấy đã đến nhà ga rồi.,FALSE
+29fbffb3-4d13-442e-8e8a-a053848b9124,49a81f30-4b93-420f-9e82-daef8f8c0338,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",FALSE
+88b29bcb-e689-4695-bb8e-f65b73b4f657,b6e49a36-d07a-4c9b-b95d-b0b3a749d82a,mùa,TRUE
+f5c6da8f-45c2-4ead-8a2d-ef6989f15a93,b6e49a36-d07a-4c9b-b95d-b0b3a749d82a,lò vi sóng,FALSE
+b2b6152e-878b-4b25-834c-85c79327ef7f,b6e49a36-d07a-4c9b-b95d-b0b3a749d82a,"thành tích, điểm số",FALSE
+b06f1c62-c84b-4ae8-9d0d-f79adb108bd3,b6e49a36-d07a-4c9b-b95d-b0b3a749d82a,"học được, trang bị cho mình",FALSE
+41b6ef8c-a8f7-4a50-9e48-1bcebee00cc2,2fe2f7d9-223c-45ad-904b-068608aef59a,vắng nhà,FALSE
+08d2fcb7-4c81-4e1a-ac98-94301976b6a3,2fe2f7d9-223c-45ad-904b-068608aef59a,"tra cứu, điều tra",FALSE
+7564b3bc-6632-4493-9ec0-22a35e6af380,2fe2f7d9-223c-45ad-904b-068608aef59a,lò vi sóng,FALSE
+94a04fbb-c7a3-42c9-8c0c-589726b649cd,2fe2f7d9-223c-45ad-904b-068608aef59a,mùa xuân,TRUE
+65be1456-9490-4f2a-b93a-2c38368b5f35,132cd34c-554c-4c3b-86ea-a8d3e4c7b8bc,chìa khóa,FALSE
+f9fda2cf-c190-44de-b7d0-281278f01add,132cd34c-554c-4c3b-86ea-a8d3e4c7b8bc,lòng biết ơn,FALSE
+7a2b4488-1fb0-4052-bcec-f72773bcf898,132cd34c-554c-4c3b-86ea-a8d3e4c7b8bc,"chạy trốn, sơ tán",FALSE
+86b26cc0-c95e-4dde-b79c-207049098065,132cd34c-554c-4c3b-86ea-a8d3e4c7b8bc,mùa hè,TRUE
+f5ca8b61-939b-4ae4-9018-f15aec62831f,d70b5d4e-daf9-46ce-aaae-a46d8274697e,Đèn đã tắt. Có vẻ như không còn ai ở đó.,FALSE
+b06c06cb-1431-4dd4-9c35-da3eb9a09af7,d70b5d4e-daf9-46ce-aaae-a46d8274697e,Có thể từ buổi chiều trời sẽ mưa.,TRUE
+12df7382-cb09-4389-9b3c-c2fc41a36118,d70b5d4e-daf9-46ce-aaae-a46d8274697e,"Nếu có thời gian rảnh, tôi sẽ xem phim.",FALSE
+76e3a560-78d3-4a05-b788-dfeea0b2fe6f,d70b5d4e-daf9-46ce-aaae-a46d8274697e,Tôi cùng bạn về từ nhà ga.,FALSE
+71791a61-85eb-4670-9671-4a6e0296e66e,f7d1ca28-0dd1-4e91-80a0-0e97fa4b20c6,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+5871165e-c02a-4e06-8bca-5bb3daea8674,f7d1ca28-0dd1-4e91-80a0-0e97fa4b20c6,Giám đốc đã về rồi.,FALSE
+efe8c2b8-c013-45a4-bf69-320b7ba7a306,f7d1ca28-0dd1-4e91-80a0-0e97fa4b20c6,Có quyển sách ở trên bàn.,FALSE
+11bab956-dbd0-4a42-848a-bdd4d0f3a98c,f7d1ca28-0dd1-4e91-80a0-0e97fa4b20c6,Kanji này đọc là “deguchi” (lối ra).,TRUE
+8a04f0b9-863c-4d69-a18c-f884bf632ac1,e5d81f9e-47d7-47f3-a41c-617380b4eb6e,Trông có vẻ sắp mưa.,FALSE
+e24856f7-d34f-4e69-a526-183cd2f1e4b3,e5d81f9e-47d7-47f3-a41c-617380b4eb6e,Tôi uống cà phê ở quán.,FALSE
+737a23de-2e00-4b53-a679-3f45417f1bd6,e5d81f9e-47d7-47f3-a41c-617380b4eb6e,"Sau khi làm bài tập, tôi xem ti vi.",TRUE
+1822ad76-ec0a-49d8-8035-006442ac2e71,e5d81f9e-47d7-47f3-a41c-617380b4eb6e,Cùng xem phim nhé?,FALSE
+df05aa69-23ee-4dbf-891e-f880dbba2302,16fa0362-3620-4c7a-beb2-caa5494f8a7e,Hãy ghi chú để khỏi quên.,TRUE
+5cf5bd91-2231-4216-9ca4-75a83654b22b,16fa0362-3620-4c7a-beb2-caa5494f8a7e,Xin quý khách vui lòng đợi một chút ở đây.,FALSE
+c6ab8c16-58bf-4d1e-bbb1-6e5011b5551c,16fa0362-3620-4c7a-beb2-caa5494f8a7e,Để tôi mang tài liệu ạ.,FALSE
+2e134a20-c7bc-4019-9060-b4acd8408230,16fa0362-3620-4c7a-beb2-caa5494f8a7e,Đây là quầy tiếp tân ạ.,FALSE
+59c54630-1db4-463f-aa91-5be55df40799,8253784f-728a-4bf6-847c-254dc11fc3f4,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",TRUE
+6b27a6db-4f1e-4db8-9b7a-6a4adcdd0dad,8253784f-728a-4bf6-847c-254dc11fc3f4,Tôi vừa nghe nhạc vừa học.,FALSE
+64d56108-b893-4f4a-b962-bfdef4521750,8253784f-728a-4bf6-847c-254dc11fc3f4,Quán này vừa rẻ vừa ngon nên tôi thường đến.,FALSE
+890359a8-8eb3-4240-8124-55d718228c10,8253784f-728a-4bf6-847c-254dc11fc3f4,Cửa sổ đang mở.,FALSE
+f0594639-87ee-4828-b6f3-1c16aadcaa28,a0f0e546-eafd-41e6-8b18-754ee68b67fc,giảm đi,FALSE
+0844682a-3806-4cf5-b33c-55e9bd120e36,a0f0e546-eafd-41e6-8b18-754ee68b67fc,mục tiêu,TRUE
+a1e878df-283a-4e8c-a488-8ba2fb988732,a0f0e546-eafd-41e6-8b18-754ee68b67fc,"sự công bố, thuyết trình",FALSE
+c15301cd-a7ea-4fce-b4ab-565b36f60b03,a0f0e546-eafd-41e6-8b18-754ee68b67fc,xây dựng,FALSE
+36fd2885-c331-4eae-8c31-754537be0a62,f5c6f3ed-3857-4803-87ef-83a6901fe89a,tình trạng sức khỏe,FALSE
+f977169a-713e-4555-a552-b405cbd34b11,f5c6f3ed-3857-4803-87ef-83a6901fe89a,"chủ đề, chuyện đang được nói đến",FALSE
+78784eff-dab1-4083-92c1-740b740aaf4e,f5c6f3ed-3857-4803-87ef-83a6901fe89a,khu vực lân cận,FALSE
+ae7fdfa0-ff66-4ffb-8828-1a7d3f90acdf,f5c6f3ed-3857-4803-87ef-83a6901fe89a,tương lai,TRUE
+0a0bf8d6-f978-4142-bc82-3c311613a548,3e0070f0-b098-4d7a-91a8-bedad76b68bb,vắng nhà,FALSE
+84121a4b-1e86-432b-ad34-39e2918f6657,3e0070f0-b098-4d7a-91a8-bedad76b68bb,ước mơ,TRUE
+384311ab-26d0-4ec7-9cab-aef1615cff78,3e0070f0-b098-4d7a-91a8-bedad76b68bb,phỏng vấn,FALSE
+9bd09d54-613d-432c-b4e5-69c373f1cd13,3e0070f0-b098-4d7a-91a8-bedad76b68bb,lối thoát hiểm,FALSE
+2a1d7bd9-5358-4c22-93b3-47fc41dbbca3,46766c46-b3ee-48fa-8dc8-395c191d5ad9,Đèn đã tắt. Có vẻ như không còn ai ở đó.,FALSE
+28ef6395-8d73-43b3-8c1c-5a8e7b7e6b70,46766c46-b3ee-48fa-8dc8-395c191d5ad9,Đây là ô của tôi.,FALSE
+ec21569a-d691-4485-88e6-f7b3e6fe0a87,46766c46-b3ee-48fa-8dc8-395c191d5ad9,Kanji này đọc là “deguchi” (lối ra).,TRUE
+053fce16-3858-4593-9fb5-11eb4193e0b8,46766c46-b3ee-48fa-8dc8-395c191d5ad9,Thầy/cô nói ngày mai có bài kiểm tra.,FALSE
+c283423f-d5c0-4d71-8287-7472d2acc3bf,485c1e37-6143-436d-bc76-ed3972c8fdb2,"Sau khi làm bài tập, tôi xem ti vi.",TRUE
+3178891b-9d99-48e1-a3df-2b4f3cd349e7,485c1e37-6143-436d-bc76-ed3972c8fdb2,"Nếu có thời gian rảnh, tôi sẽ xem phim.",FALSE
+ce6270c9-6da8-45a2-9c7f-9a1ae402528b,485c1e37-6143-436d-bc76-ed3972c8fdb2,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+e18619ba-10f5-4bbe-a68e-b9a3f492f460,485c1e37-6143-436d-bc76-ed3972c8fdb2,Tôi đã mở cửa sổ.,FALSE
+fecd946d-9bca-4670-be18-12d5603709eb,8339fcb7-107a-4843-9142-8261285811d6,Cái bánh này trông có vẻ ngon.,FALSE
+b9d8c40b-eaba-41d6-8bd9-377920c20811,8339fcb7-107a-4843-9142-8261285811d6,Nếu đi Kyoto thì mùa thu đẹp đấy.,TRUE
+d86e9323-c4ce-4ea6-877a-c9e118225a31,8339fcb7-107a-4843-9142-8261285811d6,Bạn đã tặng tôi quà lưu niệm.,FALSE
+5ba800e8-5a72-42e8-89d9-0afec3dd73be,8339fcb7-107a-4843-9142-8261285811d6,Anh Minh là giáo viên phải không?,FALSE
+86d2445e-72a1-4e0f-a0e1-521249a87eb4,5f20cb8d-6506-4299-b3d5-5b8f3f83064e,Tôi được thầy/cô khen.,TRUE
+91870404-ec28-4021-8caa-b3426bf95c2d,5f20cb8d-6506-4299-b3d5-5b8f3f83064e,Tôi đang định năm sau đi du học Nhật Bản.,FALSE
+53445ef4-39b5-4677-8d95-919b5995e8c6,5f20cb8d-6506-4299-b3d5-5b8f3f83064e,Vì bị sốt nên hôm nay bạn nên nghỉ.,FALSE
+416c47c9-615b-4732-8bd5-a832bb80617e,5f20cb8d-6506-4299-b3d5-5b8f3f83064e,Có thể từ buổi chiều trời sẽ mưa.,FALSE
+98660905-1926-4f63-bc74-7fb6fe77876a,e48d0704-6278-4906-94d4-fc0bcdfad880,Tôi bị em trai ăn mất bánh.,TRUE
+da3e8745-01d0-4ac0-863b-ff013dbb0c54,e48d0704-6278-4906-94d4-fc0bcdfad880,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+b47da276-2f89-4e9d-ac19-6b5898424539,e48d0704-6278-4906-94d4-fc0bcdfad880,Nếu đi Kyoto thì mùa thu đẹp đấy.,FALSE
+2bacdb6b-9db9-4120-b7ce-8a1609355095,e48d0704-6278-4906-94d4-fc0bcdfad880,Hãy ghi chú để khỏi quên.,FALSE
+8792f5b1-502b-4d9a-81ae-22625c06ce60,6dd6c813-8fc5-4e89-ae8d-892b374a1000,"nấu, hầm",FALSE
+15584c6b-9115-490a-ac86-133e1c05b70e,6dd6c813-8fc5-4e89-ae8d-892b374a1000,vô địch,TRUE
+abf3cfef-8f80-435d-b9b5-fb7c07bcc540,6dd6c813-8fc5-4e89-ae8d-892b374a1000,hết sức có thể,FALSE
+d3399d64-c5a7-454a-a75c-61617efe7986,6dd6c813-8fc5-4e89-ae8d-892b374a1000,làm việc tại (công ty),FALSE
+0833bbba-a673-4a92-b7c2-3232f57fb421,a31fca2d-9e9b-4044-8aa2-d8e77878180d,trận đấu,TRUE
+8655d83d-59a2-42cb-8376-3417a0847c5c,a31fca2d-9e9b-4044-8aa2-d8e77878180d,"bị lạc, phân vân",FALSE
+79bed7d8-e8f0-4204-965b-0ddeb838f39c,a31fca2d-9e9b-4044-8aa2-d8e77878180d,xem (khiêm nhường),FALSE
+2c160792-80af-4765-a206-f74c6aee7eb5,a31fca2d-9e9b-4044-8aa2-d8e77878180d,tham quan,FALSE
+5f62c005-e666-4d72-b7c1-abe450ed6f4b,21e9a4f8-b451-4d69-a861-e5431cc345c4,muối,FALSE
+acd8bb30-8287-493e-b308-607c511c022b,21e9a4f8-b451-4d69-a861-e5431cc345c4,con gái,FALSE
+b485db05-9a6b-45e2-ba2b-85f58ab25b18,21e9a4f8-b451-4d69-a861-e5431cc345c4,tuyển thủ,TRUE
+4a111264-b1b5-4761-bc28-729f8a0fefa4,21e9a4f8-b451-4d69-a861-e5431cc345c4,"sự xác nhận, kiểm tra",FALSE
+71fcc541-d587-4828-a202-5a569d9d58fe,ecd4d11a-8301-4c55-8a2f-392ced9921ca,Tôi viết tên bằng bút.,FALSE
+c1c68be0-7b6e-4ca1-9ded-43b671294df1,ecd4d11a-8301-4c55-8a2f-392ced9921ca,Cái ô này giá bao nhiêu?,FALSE
+34c19be7-811d-4d33-b7b1-82a39323a946,ecd4d11a-8301-4c55-8a2f-392ced9921ca,Tôi đã mượn sách từ bạn.,FALSE
+f7fbfd86-f3aa-4d23-9fb5-2bca18e1a948,ecd4d11a-8301-4c55-8a2f-392ced9921ca,"Sau khi làm bài tập, tôi xem ti vi.",TRUE
+3fbd3995-076d-42f0-a09f-5a0d3e1b2552,d9521541-a777-4af3-a30a-fa200d47960e,Tôi học tiếng Nhật để làm việc ở Nhật.,FALSE
+157d5eca-ada9-4e5e-8adf-63b86e96386d,d9521541-a777-4af3-a30a-fa200d47960e,Nếu đi Kyoto thì mùa thu đẹp đấy.,TRUE
+36b6e14a-8d2a-4c9e-8acf-fd1fd0a393ab,d9521541-a777-4af3-a30a-fa200d47960e,Tôi cùng bạn về từ nhà ga.,FALSE
+1ca72261-90c7-4060-9665-949117202f8c,d9521541-a777-4af3-a30a-fa200d47960e,Cây bút này dễ viết.,FALSE
+d018a8a2-e816-47ed-8b21-0db3c1f84fc7,0dbdb30f-a3e1-4ea1-bb7b-50f85d505dc4,Hôm qua tôi đã ăn quá nhiều.,FALSE
+c8550229-be43-4023-a2c3-fb04c2510f51,0dbdb30f-a3e1-4ea1-bb7b-50f85d505dc4,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+50c8f937-fb68-4662-8239-bc761b53595a,0dbdb30f-a3e1-4ea1-bb7b-50f85d505dc4,"Trước khi ngủ, tôi đọc sách.",FALSE
+17b56747-d65c-4167-8a93-be52d04c03dc,0dbdb30f-a3e1-4ea1-bb7b-50f85d505dc4,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",TRUE
+e4c09002-b449-4285-8281-5f8fbca1a64c,312be0fa-5c94-49e4-9eea-2d2c7a39b134,Việc học ngoại ngữ rất vui.,TRUE
+8d764357-9cfb-405b-9821-3bf86c66124f,312be0fa-5c94-49e4-9eea-2d2c7a39b134,Cái kéo này được dùng để cắt giấy.,FALSE
+0dfd4766-ab70-499a-872f-44fc16bd3302,312be0fa-5c94-49e4-9eea-2d2c7a39b134,Vì tàu trễ nên tôi đã đến cuộc họp muộn.,FALSE
+3bbd7a6f-de69-4c6d-bcf8-697d8df9bad4,312be0fa-5c94-49e4-9eea-2d2c7a39b134,Tôi rất vui vì đã thi đỗ.,FALSE
+0b424e10-fa12-4067-aeb2-4193f0028a01,77790f32-1be4-4997-8016-b8c5c0eddaf8,Cái kéo này được dùng để cắt giấy.,TRUE
+6bb9fb99-d928-4084-891d-57f845b6355b,77790f32-1be4-4997-8016-b8c5c0eddaf8,Tôi học tiếng Nhật để làm việc ở Nhật.,FALSE
+21eba0d5-ce9c-4a1b-b203-ec50d752ef26,77790f32-1be4-4997-8016-b8c5c0eddaf8,Máy này được dùng để in ảnh.,FALSE
+65cd0b81-d727-49cf-a64b-0e47d60a0d1e,77790f32-1be4-4997-8016-b8c5c0eddaf8,Trông có vẻ sắp mưa.,FALSE
+6ebd9c38-38f1-47f8-bde9-4d4fe168c390,d93a82e8-26ac-480e-b474-0757c1cf9e78,mưa lớn,FALSE
+8a44aee5-1824-4df3-b71f-91b6c00665cd,d93a82e8-26ac-480e-b474-0757c1cf9e78,trộn,FALSE
+9fc8cc86-5283-459f-9535-aa5ef52151aa,d93a82e8-26ac-480e-b474-0757c1cf9e78,"mong được giúp đỡ, xin gửi lời",FALSE
+36c1e5de-f98d-4b72-b320-edbe871f261b,d93a82e8-26ac-480e-b474-0757c1cf9e78,kinh nghiệm,TRUE
+492232bf-6722-4182-be2c-4b1b3891b60e,827deaac-e41c-45b9-b1fb-370c7d8645e5,ý kiến,TRUE
+3ffeb57c-e9a0-47d3-9e58-ce84e6bb6318,827deaac-e41c-45b9-b1fb-370c7d8645e5,thành công,FALSE
+e1b6fa26-e995-4701-b2d3-7d99eda654df,827deaac-e41c-45b9-b1fb-370c7d8645e5,màu sắc,FALSE
+fd4074d1-234b-43b6-87fe-64703ee21a2f,827deaac-e41c-45b9-b1fb-370c7d8645e5,làm hỏng,FALSE
+ac751d0e-4084-4e1e-8683-d4c71a128a91,9481813d-ba76-45f7-93c0-8a01c588fbd9,bà (của mình),FALSE
+05cdc5d1-e216-4f4a-9129-c6c68f7bfe70,9481813d-ba76-45f7-93c0-8a01c588fbd9,"vội, nhanh lên",FALSE
+7a0f33b5-8353-4be2-aa30-cdd434c8adec,9481813d-ba76-45f7-93c0-8a01c588fbd9,được dọn gọn,FALSE
+a2c5c5ed-39a4-4ba3-8bd7-d8f6536109e2,9481813d-ba76-45f7-93c0-8a01c588fbd9,"tâm trạng, cảm giác",TRUE
+d69b84b9-f235-435b-9d62-8284e126685c,1ca7319c-079b-416c-87f5-53e21aad1126,Bạn đã tặng tôi quà lưu niệm.,FALSE
+44f57a45-54fc-485d-8d90-b0aec168e9b0,1ca7319c-079b-416c-87f5-53e21aad1126,Nếu đi Kyoto thì mùa thu đẹp đấy.,TRUE
+f97d19c9-7ef8-4e70-96ba-c509bfe2b7e2,1ca7319c-079b-416c-87f5-53e21aad1126,Tôi học tiếng Nhật để làm việc ở Nhật.,FALSE
+1b0e88c0-a2c9-4e3b-b7a3-201c3933e570,1ca7319c-079b-416c-87f5-53e21aad1126,"Khi qua đường, tôi nhìn bên phải.",FALSE
+3178bd1c-acd3-47f1-84b9-64326a24aa1a,86e79eda-80c8-4ca0-9815-eccd4eda87d4,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",TRUE
+4962262d-53bb-4adf-8d96-4f670e1b36a0,86e79eda-80c8-4ca0-9815-eccd4eda87d4,Ấn nút này thì cửa mở.,FALSE
+145d763e-f625-435a-ae8a-0c270fdb734e,86e79eda-80c8-4ca0-9815-eccd4eda87d4,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,FALSE
+8dc578bd-53a5-4f12-9da5-3b96575bdc80,86e79eda-80c8-4ca0-9815-eccd4eda87d4,"Dù trời mưa, tôi vẫn đi học.",FALSE
+6398b266-bb74-4d4d-9e6d-b4d23e4406f5,0296d097-3198-44c3-83be-0dd53f8e34c7,Chắc anh ấy đã đến nhà ga rồi.,FALSE
+7390cfe8-f8e5-440e-8f65-9e3b4127c3d4,0296d097-3198-44c3-83be-0dd53f8e34c7,Xin hãy lắp theo đúng như hướng dẫn viết trong sách.,FALSE
+22c0ad4f-48b5-4ec4-8000-540ab5abf4b4,0296d097-3198-44c3-83be-0dd53f8e34c7,Tôi bị em trai ăn mất bánh.,TRUE
+b4d8608a-4a8d-4444-ad5f-0d11dc698d23,0296d097-3198-44c3-83be-0dd53f8e34c7,Trông có vẻ sắp mưa.,FALSE
+517a893e-5312-44ab-92a8-d3be397fea88,980520b1-b51c-4ca4-8093-828b99de7c19,Vì tàu trễ nên tôi đã đến cuộc họp muộn.,TRUE
+c3cbd516-306c-4caa-8409-f664181cbdd2,980520b1-b51c-4ca4-8093-828b99de7c19,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,FALSE
+5f29fe65-26b2-4811-9401-ff43f91d962a,980520b1-b51c-4ca4-8093-828b99de7c19,Bây giờ tôi sắp ra ngoài.,FALSE
+1c999087-c9b3-4775-b1a0-0b26a6da93cd,980520b1-b51c-4ca4-8093-828b99de7c19,Chắc anh ấy đã đến nhà ga rồi.,FALSE
+5f437af2-5ac6-4ec5-bec5-4c343d20ca59,69b15c08-feda-49f7-99da-de6ca26f6ef2,Tôi rất vui vì đã thi đỗ.,TRUE
+519a8abe-c235-4af6-b334-dee2416049b9,69b15c08-feda-49f7-99da-de6ca26f6ef2,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+e0fd8fea-b390-4e92-8286-57290ad3b7c6,69b15c08-feda-49f7-99da-de6ca26f6ef2,Xin quý khách vui lòng đợi một chút ở đây.,FALSE
+7ad32786-fc69-41f8-b0a6-b370150f9072,69b15c08-feda-49f7-99da-de6ca26f6ef2,Để tôi mang tài liệu ạ.,FALSE
+3168adeb-7e1f-44d1-bfb9-74d2e2022f4a,1c2c5e1b-1bca-4930-a563-fef94d5a78c6,lối vào nhà,FALSE
+6ead77e3-3b13-4fc9-8894-971e77db4ca8,1c2c5e1b-1bca-4930-a563-fef94d5a78c6,vắng nhà,FALSE
+4f2343bf-416a-4581-a563-fa2207e63b0f,1c2c5e1b-1bca-4930-a563-fef94d5a78c6,ông (của mình),TRUE
+505baa8c-f416-42b2-8b22-75abecb3d385,1c2c5e1b-1bca-4930-a563-fef94d5a78c6,"quan trọng, quý giá",FALSE
+f83d30d7-f03b-4497-9331-80c3b90acf21,bac84b71-6a50-4017-8b7b-ed57f4982bfe,thói quen,FALSE
+256c4382-0b9d-4aab-83a4-f1dfc95dd1ba,bac84b71-6a50-4017-8b7b-ed57f4982bfe,"sự trao đổi, tư vấn",FALSE
+c9a2127f-9f93-4a20-9c26-67316d477b28,bac84b71-6a50-4017-8b7b-ed57f4982bfe,xin phép (ra về/kết thúc),FALSE
+3b50f39c-f783-43d2-a92c-66ecfbe394b3,bac84b71-6a50-4017-8b7b-ed57f4982bfe,bà (của mình),TRUE
+18db96a5-ff66-4534-9ee7-aa8ff2e5cb01,6e106899-a553-48e4-a154-8f8fb3168d26,"việc bận, công việc cần làm",FALSE
+849aa9a4-c858-40d6-b497-3bcbae45caae,6e106899-a553-48e4-a154-8f8fb3168d26,ngay lập tức,FALSE
+72faedb8-e159-418a-b3fc-b983037985ae,6e106899-a553-48e4-a154-8f8fb3168d26,cháu,TRUE
+bac26e8c-4d33-43e1-a29d-2947de509d15,6e106899-a553-48e4-a154-8f8fb3168d26,tin đồn,FALSE
+a39f4163-ff97-4589-bbd7-29b7eeb2eb96,572ada49-a18d-402e-8b4b-c6fa3db449d5,Tôi được thầy/cô khen.,FALSE
+af8ee0bb-eb09-41c4-bac3-1e363cd0c680,572ada49-a18d-402e-8b4b-c6fa3db449d5,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",TRUE
+132792a3-c272-422b-9d67-e0d77ed04a68,572ada49-a18d-402e-8b4b-c6fa3db449d5,"Sang thu rồi, trời trở nên mát mẻ.",FALSE
+6bceb8a7-ccd7-4c92-8294-4e5d7f7c731f,572ada49-a18d-402e-8b4b-c6fa3db449d5,Xin hãy viết tên vào đây.,FALSE
+0a660203-237e-4a1f-aca6-9c92f4900508,b87ab892-c1b0-4854-8a25-17cee1725353,Tôi bị em trai ăn mất bánh.,TRUE
+261bb187-9111-4192-9acd-fdffa862b4c4,b87ab892-c1b0-4854-8a25-17cee1725353,Thành phố này yên tĩnh và tiện lợi.,FALSE
+8273ba6a-8d13-4ee6-a8b7-6156a3c6970b,b87ab892-c1b0-4854-8a25-17cee1725353,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",FALSE
+c8316ad7-ef04-4045-ba21-eeb3976e3d01,b87ab892-c1b0-4854-8a25-17cee1725353,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+0c1214a5-e943-4fb3-8657-7c03f72639fa,fc76b06a-d901-4e03-b503-5170994e61ec,Tôi đã nhận sách từ thầy/cô.,FALSE
+68d0fb82-246d-4323-8ffb-d428ac1830b7,fc76b06a-d901-4e03-b503-5170994e61ec,Tôi có thể đọc được một ít kanji.,FALSE
+985065d5-7020-41a4-8b5a-51bc1343aa88,fc76b06a-d901-4e03-b503-5170994e61ec,Anh Minh là giáo viên phải không?,FALSE
+7b3dd01a-5679-4076-816b-c7b56e6e6519,fc76b06a-d901-4e03-b503-5170994e61ec,Cái kéo này được dùng để cắt giấy.,TRUE
+2774690f-ff5d-4bb4-951f-3ab099202141,08b4e22a-dbea-458e-9f39-62656baf0e39,Xin hãy chỉ cho tôi cách đi đến nhà ga.,TRUE
+b999adfc-a4d1-4cf2-897f-d2c6bb3e2354,08b4e22a-dbea-458e-9f39-62656baf0e39,Từ đây có thể nhìn thấy biển.,FALSE
+5b3f65c9-1a82-4329-b3e8-cd9d832aadca,08b4e22a-dbea-458e-9f39-62656baf0e39,Tôi vừa nghe nhạc vừa học.,FALSE
+155c1d67-7ec9-4462-8614-39a99a7af97b,08b4e22a-dbea-458e-9f39-62656baf0e39,Quán này vừa rẻ vừa ngon nên tôi thường đến.,FALSE
+cb5939c3-cbf7-42cf-9b87-b28eecd07478,4412118f-5fe9-40f4-96a4-4defce7d5a22,Tôi sẽ thử kiểm tra xem cách này có đúng không.,TRUE
+68acc397-8ace-44f5-aef7-f95efd6b7da0,4412118f-5fe9-40f4-96a4-4defce7d5a22,Nghỉ một chút nhé.,FALSE
+8c542189-a194-4afc-a3f3-1b847c4c2dac,4412118f-5fe9-40f4-96a4-4defce7d5a22,Tôi đang định năm sau đi du học Nhật Bản.,FALSE
+eecad7e8-0a57-462a-a943-0486dd1041fb,4412118f-5fe9-40f4-96a4-4defce7d5a22,Vì bị sốt nên hôm nay bạn nên nghỉ.,FALSE
+ad9464a5-6602-4ef5-b80f-f895fd06dc8a,cab2513e-6239-4339-9d7e-bea812455888,"quá, vượt quá",FALSE
+3daccd7c-2e50-4e7a-91fd-8a2d0ae8c37e,cab2513e-6239-4339-9d7e-bea812455888,tuyển thủ,FALSE
+7afb740c-0a90-4c2c-adf7-02caebf60b82,cab2513e-6239-4339-9d7e-bea812455888,lúc nãy,FALSE
+15af668e-c84c-407d-a90a-0bc0b527fab0,cab2513e-6239-4339-9d7e-bea812455888,tham quan,TRUE
+6a5070e2-3c0f-41a0-8928-89e08f0a9148,9c4866a1-2d03-4077-8993-df79d04201a3,mùa hè,FALSE
+1afee573-d25a-4fc2-8e96-08a2a5b0d4f7,9c4866a1-2d03-4077-8993-df79d04201a3,nhận,FALSE
+07ea32cb-3f8c-473d-8f7e-7da338329c36,9c4866a1-2d03-4077-8993-df79d04201a3,nhà trọ kiểu Nhật,TRUE
+f400839b-1e16-4437-8eb5-6b9cfae8e82c,9c4866a1-2d03-4077-8993-df79d04201a3,đáng tiếc,FALSE
+55459dcd-a65c-470d-b5c0-3e8f5ec4288b,011bf3ac-13a6-491b-b644-9c073afa7c2c,lưu trú,TRUE
+ea052805-8b60-4540-8d69-d6e8ce12c1f6,011bf3ac-13a6-491b-b644-9c073afa7c2c,máy bay,FALSE
+16fb8ffa-89b8-47bd-b3b3-dafa9932587e,011bf3ac-13a6-491b-b644-9c073afa7c2c,vô địch,FALSE
+525c0d13-2919-44b1-adbf-653fb29af857,011bf3ac-13a6-491b-b644-9c073afa7c2c,đăng ký,FALSE
+e7fe68cb-5cae-48eb-b3bb-5ae669fc99f3,50b2b2ec-0c2d-4dfd-a717-a1636301f4cc,Tôi bị em trai ăn mất bánh.,TRUE
+1d83f16b-b2e6-4809-a49b-0d1cccfec60a,50b2b2ec-0c2d-4dfd-a717-a1636301f4cc,Cái ô này giá bao nhiêu?,FALSE
+7b28a11a-a906-4af4-9d19-21d9b411cb8e,50b2b2ec-0c2d-4dfd-a717-a1636301f4cc,Tôi đã mượn sách từ bạn.,FALSE
+4089e960-75ff-4e65-ace2-0d16fcd02d72,50b2b2ec-0c2d-4dfd-a717-a1636301f4cc,Vì hiểu một chút tiếng Nhật nên tôi thấy vui.,FALSE
+16c96659-9afd-467b-86c9-0200e36e4851,824f6d9e-3ed3-4509-8d16-66a35a8d7370,Cái kéo này được dùng để cắt giấy.,TRUE
+ec02fe4d-acab-406c-bf3a-e032ca344638,824f6d9e-3ed3-4509-8d16-66a35a8d7370,Kanji này đọc là “deguchi” (lối ra).,FALSE
+749b8475-62c1-4deb-8e93-33f0b7805f44,824f6d9e-3ed3-4509-8d16-66a35a8d7370,Bánh ở cửa hàng này ngon nhất.,FALSE
+ef2ca6f4-28e7-4c32-be6d-a32dcb3853c2,824f6d9e-3ed3-4509-8d16-66a35a8d7370,Đó là người đang sống ở Osaka.,FALSE
+c0217273-17d1-4b15-8a33-5e487b78838f,e56bcc61-f440-4e8d-a006-9751fe423865,Cái bánh này trông có vẻ ngon.,FALSE
+7325f246-72e3-42ac-9b0c-98a40a4b199c,e56bcc61-f440-4e8d-a006-9751fe423865,Hôm nay xin hãy cho phép tôi về sớm.,FALSE
+a97df4f0-c425-4a99-9a46-51aa6c348689,e56bcc61-f440-4e8d-a006-9751fe423865,Tôi rất vui vì đã thi đỗ.,TRUE
+2a4a4346-8569-44cb-a0cd-6c5f005d4d4b,e56bcc61-f440-4e8d-a006-9751fe423865,Nghỉ một chút nhé.,FALSE
+61fde3a7-26d6-4e31-aab6-ae71a48c8ba6,b7c80249-f797-41ae-b141-bb67fbfc7122,Giám đốc đã về rồi.,TRUE
+9c0b053f-a4f6-4b1c-8641-e7c80875eba5,b7c80249-f797-41ae-b141-bb67fbfc7122,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+9953de4e-ccb5-47d1-9185-631f87e8f93c,b7c80249-f797-41ae-b141-bb67fbfc7122,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+d28853d0-d5b5-4477-8949-3f71ae5f09bd,b7c80249-f797-41ae-b141-bb67fbfc7122,Nếu đi Kyoto thì mùa thu đẹp đấy.,FALSE
+28f32a14-682f-4615-9627-c2ae2d85009d,cf451c1f-e20b-40b2-8090-94be6cf9b05f,Tôi đã nhận sách từ thầy/cô.,TRUE
+875a6d14-ae7f-42bf-9aa1-f7aee1b901ba,cf451c1f-e20b-40b2-8090-94be6cf9b05f,Việc học ngoại ngữ rất vui.,FALSE
+2d0c8595-a467-49ad-a8a3-51d4f676bc33,cf451c1f-e20b-40b2-8090-94be6cf9b05f,Cái kéo này được dùng để cắt giấy.,FALSE
+d557af3f-cd82-4e63-b65a-bba80c300c0e,cf451c1f-e20b-40b2-8090-94be6cf9b05f,Vì tàu trễ nên tôi đã đến cuộc họp muộn.,FALSE
+911cbd2e-bdcd-438a-9064-84092e9b3bd9,226fdc49-0c10-4efa-a940-8cb66c3b1445,báo cáo,FALSE
+b257075c-3e29-4393-a73a-bde203f43d02,226fdc49-0c10-4efa-a940-8cb66c3b1445,quà tặng,TRUE
+ff394880-bff9-460f-b62c-ac7825e946f1,226fdc49-0c10-4efa-a940-8cb66c3b1445,hòn đảo,FALSE
+07a1d173-32c2-4c4a-9dd1-e47a53de65ac,226fdc49-0c10-4efa-a940-8cb66c3b1445,mùa đông,FALSE
+a29a65b2-0694-46ff-9aa9-cea4a3b504e5,a3645c3a-d99e-4ef1-87e4-ff1edd4261fd,cuối cùng thì,FALSE
+be66fd7a-d6be-4df2-a80c-9d51f61b73b1,a3645c3a-d99e-4ef1-87e4-ff1edd4261fd,"lời chúc mừng, quà mừng",TRUE
+4c7d6119-d45a-4f38-afba-6a14a42ba127,a3645c3a-d99e-4ef1-87e4-ff1edd4261fd,sắp sửa,FALSE
+295a2913-5609-4c2b-8d1e-8959b8ac4105,a3645c3a-d99e-4ef1-87e4-ff1edd4261fd,"xin mời, xin cứ tự nhiên",FALSE
+5b6d8e02-59f2-4c94-b7e9-22192d3adc29,89c443bc-fa23-4fa5-827f-51e991b98d94,"lời cảm ơn, quà cảm ơn",TRUE
+2f64b642-409a-4c0a-a3ba-9a8fad37f77c,89c443bc-fa23-4fa5-827f-51e991b98d94,hòn đảo,FALSE
+acd55364-7959-49c3-9d81-ebfd6dbd8753,89c443bc-fa23-4fa5-827f-51e991b98d94,lúc nãy,FALSE
+ebb11b2d-758f-40f7-b88a-8302af62b31a,89c443bc-fa23-4fa5-827f-51e991b98d94,cuối cùng thì,FALSE
+7fca58f1-700e-4ffd-97b0-171384698994,204db318-aa78-4506-84c7-33f23e78a7e1,Bây giờ là 8 giờ rưỡi.,FALSE
+cbf649b4-59ec-4d01-9433-d53555028457,204db318-aa78-4506-84c7-33f23e78a7e1,Cái kéo này được dùng để cắt giấy.,TRUE
+513009a0-e8e1-45a7-8715-a5d16b2df2bc,204db318-aa78-4506-84c7-33f23e78a7e1,Tôi có thể đọc hiragana.,FALSE
+9fb28317-8c18-454a-8823-8af02d335d3c,204db318-aa78-4506-84c7-33f23e78a7e1,Đó là người đang sống ở Osaka.,FALSE
+6231f4ad-854f-4035-9e77-56e7277b78da,c22a20a3-b18e-4b30-8aee-d925e0df1748,Tôi ăn sáng rồi đi học.,FALSE
+8833dd1c-6c24-4420-b588-49b055ad3331,c22a20a3-b18e-4b30-8aee-d925e0df1748,Hãy ghi chú để khỏi quên.,FALSE
+f33b918d-975e-4090-8157-66fface3fd4c,c22a20a3-b18e-4b30-8aee-d925e0df1748,Có quyển sách ở trên bàn.,FALSE
+2ab65d9b-dcc9-4150-94fa-091672b00653,c22a20a3-b18e-4b30-8aee-d925e0df1748,Tôi rất vui vì đã thi đỗ.,TRUE
+4a951a96-a53c-47de-91d0-17d7e320d18b,969a2d3e-8426-40aa-8deb-aa32142178b1,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+d61c2afa-6ab2-416a-ad50-b0c6fd7bc30d,969a2d3e-8426-40aa-8deb-aa32142178b1,"Khi qua đường, tôi nhìn bên phải.",FALSE
+84164119-c853-4482-a968-74de095fc5be,969a2d3e-8426-40aa-8deb-aa32142178b1,Tôi đi đến trường bằng xe buýt.,FALSE
+25a65ee8-7a60-4f29-85b0-ed50e08d4478,969a2d3e-8426-40aa-8deb-aa32142178b1,Tôi sẽ thử kiểm tra xem cách này có đúng không.,TRUE
+f43971b6-abca-4855-b9d0-3f5995143e83,d34f409d-517c-408e-95d6-881fb81ff978,Tôi học tiếng Nhật để làm việc ở Nhật.,TRUE
+abe30b5c-2f94-47dd-837e-ae812ff350d3,d34f409d-517c-408e-95d6-881fb81ff978,Tôi đã nhận sách từ thầy/cô.,FALSE
+22f5fbce-edb2-4615-b0fa-0c601d3f3dae,d34f409d-517c-408e-95d6-881fb81ff978,Máy này được dùng để in ảnh.,FALSE
+3ded83e8-5e90-45e0-9f85-0826e6cdcbcb,d34f409d-517c-408e-95d6-881fb81ff978,Trông có vẻ sắp mưa.,FALSE
+1cf7b838-18bc-4dc2-85d5-4ce226da1cb0,1fcb3048-6c2e-414e-afe6-356110b871b9,Máy này được dùng để in ảnh.,TRUE
+e34320a9-db68-41ff-af7d-c312edc34b19,1fcb3048-6c2e-414e-afe6-356110b871b9,"Nếu làm mất hộ chiếu, hãy liên lạc ngay.",FALSE
+0d84ba16-2b5b-4e31-8f96-e70a6ec5f79c,1fcb3048-6c2e-414e-afe6-356110b871b9,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,FALSE
+5c8de7db-075e-4226-870f-d52fbb1b6f6f,1fcb3048-6c2e-414e-afe6-356110b871b9,Bây giờ tôi sắp ra ngoài.,FALSE
+afb29412-7304-45ed-bfe0-4f0371adafaf,7501c885-21b2-4075-9064-5b347d5f56b4,bị hỏng,FALSE
+a43183e4-d70d-41a0-bfb0-32a67e731272,7501c885-21b2-4075-9064-5b347d5f56b4,mong được giúp đỡ,FALSE
+a4ddd56e-41f4-4ba7-bda5-f5af15866066,7501c885-21b2-4075-9064-5b347d5f56b4,tiền lương,TRUE
+bde5fb90-bddf-4b07-a3ac-7b2f7e2e7fe0,7501c885-21b2-4075-9064-5b347d5f56b4,tuyển dụng,FALSE
+b2e07fc6-ba9a-4a21-b3d3-24a1f3921a46,a3aebbed-714f-46d8-a834-76d762ceb568,kệ,FALSE
+d608d5df-0d61-457e-bdaf-6ce6c82bd453,a3aebbed-714f-46d8-a834-76d762ceb568,phỏng vấn,TRUE
+8b0a5a34-41ca-4f40-bc5a-bdeabad3d804,a3aebbed-714f-46d8-a834-76d762ceb568,dụng cụ,FALSE
+6774e913-ba89-4634-93b2-b9331acbf298,a3aebbed-714f-46d8-a834-76d762ceb568,ngay lập tức,FALSE
+61870f93-7065-4383-a7d7-f34e1125b2ff,e0ce599b-440e-47cd-b8b3-17f82c730039,đường,FALSE
+922a91b0-6a4a-4362-91ed-f543cb504123,e0ce599b-440e-47cd-b8b3-17f82c730039,cuộc họp,TRUE
+16678dd0-8fad-480f-be56-f45632cc019f,e0ce599b-440e-47cd-b8b3-17f82c730039,cháu,FALSE
+e931ec19-d3fe-4599-872b-ccaa0b4991df,e0ce599b-440e-47cd-b8b3-17f82c730039,"điều mong đợi, niềm vui",FALSE
+9020d4e0-e9e6-4224-84af-1830833ccb22,87f47cc4-d1ce-47cf-b13b-4c1a5010ec55,Cái ô này giá bao nhiêu?,FALSE
+4d4789e4-0085-4822-a966-e95f67d2a06b,87f47cc4-d1ce-47cf-b13b-4c1a5010ec55,Trông có vẻ sắp mưa.,FALSE
+16057498-360e-46c3-ad62-952ad38dcd52,87f47cc4-d1ce-47cf-b13b-4c1a5010ec55,Tôi rất vui vì đã thi đỗ.,TRUE
+b6e18059-4935-4980-849a-44df1b3d6798,87f47cc4-d1ce-47cf-b13b-4c1a5010ec55,Tôi đã mượn sách từ bạn.,FALSE
+d9c673c7-0273-4789-9a78-c142750a0a6f,6bfd6a3a-7977-46bc-8288-b0ed5079fe40,Bây giờ là 8 giờ rưỡi.,FALSE
+cf8a80d0-27f8-40c7-9668-d98d42fd5581,6bfd6a3a-7977-46bc-8288-b0ed5079fe40,"Trước khi ngủ, tôi đọc sách.",FALSE
+f6d3e42a-b59c-431f-af36-290ae79a992e,6bfd6a3a-7977-46bc-8288-b0ed5079fe40,Tôi muốn đến Nhật ngắm hoa anh đào.,FALSE
+aa3e399c-9d76-42a3-9db2-fd8c04a85233,6bfd6a3a-7977-46bc-8288-b0ed5079fe40,Tôi sẽ thử kiểm tra xem cách này có đúng không.,TRUE
+4eaf5921-de93-4071-832a-ee4800745f7c,80b51999-dac9-463d-8b38-7a5bb5f560b2,Để tôi mang tài liệu ạ.,FALSE
+2ca90892-8878-4130-883b-9b211f82d593,80b51999-dac9-463d-8b38-7a5bb5f560b2,Nghỉ một chút nhé.,FALSE
+191d1a81-f5be-4cce-948a-07a371c73d12,80b51999-dac9-463d-8b38-7a5bb5f560b2,Tôi đã nhận sách từ thầy/cô.,TRUE
+afc4955b-cc2e-4818-a1d1-f095e0571ad2,80b51999-dac9-463d-8b38-7a5bb5f560b2,Tôi vừa nghe nhạc vừa học.,FALSE
+1c76bed1-8f20-4101-8f83-25741d7a2f99,70e691e0-183d-40f7-8834-88826fd57c8e,Trông có vẻ sắp mưa.,TRUE
+fbda1221-7972-44a7-86a7-1062928481a0,70e691e0-183d-40f7-8834-88826fd57c8e,Hôm nay xin hãy cho phép tôi về sớm.,FALSE
+2222ea10-0f14-4701-9434-6555919683a0,70e691e0-183d-40f7-8834-88826fd57c8e,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+21f4fdca-0eea-4c21-8633-c79a22549c11,70e691e0-183d-40f7-8834-88826fd57c8e,Xin quý khách vui lòng đợi một chút ở đây.,FALSE
+1fbb9d61-df71-496b-9086-ae06b073842e,7ff8c0fc-c7e6-4787-bb52-bc9ad9964e07,Cái bánh này trông có vẻ ngon.,TRUE
+95c8cbe0-8862-4613-947b-b32fce11671f,7ff8c0fc-c7e6-4787-bb52-bc9ad9964e07,Tôi có thể đọc được một ít kanji.,FALSE
+86ee2552-b4fc-4e18-a07f-ef44396be992,7ff8c0fc-c7e6-4787-bb52-bc9ad9964e07,Từ đây có thể nhìn thấy biển.,FALSE
+be9c4b25-e61b-49e3-8b85-03b57b2783b9,7ff8c0fc-c7e6-4787-bb52-bc9ad9964e07,Tôi vừa nghe nhạc vừa học.,FALSE
+8678b9f1-0f91-4de5-bb4e-fe5a7fdb71fd,e91df2a4-fab5-4485-9e29-6a0107a7830c,hình dạng,TRUE
+d83c7dbe-ce90-4852-a4a5-92ea9a2c8f32,e91df2a4-fab5-4485-9e29-6a0107a7830c,bị hỏng,FALSE
+57f22ba8-9b2f-4355-a1f5-d9ccda8a054d,e91df2a4-fab5-4485-9e29-6a0107a7830c,lý do,FALSE
+32772b0d-11e5-44e3-af51-a5e7114581d1,e91df2a4-fab5-4485-9e29-6a0107a7830c,"nhận, ăn/uống (khiêm nhường)",FALSE
+812c37dc-f89f-4a93-b2e2-0d0aa64f308c,fdc0bc54-1b2b-4f33-b50c-8d368f00e28f,việc điền thông tin,FALSE
+1b9c98f1-206d-4562-97ad-268f2c83c575,fdc0bc54-1b2b-4f33-b50c-8d368f00e28f,màu sắc,TRUE
+4f9c4372-21a2-48cc-b2d7-d6a6a8d7df26,fdc0bc54-1b2b-4f33-b50c-8d368f00e28f,"tốt bụng, tử tế",FALSE
+868681f7-1c3e-4f04-bcc5-6fb0fd28753f,fdc0bc54-1b2b-4f33-b50c-8d368f00e28f,quà tặng,FALSE
+3dfab77f-a778-421a-ad6a-0528329ce907,d35233f9-95c1-46c1-a249-50d93e5931dd,mùa hè,FALSE
+bdc5a98a-0cd5-414e-8db4-71682c9dc3fa,d35233f9-95c1-46c1-a249-50d93e5931dd,"nhận, ăn/uống (khiêm nhường)",FALSE
+b51c3839-69a1-4e83-abcd-8a1edacc7fc4,d35233f9-95c1-46c1-a249-50d93e5931dd,mùi,TRUE
+094f8284-9f27-4319-ba2c-a7259c8e6595,d35233f9-95c1-46c1-a249-50d93e5931dd,làm việc tại (công ty),FALSE
+587bc443-b123-493f-9128-71e16851b309,bd7c7480-543e-4e6b-a753-17facd4a8785,Tôi sẽ thử kiểm tra xem cách này có đúng không.,TRUE
+461c6e88-e30d-495e-910c-e1a558376ff3,bd7c7480-543e-4e6b-a753-17facd4a8785,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+ad9fb33f-737a-4fd5-a145-1e0de101df8f,bd7c7480-543e-4e6b-a753-17facd4a8785,Nguy hiểm nên đừng vào đó.,FALSE
+af68f7d2-df01-4d8d-8f77-128a025fadb1,bd7c7480-543e-4e6b-a753-17facd4a8785,Bạn đã tặng tôi quà lưu niệm.,FALSE
+646d9e02-c546-4462-ab32-808e30936ad3,0cfdbdff-e9ff-4409-8d18-14f2b06165ae,Bánh ở cửa hàng này ngon nhất.,FALSE
+c6d97e48-05e4-4a44-8ba6-fa87ed258be7,0cfdbdff-e9ff-4409-8d18-14f2b06165ae,Tôi đã nhận sách từ thầy/cô.,TRUE
+74d7a086-0191-485f-821d-f09b89790b1e,0cfdbdff-e9ff-4409-8d18-14f2b06165ae,Hãy ghi chú để khỏi quên.,FALSE
+e2885d2c-a460-4f50-9183-c9ceb08c1c24,0cfdbdff-e9ff-4409-8d18-14f2b06165ae,Máy này được dùng để in ảnh.,FALSE
+6afbd56c-ce58-4f03-b834-0e7e72bd5e02,2ac549b0-1e83-42c2-be95-4880065a4d17,Nghỉ một chút nhé.,FALSE
+bd2a7a2d-5cc5-4c47-8fb5-c81b4e7d69b7,2ac549b0-1e83-42c2-be95-4880065a4d17,Máy này được dùng để in ảnh.,TRUE
+f7a5ab3b-1745-430a-83f2-a7c506b9100a,2ac549b0-1e83-42c2-be95-4880065a4d17,Tôi rất vui vì đã thi đỗ.,FALSE
+4f7a772c-2454-4f20-b9ad-25fed689bb2b,2ac549b0-1e83-42c2-be95-4880065a4d17,Vì hiểu một chút tiếng Nhật nên tôi thấy vui.,FALSE
+de67bb36-355d-4a13-b473-48c276df9851,70f707a3-6e53-4683-843f-2b2715c185ce,Hôm qua tôi đã ăn quá nhiều.,TRUE
+db5c6bd4-d748-47ae-8897-6cc60ea93ad6,70f707a3-6e53-4683-843f-2b2715c185ce,Tôi sẽ mua vé trước chuyến đi.,FALSE
+a3d3e093-567e-4496-a1e3-b5ea0b757d84,70f707a3-6e53-4683-843f-2b2715c185ce,Nghỉ một chút nhé.,FALSE
+1834f9b0-d221-451f-bf7a-70e39f55d1f7,70f707a3-6e53-4683-843f-2b2715c185ce,Tôi đang định năm sau đi du học Nhật Bản.,FALSE
+f3cb55d2-c184-43f1-929b-f24ef13a8cc0,c2a6e1b5-15e4-43ec-83e8-703ca50900a8,Cây bút này dễ viết.,TRUE
+cb0cd93d-4dfe-4ed2-859f-23df80788b5a,c2a6e1b5-15e4-43ec-83e8-703ca50900a8,Xin hãy lắp theo đúng như hướng dẫn viết trong sách.,FALSE
+40145a73-04e6-4b3d-906a-59ac729a9618,c2a6e1b5-15e4-43ec-83e8-703ca50900a8,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+fa04db5f-efbb-464f-9996-08c1ada5dd6d,c2a6e1b5-15e4-43ec-83e8-703ca50900a8,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+50b07981-4e9f-403a-92c4-9c10b460ef2b,7672da86-58a8-4457-9347-98cd2bd7290b,"bị lạc, phân vân",FALSE
+78fcef99-e712-48af-acdd-d24e7640d155,7672da86-58a8-4457-9347-98cd2bd7290b,bà (của mình),FALSE
+d618b4c9-5e16-438a-bd7f-7b982dbc25e7,7672da86-58a8-4457-9347-98cd2bd7290b,bình thường,FALSE
+7121fe24-4381-4c32-a1b0-4b47ddb50abd,7672da86-58a8-4457-9347-98cd2bd7290b,"quá, vượt quá",TRUE
+d55990b8-ab35-488c-afb5-4b8f9d8d9b4c,3ec7edd6-d06a-4579-abdf-44fb5b4cda5b,nhà trọ kiểu Nhật,FALSE
+7f11ec57-2340-408d-ac0f-07c02b027109,3ec7edd6-d06a-4579-abdf-44fb5b4cda5b,giao phó,FALSE
+422d4e76-4237-4c51-a14f-9770ee1d474d,3ec7edd6-d06a-4579-abdf-44fb5b4cda5b,đủ,TRUE
+9dcebeac-6c75-4643-91e5-b4bb1ea3a019,3ec7edd6-d06a-4579-abdf-44fb5b4cda5b,"nướng, rán",FALSE
+0c23f8de-de91-40c3-8f80-85cb13809977,0abc5817-53ce-4c12-9862-2d5e56234671,"tin báo, thông báo",FALSE
+4a79054b-5854-4189-add1-521722fee693,0abc5817-53ce-4c12-9862-2d5e56234671,luyện tập,FALSE
+9d3d28fc-0ee6-4c97-89fd-ee9c6081b82c,0abc5817-53ce-4c12-9862-2d5e56234671,đơn giản,TRUE
+60809cd5-f19c-4256-890f-477fdd34abb4,0abc5817-53ce-4c12-9862-2d5e56234671,người phụ trách,FALSE
+87176c19-7790-4763-84fe-727e87f4edf3,2ac88e05-67da-4738-b315-7ea0c29c2ca8,Con mèo ở dưới ghế.,FALSE
+a18bec94-bc3d-48b4-8fc7-a99d4ca533a1,2ac88e05-67da-4738-b315-7ea0c29c2ca8,Tôi đã nhận sách từ thầy/cô.,TRUE
+77d13b13-ce30-4c71-9587-f67fb33b184f,2ac88e05-67da-4738-b315-7ea0c29c2ca8,Tôi được thầy/cô khen.,FALSE
+cbe71809-815c-4b84-8668-677e24081ac9,2ac88e05-67da-4738-b315-7ea0c29c2ca8,Ấn nút này thì cửa mở.,FALSE
+2254b2ef-21ef-4c3d-8777-67701c895abe,085e296f-01b2-4ff5-9742-2bdb34ef4fa4,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+626eacee-c8b1-4b53-a47e-400b47ba613c,085e296f-01b2-4ff5-9742-2bdb34ef4fa4,Máy này được dùng để in ảnh.,TRUE
+1fe0be45-b06e-456c-8070-cea5c8e12a4f,085e296f-01b2-4ff5-9742-2bdb34ef4fa4,Anh Minh là giáo viên phải không?,FALSE
+de1a2d7a-e3a8-4c1e-a1d5-9584023c1675,085e296f-01b2-4ff5-9742-2bdb34ef4fa4,Có quyển sách ở trên bàn.,FALSE
+11e5a212-f58a-4e32-ace7-9040fa8dc474,7b33f85d-59da-442f-a50a-335e868cd493,Thành phố này yên tĩnh và tiện lợi.,FALSE
+17b22acc-a167-430d-a750-98e58e97aee9,7b33f85d-59da-442f-a50a-335e868cd493,Cái bánh này trông có vẻ ngon.,TRUE
+09970859-0ddd-45ca-bebb-33f6e5aab5f9,7b33f85d-59da-442f-a50a-335e868cd493,Con mèo ở dưới ghế.,FALSE
+4e351f4d-fe5f-4479-959e-5fa4fea6c9d6,7b33f85d-59da-442f-a50a-335e868cd493,Mỗi sáng tôi thức dậy lúc 6 giờ.,FALSE
+33c2740f-7b13-4e4c-9b36-80231ae6ab6c,3c143f9d-f424-4c03-ad2c-7f1c1b4b36cc,"Nếu làm mất hộ chiếu, hãy liên lạc ngay.",TRUE
+9242a6ac-c127-496a-8a14-6d9ed94f8b11,3c143f9d-f424-4c03-ad2c-7f1c1b4b36cc,Tôi bị em trai ăn mất bánh.,FALSE
+e286e5f2-2a66-4261-b098-44498183765b,3c143f9d-f424-4c03-ad2c-7f1c1b4b36cc,Việc học ngoại ngữ rất vui.,FALSE
+5d73f479-9d78-45a0-a6ec-ac3f40748323,3c143f9d-f424-4c03-ad2c-7f1c1b4b36cc,Cái kéo này được dùng để cắt giấy.,FALSE
+4e687b8a-e0e9-4ce6-bc0e-533e3e4a9da8,869aa6f2-4d53-4a60-9126-56f4d50db0f4,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,TRUE
+a4df1ccc-2538-4311-b00a-84bcb3fed2fe,869aa6f2-4d53-4a60-9126-56f4d50db0f4,Giám đốc đã về rồi.,FALSE
+3a358590-0f96-44c8-ae01-5e15ea12ef9e,869aa6f2-4d53-4a60-9126-56f4d50db0f4,Tôi đã nhận sách từ thầy/cô.,FALSE
+2bfaf706-2751-49b3-9108-d37570850701,869aa6f2-4d53-4a60-9126-56f4d50db0f4,Tôi học tiếng Nhật để làm việc ở Nhật.,FALSE
+a66b7ea0-eb8e-4fb8-aceb-398439f4441f,1d0519a4-0160-4d42-8f44-df215f3a17ac,hỏa hoạn,TRUE
+1ee71787-a29c-4257-abb1-a7cae822e965,1d0519a4-0160-4d42-8f44-df215f3a17ac,"trong lúc, trong khoảng",FALSE
+bda1cdb9-b0c2-4f50-9928-6f15f2b936e8,1d0519a4-0160-4d42-8f44-df215f3a17ac,từ nay về sau,FALSE
+be528d3c-d168-4ead-8ff9-bc8df81cbf14,1d0519a4-0160-4d42-8f44-df215f3a17ac,sự nỗ lực,FALSE
+f59820c6-796a-4336-b934-68c5d68cb82a,aafa62af-d2d5-48b8-a6d6-99f592449538,"suốt, hơn hẳn",FALSE
+9e92b7ca-2869-45c9-8654-6ff237693478,aafa62af-d2d5-48b8-a6d6-99f592449538,mưa lớn,TRUE
+abbc4d35-6288-444f-aedf-c1a40bd1eb81,aafa62af-d2d5-48b8-a6d6-99f592449538,"tin báo, thông báo",FALSE
+b2a47092-c325-4aac-a65f-0496a16c6eb6,aafa62af-d2d5-48b8-a6d6-99f592449538,hiệu thuốc,FALSE
+9f18db38-c1e4-4fc2-a0d3-bb9b8f737a5b,53b1926b-ebe7-467a-ba0d-19facf63ac81,thay quần áo,FALSE
+e5d80323-48e9-4327-b438-3b6953287bed,53b1926b-ebe7-467a-ba0d-19facf63ac81,động đất,TRUE
+ef58a60b-a4c1-41fd-85c8-5164322fc103,53b1926b-ebe7-467a-ba0d-19facf63ac81,hành lý,FALSE
+13c60b30-8096-4d32-89be-c03bf0ea351a,53b1926b-ebe7-467a-ba0d-19facf63ac81,"giao, chuyển đến",FALSE
+17371449-5263-41d9-856f-569ab87c5ae6,7cbebec7-0ef9-4ea4-addc-0ca7ef4c7104,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+d8e0ced8-e1ee-4151-9adf-d7415948d66a,7cbebec7-0ef9-4ea4-addc-0ca7ef4c7104,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+fd4d20f6-be0e-4159-8212-41133cfc3a9c,7cbebec7-0ef9-4ea4-addc-0ca7ef4c7104,Máy này được dùng để in ảnh.,TRUE
+9d4d7f96-630f-417e-b0af-483984663d05,7cbebec7-0ef9-4ea4-addc-0ca7ef4c7104,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+b2937360-711e-48ec-85c3-3ae8ec1969d8,6b8c0c93-54e9-4adf-91b1-a351184c6d3d,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+f9a73052-56fc-4b97-8d13-5784b9b46ae5,6b8c0c93-54e9-4adf-91b1-a351184c6d3d,Tôi sẽ mua vé trước chuyến đi.,FALSE
+637f440e-9662-4a04-aacd-9a65d6069d6a,6b8c0c93-54e9-4adf-91b1-a351184c6d3d,Cái bánh này trông có vẻ ngon.,TRUE
+83378a09-6289-4058-b328-8496b426ca48,6b8c0c93-54e9-4adf-91b1-a351184c6d3d,Xin quý khách vui lòng đợi một chút ở đây.,FALSE
+ee5f17af-2a6a-4b5d-b07b-22b96f22af0c,d6877d23-2c73-43cb-8d63-fadc129b698f,Tàu điện nhanh hơn xe buýt.,FALSE
+7b348c04-fce1-43e2-ac50-971d3423051e,d6877d23-2c73-43cb-8d63-fadc129b698f,Cây bút này dễ viết.,TRUE
+abc1f480-c986-4960-9591-8d3a8d55663d,d6877d23-2c73-43cb-8d63-fadc129b698f,Đó là người đang sống ở Osaka.,FALSE
+8b2fc094-0900-4fd8-a8fc-71c28c914dbc,d6877d23-2c73-43cb-8d63-fadc129b698f,Tôi muốn có đôi giày mới.,FALSE
+4507a979-f165-4b47-a367-24a94616f829,6d1320bf-fedc-4a0f-a833-948e0b846e89,Bây giờ tôi sắp ra ngoài.,TRUE
+0e4b474d-0050-4585-9525-0491e05aba69,6d1320bf-fedc-4a0f-a833-948e0b846e89,Cây bút này dễ viết.,FALSE
+44df1728-4e30-428d-9c98-8f17a1ffa2e8,6d1320bf-fedc-4a0f-a833-948e0b846e89,"Nếu làm mất hộ chiếu, hãy liên lạc ngay.",FALSE
+1c66ba2e-042a-4179-9fd1-da76d368ae26,6d1320bf-fedc-4a0f-a833-948e0b846e89,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,FALSE
+b7b4a100-3c6a-4caf-8a8e-ed715286485c,d6c09eed-b8bf-4282-aebd-a0c524416a53,Chắc anh ấy đã đến nhà ga rồi.,TRUE
+13fc4ec4-0fd2-4cd0-865f-edea8267ec55,d6c09eed-b8bf-4282-aebd-a0c524416a53,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+f3f167c6-2f1f-4e5d-b8d2-91d29e5fd684,d6c09eed-b8bf-4282-aebd-a0c524416a53,Hôm nay xin hãy cho phép tôi về sớm.,FALSE
+525130a1-9f54-4e68-a8e5-e98295040372,d6c09eed-b8bf-4282-aebd-a0c524416a53,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+3fb13365-6b77-4e6a-9273-8f0f4c00a5a6,eb658e89-f237-4546-89bd-5b85ba37ac48,thay quần áo,FALSE
+198baba4-5df1-4cb4-83e2-dbb8d1b0164a,eb658e89-f237-4546-89bd-5b85ba37ac48,lúc nãy,TRUE
+69a835ee-5336-4fc3-92ba-759e3eb1bea8,eb658e89-f237-4546-89bd-5b85ba37ac48,"quá sức, không thể",FALSE
+1dfb65cd-d71b-41bb-a416-3796603574c3,eb658e89-f237-4546-89bd-5b85ba37ac48,đau đầu,FALSE
+4ea141b2-72fe-4147-a96c-d2c45e118e01,3e124ea2-af8c-4941-a667-b16a9125c6ee,cuộc họp,FALSE
+1d26ecbd-f5a0-4970-a2b5-c1090ba3e6fa,3e124ea2-af8c-4941-a667-b16a9125c6ee,vừa mới đây,TRUE
+85bc5e0f-86e3-461b-aa25-d6cc34ea9945,3e124ea2-af8c-4941-a667-b16a9125c6ee,việc điền thông tin,FALSE
+f0abec97-9230-49c1-9dfe-1b73fd514e3d,3e124ea2-af8c-4941-a667-b16a9125c6ee,trận đấu,FALSE
+0229e759-b4a8-40bc-a3df-4942546780ad,f316fe97-5777-44ea-93db-0d9dfc87eae9,kệ,FALSE
+81c48a9e-3855-4402-920f-965d0e035bff,f316fe97-5777-44ea-93db-0d9dfc87eae9,giờ nghỉ,FALSE
+d98344c2-c263-487a-b878-ef1a14544060,f316fe97-5777-44ea-93db-0d9dfc87eae9,"hợp, hợp với",FALSE
+04590ba1-75b6-4e48-8e1b-45218637cc13,f316fe97-5777-44ea-93db-0d9dfc87eae9,chẳng bao lâu nữa,TRUE
+44bdb695-dd89-420a-8171-27bc25f72b44,702cb109-a1d8-4cea-bba4-78ccf68fff1d,Máy này được dùng để in ảnh.,FALSE
+a4b680d0-cd0c-4102-b1c4-5d215c371ba3,702cb109-a1d8-4cea-bba4-78ccf68fff1d,Cái bánh này trông có vẻ ngon.,TRUE
+aa6f6d3f-2a17-4ad0-8766-561661a3ab0f,702cb109-a1d8-4cea-bba4-78ccf68fff1d,Tôi có thể đọc được một ít kanji.,FALSE
+cc9e6307-82ae-4a03-82e3-307f81381dfc,702cb109-a1d8-4cea-bba4-78ccf68fff1d,Vì bị sốt nên hôm nay bạn nên nghỉ.,FALSE
+50035ef6-31ef-4922-ac28-fe9a850de7b8,85a31747-bb4a-4c13-8060-ac585e9dea2a,Bộ phim hôm qua rất thú vị.,FALSE
+90eb2aa7-3b13-4c61-b508-ebb0ab233201,85a31747-bb4a-4c13-8060-ac585e9dea2a,Anh Minh là giáo viên phải không?,FALSE
+09fe69bd-270c-4eeb-88e6-e77279d5aed8,85a31747-bb4a-4c13-8060-ac585e9dea2a,Cây bút này dễ viết.,TRUE
+20c6dffd-8d1c-40dc-ba95-16fcb1d62052,85a31747-bb4a-4c13-8060-ac585e9dea2a,Có quyển sách ở trên bàn.,FALSE
+561ff22d-beb5-45c6-9d62-05a2e5e7f987,5a9a37fb-4932-4f54-ae9a-91723ec5a144,Tôi uống cà phê ở quán.,FALSE
+aa37fda0-49f2-49c6-81b3-73ed6bdfedd6,5a9a37fb-4932-4f54-ae9a-91723ec5a144,Trông có vẻ sắp mưa.,FALSE
+f9a69d96-057a-4b3c-aa9b-0a9ad9936af0,5a9a37fb-4932-4f54-ae9a-91723ec5a144,Tôi nghĩ ngày mai trời sẽ mưa.,FALSE
+79363e96-ec3b-4b80-9f35-aec787565f3a,5a9a37fb-4932-4f54-ae9a-91723ec5a144,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,TRUE
+025b7d69-42ca-49b6-ab6d-febe40d71a99,a6f9dba0-688f-4508-ab40-8d924751a982,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",TRUE
+14f1787d-989b-4f73-8a39-79e84fc7a3da,a6f9dba0-688f-4508-ab40-8d924751a982,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,FALSE
+e453c4d2-d0a3-48ca-b6b5-83ae4c6c6328,a6f9dba0-688f-4508-ab40-8d924751a982,Tôi có thể đọc được một ít kanji.,FALSE
+1a25cda3-6a3f-419a-b7f0-51c74c69ea1c,a6f9dba0-688f-4508-ab40-8d924751a982,Từ đây có thể nhìn thấy biển.,FALSE
+390b8f67-3c50-49ec-9ce7-454429e94860,b4b75994-adfa-4529-89d4-43a1e06d7bc5,Đèn đã tắt. Có vẻ như không còn ai ở đó.,TRUE
+ba39fe1f-58f1-438e-a16a-6c4f2c2b05d8,b4b75994-adfa-4529-89d4-43a1e06d7bc5,Ghế đã được xếp sẵn trong phòng họp.,FALSE
+4e2c83e5-ba01-44ac-b2ce-84e940d33c56,b4b75994-adfa-4529-89d4-43a1e06d7bc5,Tôi sẽ mua vé trước chuyến đi.,FALSE
+ca395f5b-94a2-4c64-a488-e77f7b0a2d5d,b4b75994-adfa-4529-89d4-43a1e06d7bc5,Nghỉ một chút nhé.,FALSE
+dd92431f-2388-44b4-945d-47171f52d4f5,f99b0d34-eee8-4375-a03c-353cfdc0240c,"sự thay thế, thay cho",FALSE
+e400e5b0-d7d9-40fe-a036-084a4b2b6f90,f99b0d34-eee8-4375-a03c-353cfdc0240c,tin tức,TRUE
+a3d208b0-e90d-4408-9b00-9ba8c5d84142,f99b0d34-eee8-4375-a03c-353cfdc0240c,khu vực lân cận,FALSE
+b02e56b3-f2a8-4edd-b850-dd91b789c905,f99b0d34-eee8-4375-a03c-353cfdc0240c,tiền lương,FALSE
+331a1dbd-8148-4b7b-82b8-3df79dad8e62,533fca0e-1b66-4f73-8d06-0adcc19b4f63,màu sắc,FALSE
+05fb627f-f198-4e91-a4bc-e814b8fd8838,533fca0e-1b66-4f73-8d06-0adcc19b4f63,"sự tiến bộ, thành thạo",FALSE
+9f6038ac-8f19-4917-a066-c52ed1295fd4,533fca0e-1b66-4f73-8d06-0adcc19b4f63,vô địch,FALSE
+40f512f8-d400-4bd5-ae05-d8977bdfc8a5,533fca0e-1b66-4f73-8d06-0adcc19b4f63,bài báo,TRUE
+9f6fad81-88c9-4243-8f06-fda1600c4eb5,018643bf-2323-4a1a-ab55-4375cfe05dfc,"vận động, tập thể dục",FALSE
+ef3a961b-0ff4-4978-a0ff-83eaa0f7d1f3,018643bf-2323-4a1a-ab55-4375cfe05dfc,báo,TRUE
+24e350b6-2904-47a9-b621-473b35b090a6,018643bf-2323-4a1a-ab55-4375cfe05dfc,đến muộn,FALSE
+7a1aad33-30a3-49a5-b803-543075dfe8d9,018643bf-2323-4a1a-ab55-4375cfe05dfc,động đất,FALSE
+e52be224-cbb6-44bd-b951-546fb3b0d3f3,90eae39e-51e6-4cbc-b4ad-24364a0ef358,Trông có vẻ sắp mưa.,FALSE
+83c275dc-958f-4a8d-ace5-a3e8abb22ed5,90eae39e-51e6-4cbc-b4ad-24364a0ef358,Cây bút này dễ viết.,TRUE
+da13ef3c-d451-4f46-b633-7f54038242ee,90eae39e-51e6-4cbc-b4ad-24364a0ef358,"Nếu có thời gian, tôi sẽ giúp.",FALSE
+23b67117-b8a8-4dc7-8b3f-05f34f6280c5,90eae39e-51e6-4cbc-b4ad-24364a0ef358,Thư viện ở đằng kia.,FALSE
+47e1ad0f-7f75-4295-b597-b692b0636964,3256ed20-6e52-49ff-ba60-4f047812991c,Tôi học hai lần mỗi tuần.,FALSE
+a18a9b8b-a26d-47b2-a0b1-904b1654af43,3256ed20-6e52-49ff-ba60-4f047812991c,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,TRUE
+68f8807b-94d9-4b13-98bf-107026ac8114,3256ed20-6e52-49ff-ba60-4f047812991c,Tôi nghĩ ngày mai trời sẽ mưa.,FALSE
+fde46f36-6c5f-4726-bbb6-71f34eb044d7,3256ed20-6e52-49ff-ba60-4f047812991c,Tôi được thầy/cô dạy tiếng Nhật.,FALSE
+fb01ca7d-7e49-43b5-9f81-4675c70e2a86,685a192e-ac1d-43d2-997f-ad3413dfd233,Cửa sổ đang mở.,FALSE
+7d2ccfaf-96f0-44ba-afb4-2c7ca5117d57,685a192e-ac1d-43d2-997f-ad3413dfd233,Vì hiểu một chút tiếng Nhật nên tôi thấy vui.,FALSE
+d436d357-692f-434b-9a17-987b6a6b39b4,685a192e-ac1d-43d2-997f-ad3413dfd233,Tôi đi đến trường bằng xe buýt.,FALSE
+3dedb2fa-ee2f-484a-8612-ca0125f74c40,685a192e-ac1d-43d2-997f-ad3413dfd233,Chắc anh ấy đã đến nhà ga rồi.,TRUE
+f558c5e5-89ff-46c4-bc77-6ceee04c80bf,01f020b4-ed90-468a-893b-1a5064099c69,Mẹ bắt/cho phép đứa trẻ ăn rau.,TRUE
+748a0bd9-6556-4b4a-ba31-690134bf40fd,01f020b4-ed90-468a-893b-1a5064099c69,Kanji này đọc là “deguchi” (lối ra).,FALSE
+07661e97-80a0-4955-afef-e79c1fdc58a8,01f020b4-ed90-468a-893b-1a5064099c69,Xin hãy lắp theo đúng như hướng dẫn viết trong sách.,FALSE
+994e024f-6ed6-4130-bb62-184bb6704853,01f020b4-ed90-468a-893b-1a5064099c69,"Sau khi làm bài tập, tôi xem ti vi.",FALSE
+2b00ba7d-b534-4b06-974b-688a4f17f83c,6fa6548a-63b8-4942-ac16-6992cc114211,Hôm nay xin hãy cho phép tôi về sớm.,TRUE
+fdd7d1b4-f37a-4bd4-888d-8b03b329475d,6fa6548a-63b8-4942-ac16-6992cc114211,Tôi được thầy/cô khen.,FALSE
+16348483-c024-4d19-87f1-2e66be9169a7,6fa6548a-63b8-4942-ac16-6992cc114211,Tôi bị em trai ăn mất bánh.,FALSE
+e986e93f-62db-4cf7-a2b5-7129697dbe0a,6fa6548a-63b8-4942-ac16-6992cc114211,Việc học ngoại ngữ rất vui.,FALSE
+e8588fa6-85bb-4169-a01e-e20a5dd37ff3,fb7141c9-e1e6-48c8-ba76-d1e5e469dfde,thói quen,FALSE
+99360515-71bf-4589-95d1-964331a65dbd,fb7141c9-e1e6-48c8-ba76-d1e5e469dfde,trách nhiệm,TRUE
+e8c74488-c17f-4e25-9d13-a6f0a61a1456,fb7141c9-e1e6-48c8-ba76-d1e5e469dfde,phỏng vấn,FALSE
+b4ac79fa-7ea3-4dc9-bef5-eea88358732b,fb7141c9-e1e6-48c8-ba76-d1e5e469dfde,sự tập hợp,FALSE
+58f1e1d9-5b5b-481d-8cda-cd0cfd856cb5,20672b25-4327-4810-8582-1ffe743cc35b,giao phó,TRUE
+7ba0f146-c21b-4f38-9d74-ae685ba39bac,20672b25-4327-4810-8582-1ffe743cc35b,chúc mạnh khỏe,FALSE
+d9eda3e0-3f66-4037-a582-040e8be9d839,20672b25-4327-4810-8582-1ffe743cc35b,ước mơ,FALSE
+57b86ee5-24cb-42ee-958d-82c35a1402ff,20672b25-4327-4810-8582-1ffe743cc35b,chuyến công tác,FALSE
+62cc5583-bda1-452d-b633-0346da0603a3,c5c5b3fe-549b-4124-929c-ca0e0ed92fb3,"người trực, phiên trực",TRUE
+bbf863e0-582b-4a4d-9fb6-9dc3d452b7ed,c5c5b3fe-549b-4124-929c-ca0e0ed92fb3,cấm,FALSE
+b22da22e-ff28-4ff9-94aa-dc6364442cc3,c5c5b3fe-549b-4124-929c-ca0e0ed92fb3,máy bay,FALSE
+35efe7e9-9469-4414-8bc1-e8e8503f7965,c5c5b3fe-549b-4124-929c-ca0e0ed92fb3,"khá, tương đối",FALSE
+8ccec9d8-efc2-489c-9932-1eba87d655eb,fadb2cb2-f597-4f10-bbc5-6faa12414d20,Cửa sổ đang mở.,FALSE
+a4cdbdbd-068d-41b2-90ce-3da3031c42a0,fadb2cb2-f597-4f10-bbc5-6faa12414d20,"Theo dự báo thời tiết, nghe nói ngày mai trời mưa.",FALSE
+ba70c71b-dbbd-43e2-bdaf-dee135e326c6,fadb2cb2-f597-4f10-bbc5-6faa12414d20,"Nhờ luyện tập hằng ngày, tôi đã có thể đọc cả đoạn văn dài.",FALSE
+a6fef384-af51-4516-8e6c-c9cc90970628,fadb2cb2-f597-4f10-bbc5-6faa12414d20,Mặc dù đã uống thuốc nhưng vẫn không hạ sốt.,TRUE
+269ba1cf-29af-49df-81d8-9b76205c2861,8d91f263-f8ab-4c26-96ae-67a1cfac38c3,"Nếu làm mất hộ chiếu, hãy liên lạc ngay.",FALSE
+e90aa1d0-5473-4f3a-a748-01d1938e6d99,8d91f263-f8ab-4c26-96ae-67a1cfac38c3,Hôm qua tôi đã ăn quá nhiều.,FALSE
+c6828905-bee0-4408-bad7-a43025c2dfde,8d91f263-f8ab-4c26-96ae-67a1cfac38c3,Có quyển sách ở trên bàn.,FALSE
+95107a10-25f5-40b6-b003-51540bd90ebf,8d91f263-f8ab-4c26-96ae-67a1cfac38c3,Chắc anh ấy đã đến nhà ga rồi.,TRUE
+16b2cf2f-10a4-45ca-bf96-0f17e08855ae,ab28b1ef-90d7-418c-ab82-15dec65083dd,Bánh ở cửa hàng này ngon nhất.,FALSE
+c5f18821-6624-4667-bd25-0afc1d73fdb1,ab28b1ef-90d7-418c-ab82-15dec65083dd,Tôi học hai lần mỗi tuần.,FALSE
+dea40bcc-99e0-43a7-b86d-a75176792bdc,ab28b1ef-90d7-418c-ab82-15dec65083dd,Đèn đã tắt. Có vẻ như không còn ai ở đó.,TRUE
+698e5f8b-28a4-41d2-8896-d85778f53f07,ab28b1ef-90d7-418c-ab82-15dec65083dd,Đây là ô của tôi.,FALSE
+b7a4ed1c-7253-4ecd-ac2d-04e727e0ff53,164f746c-06de-49db-a157-51806a5db654,Thầy/cô sẽ đến lúc mấy giờ ạ?,TRUE
+a39ae519-9f03-4a90-82cd-cc8544af871d,164f746c-06de-49db-a157-51806a5db654,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+6e136d4f-8749-49a5-afa4-908f08cff526,164f746c-06de-49db-a157-51806a5db654,Giám đốc đã về rồi.,FALSE
+175144ab-467e-4948-b941-a6d7eaae665c,164f746c-06de-49db-a157-51806a5db654,Tôi đã nhận sách từ thầy/cô.,FALSE
+7319c25e-293b-40b0-8be1-2001eba7988c,d4219861-496c-49e6-bd25-552999e11f6b,Xin quý khách vui lòng đợi một chút ở đây.,TRUE
+973b23e0-6464-4165-a261-e7b756d7e754,d4219861-496c-49e6-bd25-552999e11f6b,Hôm qua tôi đã ăn quá nhiều.,FALSE
+191490e6-ed9b-4f94-8de4-9279f1c6357c,d4219861-496c-49e6-bd25-552999e11f6b,Cây bút này dễ viết.,FALSE
+5abc0d3b-1406-4bf2-a1e3-c53db037fddf,d4219861-496c-49e6-bd25-552999e11f6b,"Nếu làm mất hộ chiếu, hãy liên lạc ngay.",FALSE
+70e8bb89-4cae-42b3-aef2-305e4005959a,3b18fe20-a03d-469d-93ac-f5a8d4bc07b0,"sự mời, lời mời",FALSE
+30abe03a-088c-493d-b89f-200af064dc2e,3b18fe20-a03d-469d-93ac-f5a8d4bc07b0,"đón, chào đón",FALSE
+b5b4fbb6-fb72-4497-95bf-0cc78fa0ee2c,3b18fe20-a03d-469d-93ac-f5a8d4bc07b0,bà (của mình),FALSE
+03f411aa-1418-492d-9fe5-6ab3c55cedf4,3b18fe20-a03d-469d-93ac-f5a8d4bc07b0,nói (khiêm nhường),TRUE
+100e6d81-083a-47e8-a806-64fbe545ddbf,3c2c2155-5151-4ecc-a68c-f9ec36696fcb,cổ vũ,FALSE
+5e145f11-bf54-4416-9cbb-201359e32cba,3c2c2155-5151-4ecc-a68c-f9ec36696fcb,sự giải thích,FALSE
+da69c30e-886d-4b42-b0e0-6662ac26bcc8,3c2c2155-5151-4ecc-a68c-f9ec36696fcb,"hỏi, thăm (khiêm nhường)",TRUE
+3c93267d-4438-448c-adac-ab59659b4b81,3c2c2155-5151-4ecc-a68c-f9ec36696fcb,mong được giúp đỡ,FALSE
+1f10dd42-2f64-40e2-bd7a-9bd848f680ab,74f66d96-aaef-4c64-b10b-d2c5399d1128,sự thử thách,FALSE
+26499352-0e6d-42be-afc1-456130ac0f54,74f66d96-aaef-4c64-b10b-d2c5399d1128,"vận động, tập thể dục",FALSE
+4ae2b24b-4e62-468b-855c-af2dcacc4af7,74f66d96-aaef-4c64-b10b-d2c5399d1128,"đi, đến (khiêm nhường)",TRUE
+ab3dc111-3d9b-495d-acc1-e0763f051902,74f66d96-aaef-4c64-b10b-d2c5399d1128,tuyển dụng,FALSE
+1fb57cf3-b255-46b9-9fda-5dde9d87ebd2,515d9307-3949-45f8-9e4f-6a2b8be5c4bc,Chắc anh ấy đã đến nhà ga rồi.,TRUE
+a92ff947-55a8-4a01-a601-a45e363bd8d6,515d9307-3949-45f8-9e4f-6a2b8be5c4bc,Thầy/cô sẽ đến lúc mấy giờ ạ?,FALSE
+39fccd2e-66d3-4d32-80a0-88971384a9fe,515d9307-3949-45f8-9e4f-6a2b8be5c4bc,Thành phố này yên tĩnh.,FALSE
+19b3ae1e-fc8e-4131-90f5-f9ef5d6aaa3b,515d9307-3949-45f8-9e4f-6a2b8be5c4bc,Đây là quyển sách tôi đã mua.,FALSE
+e90020e0-e168-40b2-853d-0c009b6dd0cb,768a30ed-fca6-49a0-baf8-9703458e0870,Hôm nay trời nóng.,FALSE
+f3771847-6bcf-4af7-a3fd-8e24b8d785ea,768a30ed-fca6-49a0-baf8-9703458e0870,Đèn đã tắt. Có vẻ như không còn ai ở đó.,TRUE
+f95835f4-b80a-4783-8c10-33b772c85418,768a30ed-fca6-49a0-baf8-9703458e0870,Tôi sẽ thử kiểm tra xem cách này có đúng không.,FALSE
+70e401f8-2a93-4766-ae95-6bc548d8cb2c,768a30ed-fca6-49a0-baf8-9703458e0870,Có quyển sách ở trên bàn.,FALSE
+db4ea47f-3f7b-4c94-a8c8-6d2d5a75ab5b,9278c825-c663-42e1-bc3b-9680b498be3c,Tôi bị em trai ăn mất bánh.,FALSE
+af5f632d-d314-4055-8766-2c7bfd9e2c86,9278c825-c663-42e1-bc3b-9680b498be3c,Tôi có thể đọc hiragana.,FALSE
+03644724-bd3c-4c82-ac2c-9c9804abacd6,9278c825-c663-42e1-bc3b-9680b498be3c,Hôm nay xin hãy cho phép tôi về sớm.,TRUE
+d4cb2a6c-ae6e-4a19-beff-0267f11b3dbb,9278c825-c663-42e1-bc3b-9680b498be3c,Thư viện ở đằng kia.,FALSE
+f751fb8b-f376-4e67-8e4a-5c807f0455a8,ad47c60f-efc6-4075-8cbd-0c0020d74058,Để tôi mang tài liệu ạ.,TRUE
+5a3ed8a5-124b-4cbb-83b6-f028d262398a,ad47c60f-efc6-4075-8cbd-0c0020d74058,Đèn đã tắt. Có vẻ như không còn ai ở đó.,FALSE
+d4d5616d-e686-4c60-8a42-c7b245398d23,ad47c60f-efc6-4075-8cbd-0c0020d74058,Mẹ bắt/cho phép đứa trẻ ăn rau.,FALSE
+70df3c88-67c4-481a-a7ee-fbca0ec83506,ad47c60f-efc6-4075-8cbd-0c0020d74058,Hôm nay xin hãy cho phép tôi về sớm.,FALSE
+7c4550cd-3742-4e1f-8ea5-cadd76319af3,851df031-871f-4469-8513-9897f9cde851,Đây là quầy tiếp tân ạ.,TRUE
+e164b62a-2f42-4d78-9d45-16244bfb9b67,851df031-871f-4469-8513-9897f9cde851,Sao bạn đến muộn vậy? Vì tàu bị trễ.,FALSE
+6358677a-c58e-4f36-8fbe-05c72ee94405,851df031-871f-4469-8513-9897f9cde851,Anh/chị có thể vui lòng giải thích lại một lần nữa không?,FALSE
+19dee082-7b30-4f14-a6ef-b66e73f132e5,851df031-871f-4469-8513-9897f9cde851,Tôi có thể đọc được một ít kanji.,FALSE
+853000c9-e4f3-4f55-a767-c5fed5e5299a,44084eb9-8279-47fe-b0b5-57453f24d47b,được dọn gọn,FALSE
+487ce1d2-b13c-44d5-a87d-f34bea625219,44084eb9-8279-47fe-b0b5-57453f24d47b,"sự công bố, thuyết trình",FALSE
+0d19702d-02c2-45f0-aef1-722fbf32a8e4,44084eb9-8279-47fe-b0b5-57453f24d47b,"sự chuẩn bị, sắp sẵn",FALSE
+9aa88c23-4dc3-4c93-909d-8b57009c022b,44084eb9-8279-47fe-b0b5-57453f24d47b,lòng biết ơn,TRUE
+99e23cba-87ad-4876-9273-a56cfb61d720,5c39d4b1-ba21-4be3-bbc5-80bc6fdaf182,"nhờ có, nhờ vào",TRUE
+7775ee2f-1a6c-43b6-9bb5-50cd318aa993,5c39d4b1-ba21-4be3-bbc5-80bc6fdaf182,cắt,FALSE
+a8132b9c-47f6-4a97-addf-d7210df06fd2,5c39d4b1-ba21-4be3-bbc5-80bc6fdaf182,làm hỏng,FALSE
+6b2ac28c-14dd-4dad-a729-b08225b1e6c7,5c39d4b1-ba21-4be3-bbc5-80bc6fdaf182,tin đồn,FALSE
+1700e29a-2b1c-45ff-930a-294b6564c56d,5fac6b10-503d-416f-af7c-9606eed92905,"trái tim, tấm lòng",TRUE
+093f763e-2a9d-4997-acc7-bc999bbe9460,5fac6b10-503d-416f-af7c-9606eed92905,bình thường,FALSE
+bb4385e7-de6c-4a25-9fd3-090e6d2af32c,5fac6b10-503d-416f-af7c-9606eed92905,khu vực lân cận,FALSE
+c42554f5-84f3-406b-80cc-efd24e9464c6,5fac6b10-503d-416f-af7c-9606eed92905,đại diện,FALSE
+f7af9f65-e581-4af5-b0b6-e9864f3f0ac4,327ba2c1-cdcc-42cd-be5c-0faaf901437d,Tôi đang định năm sau đi du học Nhật Bản.,FALSE
+e0f2471d-f059-49f7-8a63-efe010f811d5,327ba2c1-cdcc-42cd-be5c-0faaf901437d,Đèn đã tắt. Có vẻ như không còn ai ở đó.,TRUE
+7134404c-4d9e-404b-92ba-a507e627146e,327ba2c1-cdcc-42cd-be5c-0faaf901437d,Tôi phải uống thuốc.,FALSE
+26507924-4d63-45e3-86c3-ff719e700362,327ba2c1-cdcc-42cd-be5c-0faaf901437d,Hãy ghi chú để khỏi quên.,FALSE
+729d8927-7e12-41c2-95a7-b07209ce594a,1a903519-ea40-4dbc-b9d1-09dbd3c05292,Hôm nay xin hãy cho phép tôi về sớm.,TRUE
+5a409c86-6aae-4b0b-91df-59e59eb347b1,1a903519-ea40-4dbc-b9d1-09dbd3c05292,Có quyển sách ở trên bàn.,FALSE
+b4b0ef44-6f2e-4269-88be-fd8010901d58,1a903519-ea40-4dbc-b9d1-09dbd3c05292,Thành phố này yên tĩnh và tiện lợi.,FALSE
+8049675e-95a2-4d62-a45d-ff2c34d761cc,1a903519-ea40-4dbc-b9d1-09dbd3c05292,Bánh ở cửa hàng này ngon nhất.,FALSE
+e2dc588e-816b-41bb-988f-8052f3da388b,7cbaa2de-ebae-469a-baa3-a3d6643dfd7f,Bánh ở cửa hàng này ngon nhất.,FALSE
+5afd883c-3141-471d-80cd-44c943717412,7cbaa2de-ebae-469a-baa3-a3d6643dfd7f,Tôi đang định năm sau đi du học Nhật Bản.,FALSE
+969bf724-32d3-4241-b750-8351834dba96,7cbaa2de-ebae-469a-baa3-a3d6643dfd7f,Xin quý khách vui lòng đợi một chút ở đây.,TRUE
+19a70938-34e1-459c-93d3-8c3a1417acc5,7cbaa2de-ebae-469a-baa3-a3d6643dfd7f,Cái ô này giá bao nhiêu?,FALSE
