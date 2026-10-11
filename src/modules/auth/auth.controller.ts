@@ -318,16 +318,19 @@ function googleSigninRedirectUri() {
 
 function googlePopupResult(reply: FastifyReply, payload: Record<string, unknown>) {
     const targetOrigin = new URL(env.FRONTEND_URL).origin;
+    const fallbackUrl = new URL("/api/auth/google/popup-handoff", env.FRONTEND_URL).toString()
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;");
     const safePayload = JSON.stringify({ type: "kujilingo:google-auth", ...payload }).replace(/</g, "\\u003c");
+    const handoff = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
     return reply
         .type("text/html; charset=utf-8")
         .header("Cache-Control", "no-store, max-age=0")
         .header("Referrer-Policy", "no-referrer")
-        .send(`<!doctype html><html><head><meta charset="utf-8"><title>Google sign-in</title></head><body><p>Returning to KujiLingo…</p><script>if(window.opener){window.opener.postMessage(${safePayload},${JSON.stringify(targetOrigin)});window.close()}else{document.body.textContent="You can close this window."}</script></body></html>`);
+        .send(`<!doctype html><html><head><meta charset="utf-8"><title>Google sign-in</title></head><body><p>Returning to KujiLingo…</p><form id="google-handoff" method="post" action="${fallbackUrl}"><input type="hidden" name="handoff" value="${handoff}"></form><script>const targetOrigin=${JSON.stringify(targetOrigin)};const payload=${safePayload};const form=document.getElementById("google-handoff");let acknowledged=false;let sent=false;window.addEventListener("message",event=>{if(event.origin===targetOrigin&&event.source===window.opener&&event.data?.type==="kujilingo:google-auth-ack"){acknowledged=true;window.close()}});if(window.opener){try{window.opener.postMessage(payload,targetOrigin);sent=true}catch{}}if(sent){setTimeout(()=>{if(!acknowledged)form.submit()},1200)}else{form.submit()}</script></body></html>`);
 }
-
 export async function googleSignInHandler(
-    request: FastifyRequest<{ Querystring: { mode?: string } }>,
+    _request: FastifyRequest<{ Querystring: { mode?: string } }>,
     reply: FastifyReply,
 ) {
     const state = crypto.randomBytes(32).toString("hex");
@@ -367,7 +370,7 @@ export async function googleSignInCallbackHandler(
 
     reply.header("Set-Cookie", clearCookie);
     if (request.query.error || !request.query.code || !request.query.state ||
-        !/^[a-f0-9]{64}$/.test(request.query.state) || !cookieState ||
+        !/^[a-f0-9]{64}$/.test(request.query.state) || !cookieState || !/^[a-f0-9]{64}$/.test(cookieState) ||
         request.query.state.length !== cookieState.length ||
         !crypto.timingSafeEqual(Buffer.from(request.query.state), Buffer.from(cookieState))) {
         return googlePopupResult(reply, { error: "Google sign-in was cancelled or expired. Please try again." });
