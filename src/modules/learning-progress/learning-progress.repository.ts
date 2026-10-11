@@ -129,7 +129,6 @@ export const learningProgressRepository = {
     async saveReviewResult(
         userId: string,
         vocabularyId: string | undefined,
-        userVocabularyId: string | undefined,
         progressData: {
             status: "NEW" | "LEARNING" | "REVIEWING" | "MASTERED";
             mastery: number;
@@ -141,7 +140,8 @@ export const learningProgressRepository = {
         historyData: {
             correct: boolean;
             duration?: number;
-        }
+        },
+        userVocabularyId?: string
     ) {
         return prisma.$transaction(async (tx) => {
             const where = vocabularyId

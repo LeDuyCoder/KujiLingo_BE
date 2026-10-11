@@ -204,7 +204,6 @@ export const learningProgressService = {
         const updatedProgress = await learningProgressRepository.saveReviewResult(
             userId,
             vocabulary_id,
-            user_vocabulary_id,
             {
                 status: newStatus as any,
                 mastery: newMastery,
@@ -213,7 +212,8 @@ export const learningProgressService = {
                 last_review: lastReview,
                 next_review: nextReview
             },
-            historyData
+            historyData,
+            user_vocabulary_id
         );
 
 
