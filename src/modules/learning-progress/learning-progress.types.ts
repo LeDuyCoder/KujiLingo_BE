@@ -19,7 +19,8 @@ export interface GetDueReviewQueueQuery {
 
 export interface DueReviewItem {
     progress_id: string;
-    vocabulary_id: string;
+    vocabulary_id: string | null;
+    user_vocabulary_id: string | null;
     kanji: string | null;
     hiragana: string | null;
     meaning: string | null;
@@ -32,7 +33,8 @@ export interface DueReviewItem {
 }
 
 export interface SubmitVocabularyReviewBody {
-    vocabulary_id: string;
+    vocabulary_id?: string;
+    user_vocabulary_id?: string;
     correct: boolean;
     duration?: number;
 }

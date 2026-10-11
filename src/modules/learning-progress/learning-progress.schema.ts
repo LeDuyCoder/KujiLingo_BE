@@ -27,7 +27,8 @@ export const getDueReviewQueueResponseSchema = z.object({
     success: z.boolean(),
     data: z.array(z.object({
         progress_id: z.string().uuid(),
-        vocabulary_id: z.string().uuid(),
+        vocabulary_id: z.string().uuid().nullable(),
+        user_vocabulary_id: z.string().uuid().nullable(),
         kanji: z.string().nullable(),
         hiragana: z.string().nullable(),
         meaning: z.string().nullable(),
@@ -43,21 +44,27 @@ export const getDueReviewQueueResponseSchema = z.object({
 
 // --- POST /api/v1/learning-progress/review ---
 export const submitVocabularyReviewBodySchema = z.object({
-    vocabulary_id: z.string().uuid(),
+    vocabulary_id: z.string().uuid().optional(),
+    user_vocabulary_id: z.string().uuid().optional(),
     correct: z.boolean(),
     duration: z.number().min(0).max(300).optional(),
+}).refine(body => Boolean(body.vocabulary_id) !== Boolean(body.user_vocabulary_id), {
+    message: "Provide exactly one vocabulary identifier.",
 });
 
 export const submitVocabularyReviewResponseSchema = z.object({
     success: z.boolean(),
     data: z.object({
-        vocabulary_id: z.string().uuid(),
+        vocabulary_id: z.string().uuid().optional(),
+        user_vocabulary_id: z.string().uuid().optional(),
         correct: z.boolean(),
         new_status: learningStatusEnum,
         new_mastery: z.number(),
         next_review: z.string().datetime(),
     }),
     message: z.string(),
+}).refine(response => Boolean(response.data.vocabulary_id) !== Boolean(response.data.user_vocabulary_id), {
+    message: "Response must identify exactly one vocabulary source.",
 });
 
 // --- GET /api/v1/learning-progress/history ---
