@@ -127,7 +127,7 @@ export const folderService = {
                 id: vocab.id,
                 kanji: vocab.kanji,
                 hiragana: vocab.hiragana,
-                meaning,
+                meaning: meaning ?? null,
                 jlpt: vocab.jlpt || null
             };
         });
@@ -231,10 +231,10 @@ export const folderService = {
 
     async importUserVocabularies(folderId: string, userId: string, entries: Array<{
         kanji: string;
-        hiragana?: string;
-        romaji?: string;
+        hiragana?: string | undefined;
+        romaji?: string | undefined;
         meaning: string;
-        note?: string;
+        note?: string | undefined;
     }>) {
         const folder = await folderRepository.findByIdAndUser(folderId, userId);
         if (!folder) throw new Error("FOLDER_NOT_FOUND");

@@ -18,8 +18,11 @@ async function translateMissingMeanings(data: DictionaryDTO[], language: Display
     });
     const translated = await translateVocabularyTexts(sourceTexts, language);
     missingIndexes.forEach((index, translationIndex) => {
-        if (language === "vi") data[index].meaning_vi = translated[translationIndex] as string;
-        else data[index].meaning_en = translated[translationIndex] as string;
+        const entry = data[index];
+        const meaning = translated[translationIndex] ?? sourceTexts[translationIndex];
+        if (!entry || typeof meaning !== "string") return;
+        if (language === "vi") entry.meaning_vi = meaning;
+        else entry.meaning_en = meaning;
     });
     return data;
 }

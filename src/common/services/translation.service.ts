@@ -138,13 +138,13 @@ export async function translateDisplayTexts(
                     id: randomUUID(),
                     content_hash: hashes.get(source)!,
                     target_language: target,
-                    source_language: results[resultIndex].sourceLanguage,
+                    source_language: results[resultIndex]?.sourceLanguage ?? null,
                     source_text: source,
-                    translated_text: results[resultIndex].text || source,
+                    translated_text: results[resultIndex]?.text || source,
                 })),
                 skipDuplicates: true,
             }).catch(error => console.warn("Could not persist translation cache.", error));
-            batch.forEach((source, resultIndex) => translatedByHash.set(hashes.get(source)!, results[resultIndex].text || source));
+            batch.forEach((source, resultIndex) => translatedByHash.set(hashes.get(source)!, results[resultIndex]?.text || source));
         } catch (error) {
             if (reserved) await releaseQuota(characterCount).catch(() => undefined);
             console.warn("Translation unavailable; showing original content.", error);

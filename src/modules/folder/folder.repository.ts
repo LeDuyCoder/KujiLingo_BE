@@ -213,10 +213,10 @@ export const folderRepository = {
 
     async importUserVocabularies(folderId: string, userId: string, entries: Array<{
         kanji: string;
-        hiragana?: string;
-        romaji?: string;
+        hiragana?: string | undefined;
+        romaji?: string | undefined;
         meaning: string;
-        note?: string;
+        note?: string | undefined;
     }>) {
         return prisma.$transaction(async tx => {
             const existing = await tx.folder_user_vocabularies.findMany({
