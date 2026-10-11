@@ -1,6 +1,28 @@
 import { memoryCache } from "../../common/utils/cache.js";
 import { dictionaryRepository } from "./dictionary.repository.js";
 import type { DictionaryDTO } from "./dictionary.type.js";
+import { translateVocabularyTexts } from "../../common/services/translation.service.js";
+
+type DisplayLanguage = "vi" | "en";
+
+async function translateMissingMeanings(data: DictionaryDTO[], language: DisplayLanguage) {
+    const missingIndexes: number[] = [];
+    const sourceTexts: string[] = [];
+    data.forEach((entry, index) => {
+        const targetMeaning = language === "vi" ? entry.meaning_vi : entry.meaning_en;
+        const sourceMeaning = language === "vi" ? entry.meaning_en : entry.meaning_vi;
+        if (!targetMeaning && sourceMeaning) {
+            missingIndexes.push(index);
+            sourceTexts.push(sourceMeaning);
+        }
+    });
+    const translated = await translateVocabularyTexts(sourceTexts, language);
+    missingIndexes.forEach((index, translationIndex) => {
+        if (language === "vi") data[index].meaning_vi = translated[translationIndex] as string;
+        else data[index].meaning_en = translated[translationIndex] as string;
+    });
+    return data;
+}
 
 function mapToDictionaryDTO(
     vocab: any,
@@ -25,7 +47,7 @@ function mapToDictionaryDTO(
 }
 
 export const dictionaryService = {
-    async search(query: string, jlptLevel: any, page: number, limit: number, userId?: string) {
+    async search(query: string, jlptLevel: any, page: number, limit: number, userId?: string, displayLanguage: DisplayLanguage = "vi") {
         const normalizedQuery = query.trim().normalize("NFC");
         const cacheKey = `dict:search:${normalizedQuery}:${jlptLevel || "ALL"}:${page}:${limit}`;
         let cached = memoryCache.get<{ data: any[]; total: number }>(cacheKey);
@@ -60,6 +82,7 @@ export const dictionaryService = {
         const formattedData = (cached.data || []).map(vocab =>
             mapToDictionaryDTO(vocab, favoritedIds, savedIds)
         );
+        await translateMissingMeanings(formattedData, displayLanguage);
 
         return {
             data: formattedData,
@@ -72,7 +95,7 @@ export const dictionaryService = {
         };
     },
 
-    async getDetail(id: string, userId?: string) {
+    async getDetail(id: string, userId?: string, displayLanguage: DisplayLanguage = "vi") {
         const cacheKey = `dict:detail:${id}`;
         let vocab = memoryCache.get<any>(cacheKey);
 
@@ -94,6 +117,7 @@ export const dictionaryService = {
         }
 
         const baseDTO = mapToDictionaryDTO(vocab, new Set(isFavorited ? [id] : []), new Set(isSaved ? [id] : []));
+        await translateMissingMeanings([baseDTO], displayLanguage);
 
         return {
             ...baseDTO,

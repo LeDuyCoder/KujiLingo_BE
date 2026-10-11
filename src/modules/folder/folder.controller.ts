@@ -7,6 +7,8 @@ import type {
     AddSystemVocabBody,
     RemoveSystemVocabParams,
     AddUserVocabBody,
+    ImportUserVocabulariesBody,
+    UpdateSystemVocabMeaningBody,
     RemoveUserVocabParams
 } from "./folder.schema.js";
 
@@ -174,6 +176,27 @@ export async function removeSystemVocabHandler(
     }
 }
 
+export async function updateSystemVocabMeaningHandler(
+    request: FastifyRequest<{ Params: RemoveSystemVocabParams; Body: UpdateSystemVocabMeaningBody }>,
+    reply: FastifyReply
+) {
+    const userId = request.user!.id;
+    const { id: folderId, vocabularyId } = request.params;
+    const { language, meaning } = request.body;
+    try {
+        await folderService.updateSystemVocabMeaning(folderId, userId, vocabularyId, language, meaning);
+        return reply.code(200).send({ success: true, message: "Vocabulary meaning updated." });
+    } catch (error: any) {
+        if (error.message === "FOLDER_NOT_FOUND") {
+            return reply.code(404).send({ success: false, error: { code: "FOLDER_NOT_FOUND", message: "Folder not found or not owned." } });
+        }
+        if (error.message === "VOCABULARY_NOT_IN_FOLDER") {
+            return reply.code(404).send({ success: false, error: { code: "VOCABULARY_NOT_IN_FOLDER", message: "Vocabulary is not in this folder." } });
+        }
+        throw error;
+    }
+}
+
 /**
  * Controller handler to add a user vocabulary item to a folder.
  * @route POST /folders/:id/user-vocabularies
@@ -198,6 +221,27 @@ export async function addUserVocabHandler(
         }
         if (error.message === "ALREADY_IN_FOLDER") {
             return reply.code(409).send({ success: false, error: { code: "ALREADY_IN_FOLDER", message: "Duplicate entry." } });
+        }
+        throw error;
+    }
+}
+
+export async function importUserVocabulariesHandler(
+    request: FastifyRequest<{ Params: FolderIdParams; Body: ImportUserVocabulariesBody }>,
+    reply: FastifyReply
+) {
+    const userId = request.user!.id;
+    const { id: folderId } = request.params;
+    try {
+        const result = await folderService.importUserVocabularies(folderId, userId, request.body.entries);
+        return reply.code(201).send({
+            success: true,
+            data: result,
+            message: "Vocabulary import completed.",
+        });
+    } catch (error: any) {
+        if (error.message === "FOLDER_NOT_FOUND") {
+            return reply.code(404).send({ success: false, error: { code: "FOLDER_NOT_FOUND", message: "Folder not found or not owned." } });
         }
         throw error;
     }

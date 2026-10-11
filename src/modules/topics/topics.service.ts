@@ -167,7 +167,7 @@ export const topicsService = {
         });
 
         // Invalidate parent lesson detail cache
-        memoryCache.delete(`lessons:detail:${data.lesson_id}`);
+        memoryCache.deletePattern(`lessons:detail:${data.lesson_id}:*`);
 
         return {
             success: true,
@@ -245,10 +245,10 @@ export const topicsService = {
         // Invalidate caches
         memoryCache.deletePattern(`topics:detail:${id}:*`);
         if (result.oldLessonId) {
-            memoryCache.delete(`lessons:detail:${result.oldLessonId}`);
+            memoryCache.deletePattern(`lessons:detail:${result.oldLessonId}:*`);
         }
         if (updateParams.lesson_id && updateParams.lesson_id !== result.oldLessonId) {
-            memoryCache.delete(`lessons:detail:${updateParams.lesson_id}`);
+            memoryCache.deletePattern(`lessons:detail:${updateParams.lesson_id}:*`);
         }
 
         return {
@@ -287,7 +287,7 @@ export const topicsService = {
         // Invalidate caches
         memoryCache.deletePattern(`topics:detail:${id}:*`);
         if (result.lesson_id) {
-            memoryCache.delete(`lessons:detail:${result.lesson_id}`);
+            memoryCache.deletePattern(`lessons:detail:${result.lesson_id}:*`);
         }
 
         return {

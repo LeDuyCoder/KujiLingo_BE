@@ -8,9 +8,11 @@ import {
     addSystemVocabBodySchema,
     removeSystemVocabParamsSchema,
     addUserVocabBodySchema,
+    importUserVocabulariesBodySchema,
+    updateSystemVocabMeaningBodySchema,
     removeUserVocabParamsSchema
 } from "./folder.schema.js";
-import { addSystemVocabHandler, addUserVocabHandler, createFolderHandler, deleteFolderHandler, getFolderContentsHandler, listFoldersHandler, removeSystemVocabHandler, removeUserVocabHandler, updateFolderHandler } from "./folder.controller.js";
+import { addSystemVocabHandler, addUserVocabHandler, createFolderHandler, deleteFolderHandler, getFolderContentsHandler, importUserVocabulariesHandler, listFoldersHandler, removeSystemVocabHandler, removeUserVocabHandler, updateFolderHandler, updateSystemVocabMeaningHandler } from "./folder.controller.js";
 
 /**
  * Fastify plugin registering all Folder Module routes.
@@ -120,6 +122,20 @@ export async function folderRoutes(app: FastifyInstance) {
         removeSystemVocabHandler as any
     );
 
+    router.patch(
+        "/api/v1/folders/:id/system-vocabularies/:vocabularyId/meaning",
+        {
+            onRequest: [authGuard],
+            schema: {
+                tags: ["Folder"],
+                summary: "Set a personal meaning override for a folder vocabulary",
+                params: removeSystemVocabParamsSchema,
+                body: updateSystemVocabMeaningBodySchema,
+            },
+        },
+        updateSystemVocabMeaningHandler as any
+    );
+
     // 8. Add User Vocabulary to Folder
     router.post(
         "/api/v1/folders/:id/user-vocabularies",
@@ -133,6 +149,20 @@ export async function folderRoutes(app: FastifyInstance) {
             }
         },
         addUserVocabHandler as any
+    );
+
+    router.post(
+        "/api/v1/folders/:id/user-vocabularies/import",
+        {
+            onRequest: [authGuard],
+            schema: {
+                tags: ["Folder"],
+                summary: "Import user vocabularies into a folder",
+                params: folderIdParamsSchema,
+                body: importUserVocabulariesBodySchema,
+            },
+        },
+        importUserVocabulariesHandler as any
     );
 
     // 9. Remove User Vocabulary from Folder

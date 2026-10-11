@@ -183,6 +183,20 @@ export const folderRepository = {
         });
     },
 
+    async updateSystemVocabMeaning(folderId: string, vocabId: string, language: "vi" | "en", meaning: string) {
+        return prisma.folder_system_vocabularies.update({
+            where: {
+                folder_id_vocabulary_id: {
+                    folder_id: folderId,
+                    vocabulary_id: vocabId,
+                },
+            },
+            data: language === "vi"
+                ? { meaning_vi_override: meaning }
+                : { meaning_en_override: meaning },
+        });
+    },
+
     /**
      * Adds a user vocabulary item to a folder.
      * @param folderId Folder UUID
@@ -194,6 +208,65 @@ export const folderRepository = {
                 folder_id: folderId,
                 user_vocabulary_id: userVocabId
             }
+        });
+    },
+
+    async importUserVocabularies(folderId: string, userId: string, entries: Array<{
+        kanji: string;
+        hiragana?: string;
+        romaji?: string;
+        meaning: string;
+        note?: string;
+    }>) {
+        return prisma.$transaction(async tx => {
+            const existing = await tx.folder_user_vocabularies.findMany({
+                where: {
+                    folder_id: folderId,
+                    user_vocabularies: { user_id: userId },
+                },
+                select: {
+                    user_vocabularies: { select: { kanji: true, meaning: true } },
+                },
+            });
+            const makeKey = (kanji: string, meaning: string) =>
+                `${kanji.trim().normalize("NFC").toLocaleLowerCase()}\u0000${meaning.trim().normalize("NFC").toLocaleLowerCase()}`;
+            const seen = new Set(existing.map(item =>
+                makeKey(item.user_vocabularies.kanji || "", item.user_vocabularies.meaning || "")
+            ));
+            const uniqueEntries = entries.filter(entry => {
+                const key = makeKey(entry.kanji, entry.meaning);
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+
+            if (uniqueEntries.length === 0) {
+                return { importedCount: 0, skippedCount: entries.length };
+            }
+
+            const records = uniqueEntries.map(entry => ({
+                id: crypto.randomUUID(),
+                user_id: userId,
+                kanji: entry.kanji,
+                hiragana: entry.hiragana || null,
+                romaji: entry.romaji || null,
+                meaning: entry.meaning,
+                note: entry.note || null,
+                created_at: new Date(),
+            }));
+
+            await tx.user_vocabularies.createMany({ data: records });
+            await tx.folder_user_vocabularies.createMany({
+                data: records.map(record => ({
+                    folder_id: folderId,
+                    user_vocabulary_id: record.id,
+                })),
+            });
+
+            return {
+                importedCount: records.length,
+                skippedCount: entries.length - records.length,
+            };
         });
     },
 

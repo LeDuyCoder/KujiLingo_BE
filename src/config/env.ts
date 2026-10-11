@@ -15,6 +15,8 @@ const envSchema = z.object({
     MAIL_FROM_NAME: z.string().min(1),
     FRONTEND_URL: z.string().url(),
     JISHO_API_URL: z.string().url().default("https://jisho.org/api/v1/search/words"),
+    GOOGLE_TRANSLATE_API_KEY: z.string().optional().transform(value => value || undefined),
+    TRANSLATION_MONTHLY_CHARACTER_LIMIT: z.coerce.number().int().positive().max(500000).default(500000),
 });
 
 export const env = envSchema.parse(process.env);

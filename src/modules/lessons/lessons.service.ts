@@ -5,6 +5,9 @@ import { memoryCache } from "../../common/utils/cache.js";
 import type { CreateLessonBody, UpdateLessonBody } from "./lessons.types.js";
 import { hasActivePremium } from "../../common/utils/premium.js";
 import { buildLessonProgress } from "../../common/utils/lesson-progress.js";
+import { translateDisplayTexts } from "../../common/services/translation.service.js";
+
+type DisplayLanguage = "vi" | "en";
 
 const LESSON_QUIZ_PASS_PERCENT = 70;
 
@@ -123,9 +126,9 @@ export const lessonsService = {
     /**
      * Get details of a lesson (with ordered topics). Cache for 30 minutes.
      */
-    async getLessonDetail(id: string, userId?: string) {
+    async getLessonDetail(id: string, userId?: string, displayLanguage: DisplayLanguage = "vi") {
         await assertLessonUnlocked(id, userId);
-        const cacheKey = `lessons:detail:${id}`;
+        const cacheKey = `lessons:detail:${id}:${displayLanguage}`;
         const accessCacheKey = `lessons:detail:access:${id}`;
         const cached = memoryCache.get(cacheKey);
         if (cached) {
@@ -171,6 +174,16 @@ export const lessonsService = {
             }
         };
 
+        const sourceTexts = [result.data.title, result.data.description, ...result.data.topics.flatMap(topic => [topic.title, topic.description])];
+        const translatedTexts = await translateDisplayTexts(sourceTexts, displayLanguage);
+        result.data.title = translatedTexts[0] as string | null;
+        result.data.description = translatedTexts[1] as string | null;
+        result.data.topics = result.data.topics.map((topic, index) => ({
+            ...topic,
+            title: translatedTexts[2 + index * 2] as string | null,
+            description: translatedTexts[3 + index * 2] as string | null,
+        }));
+
         memoryCache.set(cacheKey, result, 1800); // 30 minutes
         memoryCache.set(accessCacheKey, lesson.courses?.title ?? "", 1800);
         return result;
@@ -213,7 +226,7 @@ export const lessonsService = {
 
         // Invalidate course and lesson list cache
         memoryCache.deletePattern("courses:list:*");
-        memoryCache.delete(`courses:detail:${data.course_id}`);
+        memoryCache.deletePattern(`courses:detail:${data.course_id}:*`);
 
         return {
             success: true,
@@ -287,14 +300,14 @@ export const lessonsService = {
         });
 
         // Invalidate caches
-        memoryCache.delete(`lessons:detail:${id}`);
+        memoryCache.deletePattern(`lessons:detail:${id}:*`);
         memoryCache.delete(`lessons:detail:access:${id}`);
         memoryCache.deletePattern("courses:list:*");
         if (result.oldCourseId) {
-            memoryCache.delete(`courses:detail:${result.oldCourseId}`);
+            memoryCache.deletePattern(`courses:detail:${result.oldCourseId}:*`);
         }
         if (updateParams.course_id && updateParams.course_id !== result.oldCourseId) {
-            memoryCache.delete(`courses:detail:${updateParams.course_id}`);
+            memoryCache.deletePattern(`courses:detail:${updateParams.course_id}:*`);
         }
 
         return {
@@ -337,11 +350,11 @@ export const lessonsService = {
         });
 
         // Invalidate caches
-        memoryCache.delete(`lessons:detail:${id}`);
+        memoryCache.deletePattern(`lessons:detail:${id}:*`);
         memoryCache.delete(`lessons:detail:access:${id}`);
         memoryCache.deletePattern("courses:list:*");
         if (result.course_id) {
-            memoryCache.delete(`courses:detail:${result.course_id}`);
+            memoryCache.deletePattern(`courses:detail:${result.course_id}:*`);
         }
 
         return {

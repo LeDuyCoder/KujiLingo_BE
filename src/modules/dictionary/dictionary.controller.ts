@@ -21,8 +21,9 @@ function getUserIdFromAuthHeader(request: FastifyRequest): string | undefined {
 export async function searchHandler(request: FastifyRequest, reply: FastifyReply) {
     const { q, jlpt_level, page, limit } = request.query as any;
     const userId = getUserIdFromAuthHeader(request);
+    const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
     try {
-        const result = await dictionaryService.search(q, jlpt_level, page, limit, userId);
+        const result = await dictionaryService.search(q, jlpt_level, page, limit, userId, displayLanguage);
         return reply.send({ success: true, ...result });
     } catch (error) {
         if (error instanceof Error && error.message === "JISHO_UNAVAILABLE") {
@@ -41,7 +42,8 @@ export async function searchHandler(request: FastifyRequest, reply: FastifyReply
 export async function getDetailHandler(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as any;
     const userId = getUserIdFromAuthHeader(request);
-    const result = await dictionaryService.getDetail(id, userId);
+    const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
+    const result = await dictionaryService.getDetail(id, userId, displayLanguage);
     
     if (!result) {
         return reply.code(404).send({

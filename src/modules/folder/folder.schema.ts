@@ -31,6 +31,11 @@ export const addSystemVocabBodySchema = z.object({
     vocabulary_id: z.string().uuid("vocabulary_id must be a valid UUID")
 });
 
+export const updateSystemVocabMeaningBodySchema = z.object({
+    language: z.enum(["vi", "en"]),
+    meaning: z.string().trim().min(1).max(500),
+});
+
 /**
  * Zod schema for validating path parameters to remove system vocabulary from a folder.
  */
@@ -46,6 +51,16 @@ export const addUserVocabBodySchema = z.object({
     user_vocabulary_id: z.string().uuid("user_vocabulary_id must be a valid UUID")
 });
 
+export const importUserVocabulariesBodySchema = z.object({
+    entries: z.array(z.object({
+        kanji: z.string().trim().min(1).max(100),
+        hiragana: z.string().trim().max(150).optional(),
+        romaji: z.string().trim().max(150).optional(),
+        meaning: z.string().trim().min(1).max(500),
+        note: z.string().trim().max(1000).optional(),
+    })).min(1).max(250),
+});
+
 /**
  * Zod schema for validating path parameters to remove user vocabulary from a folder.
  */
@@ -58,6 +73,8 @@ export type CreateFolderBody = z.infer<typeof createFolderBodySchema>;
 export type UpdateFolderBody = z.infer<typeof updateFolderBodySchema>;
 export type FolderIdParams = z.infer<typeof folderIdParamsSchema>;
 export type AddSystemVocabBody = z.infer<typeof addSystemVocabBodySchema>;
+export type UpdateSystemVocabMeaningBody = z.infer<typeof updateSystemVocabMeaningBodySchema>;
 export type RemoveSystemVocabParams = z.infer<typeof removeSystemVocabParamsSchema>;
 export type AddUserVocabBody = z.infer<typeof addUserVocabBodySchema>;
+export type ImportUserVocabulariesBody = z.infer<typeof importUserVocabulariesBodySchema>;
 export type RemoveUserVocabParams = z.infer<typeof removeUserVocabParamsSchema>;

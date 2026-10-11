@@ -8,7 +8,8 @@ export async function listCoursesHandler(
     reply: FastifyReply
 ) {
     try {
-        const result = await coursesService.listCourses(request.query);
+        const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
+        const result = await coursesService.listCourses(request.query, displayLanguage);
         return reply.code(200).send(result);
     } catch (error: any) {
         log.error(error);
@@ -28,7 +29,8 @@ export async function getCourseDetailHandler(
 ) {
     try {
         const { id } = request.params;
-        const result = await coursesService.getCourseDetail(id, request.user?.id);
+        const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
+        const result = await coursesService.getCourseDetail(id, request.user?.id, displayLanguage);
         return reply.code(200).send(result);
     } catch (error: any) {
         log.error(error);
@@ -66,7 +68,8 @@ export async function getCourseLessonProgressHandler(
         if (!userId) {
             return reply.code(401).send({ success: false, error: { code: "UNAUTHORIZED", message: "Sign in to view lesson progress." } });
         }
-        return reply.code(200).send(await coursesService.getCourseLessonProgress(request.params.id, userId));
+        const displayLanguage = request.headers["accept-language"]?.toLowerCase().startsWith("en") ? "en" : "vi";
+        return reply.code(200).send(await coursesService.getCourseLessonProgress(request.params.id, userId, displayLanguage));
     } catch (error: any) {
         if (error.message === "COURSE_NOT_FOUND") {
             return reply.code(404).send({ success: false, error: { code: "COURSE_NOT_FOUND", message: "Course not found." } });
