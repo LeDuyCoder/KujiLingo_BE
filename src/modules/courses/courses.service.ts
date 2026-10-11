@@ -48,8 +48,8 @@ export async function listCourses(query: ListCoursesQuery, displayLanguage: Disp
     const translatedTexts = await translateDisplayTexts(sourceTexts, displayLanguage);
     const data: CourseDTO[] = sourceData.map((course, index) => ({
         ...course,
-        title: translatedTexts[index] as string | null,
-        description: translatedTexts[index + 1] as string | null,
+        title: translatedTexts[index * 2] as string | null,
+        description: translatedTexts[index * 2 + 1] as string | null,
     }));
 
     const totalPages = Math.ceil(total / query.limit);

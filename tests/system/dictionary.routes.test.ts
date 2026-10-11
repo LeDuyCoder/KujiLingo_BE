@@ -130,7 +130,10 @@ test("Dictionary API - Database Integration Tests", async (t) => {
         });
 
         assert.strictEqual(res.statusCode, 200);
-        assert.strictEqual(fetchMock.mock.callCount(), 1);
+        const jishoCalls = fetchMock.mock.calls.filter(call =>
+            String(call.arguments[0]).includes("keyword=")
+        );
+        assert.strictEqual(jishoCalls.length, 1);
         const body = JSON.parse(res.body);
 
         assert.strictEqual(body.success, true);

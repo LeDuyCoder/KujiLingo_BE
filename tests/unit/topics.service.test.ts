@@ -104,7 +104,7 @@ test("Topics Service - Unit Tests", async (t) => {
         mock.method(topicsRepository, "checkLessonExists", async () => true);
         const insertMock = mock.method(topicsRepository, "createTopic", async () => createdTopic);
         mock.method(adminRepository, "createAuditLog", async () => ({}));
-        const cacheDeleteMock = mock.method(memoryCache, "delete");
+        const cacheDeletePatternMock = mock.method(memoryCache, "deletePattern");
 
         const result = await topicsService.createTopic("admin-1", {
             lesson_id: "lesson-1",
@@ -115,8 +115,8 @@ test("Topics Service - Unit Tests", async (t) => {
         assert.strictEqual(result.success, true);
         assert.strictEqual(result.data.id, "topic-created");
         assert.strictEqual(insertMock.mock.callCount(), 1);
-        assert.strictEqual(cacheDeleteMock.mock.callCount(), 1);
-        assert.strictEqual(cacheDeleteMock.mock.calls[0].arguments[0], "lessons:detail:lesson-1");
+        assert.strictEqual(cacheDeletePatternMock.mock.callCount(), 1);
+        assert.strictEqual(cacheDeletePatternMock.mock.calls[0].arguments[0], "lessons:detail:lesson-1:*");
     });
 
     await t.test("updateTopic - throws EMPTY_UPDATE if no fields provided", async () => {

@@ -35,6 +35,14 @@ test("Courses Service - Unit Tests", async (t) => {
                 image: "img",
                 order_no: 1,
                 deleted_at: null,
+            },
+            {
+                id: "course-2",
+                title: "Course N4",
+                description: null,
+                image: null,
+                order_no: 2,
+                deleted_at: null,
             }
         ];
 
@@ -42,6 +50,10 @@ test("Courses Service - Unit Tests", async (t) => {
             {
                 course_id: "course-1",
                 _count: { id: 5 },
+            },
+            {
+                course_id: "course-2",
+                _count: { id: 3 },
             }
         ];
 
@@ -52,8 +64,10 @@ test("Courses Service - Unit Tests", async (t) => {
         // First call - cache miss
         const res1 = await coursesService.listCourses({ page: 1, limit: 20 });
         assert.strictEqual(res1.success, true);
-        assert.strictEqual(res1.data.length, 1);
+        assert.strictEqual(res1.data.length, 2);
         assert.strictEqual(res1.data[0].lesson_count, 5);
+        assert.strictEqual(res1.data[1].title, "Course N4");
+        assert.strictEqual(res1.data[1].description, null);
         assert.strictEqual(findManyMock.mock.callCount(), 1);
 
         // Second call - cache hit
@@ -125,7 +139,7 @@ test("Courses Service - Unit Tests", async (t) => {
         mock.method(courseRepository, "findCourseById", async () => mockCourse);
         const updateMock = mock.method(courseRepository, "updateCourse", async () => mockUpdated);
         const auditLogMock = mock.method(adminRepository, "createAuditLog", async () => ({}));
-        const cacheDeleteMock = mock.method(memoryCache, "delete");
+        const cacheDeletePatternMock = mock.method(memoryCache, "deletePattern");
 
         const res = await coursesService.updateCourse("admin-1", "course-1", {
             title: "Updated Course",
@@ -135,7 +149,9 @@ test("Courses Service - Unit Tests", async (t) => {
         assert.strictEqual(res.data.title, "Updated Course");
         assert.strictEqual(updateMock.mock.callCount(), 1);
         assert.strictEqual(auditLogMock.mock.callCount(), 1);
-        assert.strictEqual(cacheDeleteMock.mock.callCount(), 1); // deletes detail cache
+        assert.strictEqual(cacheDeletePatternMock.mock.callCount(), 4);
+        assert.strictEqual(cacheDeletePatternMock.mock.calls[0].arguments[0], "courses:list:*");
+        assert.strictEqual(cacheDeletePatternMock.mock.calls[1].arguments[0], "courses:detail:course-1:*");
 
         // 404
         mock.restoreAll();
